@@ -1,0 +1,182 @@
+import { describe, expect, it } from 'vitest'
+import {
+  advice,
+  answer,
+  beadText,
+  being,
+  cardModel,
+  clampPoint,
+  createWorld,
+  goToHole,
+  lift,
+  lookIn,
+  pokeNest,
+  poleFree,
+  requestLift,
+  requestScope,
+  say,
+  skiffTenths,
+  step,
+  takeRope,
+  type World,
+} from '../src/sim'
+
+function settle(world: World, ms: number, start = 0): number {
+  let now = start
+  const frames = Math.ceil(ms / 16)
+  for (let i = 0; i < frames; i += 1) {
+    now += 16
+    step(world, now, 0.016)
+  }
+  return now
+}
+
+describe('harbor rules', () => {
+  it('points the rope at the largest cache and keeps the pole honest', () => {
+    const world = createWorld('ada')
+    expect(beadText(world)).toBe('mostly Codex cache · 2.1 GB')
+    expect(skiffTenths(world, 'caches')).toBe(70)
+    expect(poleFree(world)).toBe('43.8')
+    expect(world.freeTenths + 4682).toBe(world.capacityTenths)
+  })
+
+  it('throws a cache in the sea only after both faces, then moves the pole', () => {
+    const world = createWorld('ada')
+    world.room = 'hold'
+    world.hold = 'caches'
+    const you = being(world, 'you')
+    you.x = you.tx = 980
+    you.y = you.ty = 630
+    lift(world, 'codex', 1000)
+    expect(world.carrying).toBe('codex')
+    expect(world.scout).toBe('claude')
+    expect(being(world, 'claude').bubble).toMatch(/rebuild/i)
+    expect(being(world, 'codex').awake).toBe(false)
+    goToHole(world, 'sea', 1000)
+    expect(world.card).toBeNull()
+    step(world, 1700, 0.016)
+    const face = cardModel(world, 1700)
+    expect(face?.title).toBe('Throw Codex cache in the sea?')
+    expect(face?.focus).toBe('yes')
+    answer(world, true, 1700)
+    expect(cardModel(world, 1800)?.focus).toBe('no')
+    expect(cardModel(world, 1800)?.locked).toBe(true)
+    answer(world, true, 1800)
+    expect(world.card?.kind).toBe('sea')
+    expect(world.freeTenths).toBe(438)
+    answer(world, true, 2100)
+    expect(world.toss).not.toBeNull()
+    step(world, 2600, 0.016)
+    expect(world.freeTenths).toBe(459)
+    expect(poleFree(world)).toBe('45.9')
+    expect(world.items.find((item) => item.id === 'codex')?.disposed).toBe('sea')
+  })
+
+  it('refuses the chute for an app and parks it in the locker without moving the pole', () => {
+    const world = createWorld('ada')
+    world.room = 'hold'
+    world.hold = 'apps'
+    const you = being(world, 'you')
+    you.x = you.tx = 980
+    you.y = you.ty = 630
+    lift(world, 'wow', 1000)
+    goToHole(world, 'sea', 1000)
+    step(world, 2000, 0.016)
+    const face = cardModel(world, 2000)
+    expect(face?.title).toBe('Trash World of Warcraft?')
+    expect(face?.note).toMatch(/chute won't take this/)
+    answer(world, true, 2000)
+    expect(world.freeTenths).toBe(438)
+    expect(world.lockerTenths).toBe(490)
+    expect(world.items.find((item) => item.id === 'wow')?.disposed).toBe('locker')
+  })
+
+  it('puts a recent file down when the card is refused', () => {
+    const world = createWorld('ada')
+    world.room = 'hold'
+    world.hold = 'stuff'
+    lift(world, 'recording', 500)
+    world.card = { kind: 'bin', itemId: 'recording', face: 1, lockedUntil: 0, redirected: false }
+    expect(cardModel(world, 500)?.focus).toBe('no')
+    answer(world, false, 600)
+    expect(world.carrying).toBeNull()
+    expect(world.card).toBeNull()
+    expect(world.lockerTenths).toBe(0)
+  })
+
+  it('keeps the glasshouse behind a rope', () => {
+    const spot = clampPoint('glasshouse', 400, 200)
+    expect(spot.oof).toBe(true)
+    expect(spot.y).toBe(560)
+  })
+
+  it('keeps a single scout and will not throw from the chat bar', () => {
+    const alone = createWorld('ada', null)
+    say(alone, 'delete everything', 1000)
+    expect(alone.snoreUntil).toBeGreaterThan(1000)
+    expect(alone.items.every((item) => item.disposed === 'none')).toBe(true)
+
+    const world = createWorld('ada')
+    expect(world.scout).toBe('claude')
+    expect(being(world, 'codex').awake).toBe(false)
+    takeRope(world, 1000)
+    const now = settle(world, 2500, 1000)
+    expect(world.room).toBe('hold')
+    say(world, 'throw it', now)
+    expect(being(world, 'claude').bubble).toBe("You'll have to throw it.")
+    say(world, 'codex hello', now + 10)
+    expect(being(world, 'claude').bubble).toBe("It's just me out here.")
+    expect(being(world, 'codex').awake).toBe(false)
+    expect(world.items.every((item) => item.disposed === 'none')).toBe(true)
+  })
+
+  it('switches scouts by sending the current one home', () => {
+    const world = createWorld('ada')
+    pokeNest(world, 'codex', 50)
+    expect(cardModel(world, 50)?.title).toBe('Wake Codex?')
+    expect(cardModel(world, 50)?.meta).toMatch(/Claude goes back/)
+    answer(world, true, 50)
+    expect(world.scout).toBe('codex')
+    expect(being(world, 'claude').awake).toBe(false)
+    expect(being(world, 'codex').awake).toBe(true)
+  })
+
+  it('keeps a custom brief and can start inside a repo', () => {
+    const world = createWorld('ada')
+    say(world, 'leave the chrome cache alone, I still use it', 100)
+    expect(world.brief).toEqual(['leave the chrome cache alone, I still use it'])
+    expect(being(world, 'claude').bubble).toBe("I'll keep that in mind.")
+    world.room = 'hold'
+    world.hold = 'caches'
+    const chrome = world.items.find((item) => item.id === 'chrome')
+    expect(chrome).toBeTruthy()
+    expect(advice(world, chrome!).hole).toBe('bin')
+    expect(advice(world, world.items.find((item) => item.id === 'codex')!).hole).toBe('sea')
+
+    lookIn(world, 'lighthouse', 200)
+    expect(world.scope.label).toBe('lighthouse')
+    expect(world.room).toBe('hold')
+    world.room = 'quay'
+    requestScope(world, 'lighthouse', 300)
+    const you = being(world, 'you')
+    you.x = you.tx
+    you.y = you.ty
+    settle(world, 2000, 300)
+    expect(world.room).toBe('hold')
+    expect(world.scope.id).toBe('lighthouse')
+    expect(world.items.find((item) => item.id === 'next' && item.disposed === 'none')).toBeTruthy()
+  })
+
+  it('walks up to a sack before lifting it', () => {
+    const world = createWorld('ada')
+    world.room = 'hold'
+    world.hold = 'caches'
+    const you = being(world, 'you')
+    you.x = you.tx = 230
+    you.y = you.ty = 640
+    requestLift(world, 'codex', 100)
+    expect(world.carrying).toBeNull()
+    settle(world, 2000, 100)
+    expect(world.carrying).toBe('codex')
+  })
+})

@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cleanup Harbor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <div id="app">
+      <div id="fit" data-room="quay">
+        <div id="stage">
+          <div id="track" data-room="quay">
+            <section class="room" id="room-quay" aria-label="The quay">
+              <div class="sky"></div>
+              <div class="sun"></div>
+              <div class="cloud c1"></div>
+              <div class="cloud c2"></div>
+              <svg class="hills" viewBox="0 0 1280 708" aria-hidden="true">
+                <path d="M0 250C160 190 280 230 460 200C640 170 760 230 980 190C1120 168 1200 200 1280 180V340H0Z" fill="#e7f6ff" />
+                <path d="M0 290C200 240 340 280 520 250C740 214 900 270 1280 230V400H0Z" fill="#d3eefb" />
+              </svg>
+              <svg class="bergs" viewBox="0 0 1280 708" aria-hidden="true">
+                <path d="M0 230L60 140L110 190L20 340H0Z" fill="#f7fbff" stroke="#1a2332" stroke-width="4" stroke-linejoin="round" />
+                <path d="M1280 200L1180 110L1100 160L1020 80L940 190L1240 320H1280Z" fill="#f7fbff" stroke="#1a2332" stroke-width="4" stroke-linejoin="round" />
+              </svg>
+              <div class="sea" id="sea">
+                <svg class="wave" viewBox="0 0 1280 36" preserveAspectRatio="none" aria-hidden="true">
+                  <path d="M0 18Q40 0 80 18T160 18T240 18T320 18T400 18T480 18T560 18T640 18T720 18T800 18T880 18T960 18T1040 18T1120 18T1200 18T1280 18V36H0Z" fill="#b9e6f8"/>
+                  <path d="M0 24Q40 10 80 24T160 24T240 24T320 24T400 24T480 24T560 24T640 24T720 24T800 24T880 24T960 24T1040 24T1120 24T1200 24T1280 24V36H0Z" fill="#7ec8ea"/>
+                </svg>
+              </div>
+              <div class="pole">
+                <div class="pole-post"></div>
+                <div class="pole-board">
+                  <div class="kicker">Free</div>
+                  <div class="flaps" id="flaps"></div>
+                  <div class="sub" id="pole-sub">468.2 of 512</div>
+                </div>
+              </div>
+              <button type="button" class="hit boat boat-caches" data-act="board" data-hold="caches" aria-label="Caches">
+                <svg class="hull" viewBox="0 0 220 120" aria-hidden="true"><ellipse cx="110" cy="108" rx="70" ry="7" fill="rgba(26,35,50,.18)"/><path d="M30 62c14 30 40 40 80 40s66-10 80-40l-18 0c-10 18-32 26-62 26s-52-8-62-26z" fill="#c4894a" stroke="#1a2332" stroke-width="4" stroke-linejoin="round"/><path d="M52 62c8 14 28 20 58 20s50-6 58-20z" fill="#8d5a32" stroke="#1a2332" stroke-width="3"/><path d="M26 58h168" stroke="#e7c48a" stroke-width="8" stroke-linecap="round"/><path d="M22 58h176" stroke="#1a2332" stroke-width="3" stroke-linecap="round"/><circle cx="78" cy="70" r="5" fill="none" stroke="#f3d7a1" stroke-width="2"/></svg>
+                <span class="stencil" id="label-caches">Caches</span>
+              </button>
+              <button type="button" class="hit boat boat-apps" data-act="board" data-hold="apps" aria-label="Applications">
+                <svg class="hull warm" viewBox="0 0 220 120" aria-hidden="true"><ellipse cx="110" cy="108" rx="70" ry="7" fill="rgba(26,35,50,.18)"/><path d="M30 62c14 30 40 40 80 40s66-10 80-40l-18 0c-10 18-32 26-62 26s-52-8-62-26z" fill="#d7a15a" stroke="#1a2332" stroke-width="4" stroke-linejoin="round"/><path d="M52 62c8 14 28 20 58 20s50-6 58-20z" fill="#8d5a32" stroke="#1a2332" stroke-width="3"/><path d="M26 58h168" stroke="#f0d7a4" stroke-width="8" stroke-linecap="round"/><path d="M22 58h176" stroke="#1a2332" stroke-width="3" stroke-linecap="round"/></svg>
+                <span class="stencil" id="label-apps">Applications</span>
+              </button>
+              <button type="button" class="hit boat boat-stuff" data-act="board" data-hold="stuff" aria-label="Your stuff">
+                <svg class="hull pale" viewBox="0 0 220 120" aria-hidden="true"><ellipse cx="110" cy="108" rx="70" ry="7" fill="rgba(26,35,50,.18)"/><path d="M30 62c14 30 40 40 80 40s66-10 80-40l-18 0c-10 18-32 26-62 26s-52-8-62-26z" fill="#e0b56e" stroke="#1a2332" stroke-width="4" stroke-linejoin="round"/><path d="M52 62c8 14 28 20 58 20s50-6 58-20z" fill="#a8743c" stroke="#1a2332" stroke-width="3"/><path d="M26 58h168" stroke="#f6e2bc" stroke-width="8" stroke-linecap="round"/><path d="M22 58h176" stroke="#1a2332" stroke-width="3" stroke-linecap="round"/></svg>
+                <span class="stencil" id="label-stuff">Your stuff</span>
+              </button>
+              <button type="button" class="hit bead-hit" id="bead-hit" data-act="rope" aria-label="Map the whole Mac">
+                <span class="bead-swing"><span class="rope-bit"></span><span class="bead" id="bead">This Mac</span></span>
+              </button>
+              <div class="deck"></div>
+              <div class="place-sign">Harbor</div>
+              <button type="button" class="hit door door-locker" data-act="enter" data-room="locker" aria-label="The Locker">
+                <span class="door-kicker">Locker</span>
+                <span class="door-count" id="locker-count">empty</span>
+              </button>
+              <button type="button" class="hit door door-glass" data-act="enter" data-room="glasshouse" aria-label="The Glasshouse">
+                <span class="door-kicker">Glasshouse</span>
+                <span class="door-count">look</span>
+              </button>
+              <div class="nest" id="nest"></div>
+              <button type="button" class="hit plaque" id="plaque" data-act="who" aria-label="Your scout">
+                <span class="plaque-kicker">Your scout</span>
+                <span class="plaque-name" id="plaque-name">Claude</span>
+              </button>
+              <div class="brief" id="brief" hidden>
+                <div class="brief-kicker">You said</div>
+                <ul id="brief-list"></ul>
+              </div>
+              <div id="sheds"></div>
+              <button type="button" class="ground" data-act="ground" tabindex="-1" aria-label="Walk the quay"></button>
+              <div class="objects" data-room="quay"></div>
+            </section>
+
+            <section class="room" id="room-hold" aria-label="The hold">
+              <div class="hold-wall"></div>
+              <div class="porthole"></div>
+              <div class="hold-floor"></div>
+              <div class="path-sign" id="path-sign"></div>
+              <button type="button" class="hit plank" data-act="enter" data-room="quay">Quay</button>
+              <div class="spot" id="spot-bin">
+                <button type="button" class="hole bin" data-act="hole" data-hole="bin" aria-label="The Locker bin">
+                  <span class="mouth"></span>
+                  <span class="hole-name">Locker</span>
+                  <span class="hole-note">comes back</span>
+                </button>
+              </div>
+              <div class="spot" id="spot-chute">
+                <button type="button" class="hole sea" data-act="hole" data-hole="sea" aria-label="The sea chute">
+                  <span class="mouth"></span>
+                  <span class="hole-name">Sea</span>
+                  <span class="hole-note">gone for good</span>
+                </button>
+              </div>
+              <aside id="sheet" hidden>
+                <h3 id="sheet-title"></h3>
+                <p id="sheet-path"></p>
+                <p id="sheet-body"></p>
+                <p id="sheet-brief" hidden></p>
+              </aside>
+              <p class="empty-note" id="empty-note" hidden>Nothing mapped in this folder yet.</p>
+              <button type="button" class="ground" data-act="ground" tabindex="-1" aria-label="Walk the hold"></button>
+              <div class="objects" data-room="hold"></div>
+            </section>
+
+            <section class="room" id="room-locker" aria-label="The Locker">
+              <div class="metal"></div>
+              <div class="rivets"></div>
+              <button type="button" class="hit plank light" data-act="gang">Quay</button>
+              <button type="button" class="hit tip" data-act="empty" aria-label="Empty the Locker into the sea">
+                <span>Tip into the sea</span>
+              </button>
+              <button type="button" class="ground" data-act="ground" tabindex="-1" aria-label="Walk the Locker"></button>
+              <div class="objects" data-room="locker"></div>
+            </section>
+
+            <section class="room" id="room-glasshouse" aria-label="The Glasshouse">
+              <div class="glass-sky"></div>
+              <div class="panes"></div>
+              <div class="tile"></div>
+              <div class="rope-line"></div>
+              <div class="buoy b1" data-act="buoy"><b>macOS</b><span>168 GB</span></div>
+              <div class="buoy b2" data-act="buoy"><b>Docker disk</b><span>shrink with prune</span></div>
+              <div class="buoy b3" data-act="buoy"><b>Photos</b><span>your library</span></div>
+              <button type="button" class="hit clipboard" data-act="fda">The panes are clear.</button>
+              <button type="button" class="hit plank" data-act="enter" data-room="quay">Quay</button>
+              <button type="button" class="ground" data-act="ground" tabindex="-1" aria-label="Walk the Glasshouse"></button>
+              <div class="objects" data-room="glasshouse"></div>
+            </section>
+          </div>
+          <div id="splash" hidden><i></i><i></i><i></i></div>
+          <aside id="mini">
+            <span class="kicker">Free</span>
+            <div class="flaps" id="mini-flaps"></div>
+            <div class="sub" id="mini-sub"></div>
+          </aside>
+        </div>
+        <footer id="console">
+          <button type="button" id="sound" aria-pressed="true" aria-label="Sound on">
+            <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+              <path d="M4 10h3l5-4v12l-5-4H4z" fill="currentColor" />
+              <path d="M16 9c1.2 1 1.2 5 0 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            </svg>
+          </button>
+          <form id="chat">
+            <label class="sr" for="say">Tell your scout what matters</label>
+            <input id="say" maxlength="80" placeholder="Tell your scout what matters" autocomplete="off" />
+          </form>
+          <span id="count" hidden>0/80</span>
+        </footer>
+        <div id="catcher" hidden></div>
+        <div id="card" hidden>
+          <div class="card-icon" id="card-icon"></div>
+          <h2 id="card-title"></h2>
+          <p id="card-meta"></p>
+          <p id="card-path" hidden></p>
+          <p id="card-note"></p>
+          <div class="card-actions">
+            <button type="button" id="card-no">No</button>
+            <button type="button" id="card-yes">Yes</button>
+          </div>
+        </div>
+        <div id="who" hidden>
+          <h2>Who's with you?</h2>
+          <p>One subscription. One scout.</p>
+          <div class="who-grid">
+            <button type="button" data-scout="claude">Claude</button>
+            <button type="button" data-scout="codex">Codex</button>
+            <button type="button" data-scout="cursor">Cursor</button>
+            <button type="button" data-scout="custom">Someone else</button>
+          </div>
+        </div>
+        <div id="live" class="sr" aria-live="polite"></div>
+      </div>
+    </div>
+
+    <template id="tpl-you">
+      <div class="being you" data-act="bird" data-bird="you">
+        <div class="shadow"></div>
+        <div class="turn"><div class="sprite">
+          <svg viewBox="0 0 120 140" aria-hidden="true">
+            <ellipse class="foot l" cx="40" cy="126" rx="16" ry="9" fill="#f4a024" stroke="#1a2332" stroke-width="4" transform="rotate(-16 40 126)"/>
+            <ellipse class="foot r" cx="80" cy="126" rx="16" ry="9" fill="#f4a024" stroke="#1a2332" stroke-width="4" transform="rotate(16 80 126)"/>
+            <ellipse class="flipper l" cx="22" cy="86" rx="13" ry="24" fill="#164866" stroke="#1a2332" stroke-width="4" transform="rotate(22 22 86)"/>
+            <ellipse class="flipper r" cx="98" cy="86" rx="13" ry="24" fill="#164866" stroke="#1a2332" stroke-width="4" transform="rotate(-22 98 86)"/>
+            <path d="M60 22c28 0 40 24 39 50 0 28-14 52-39 52S21 100 22 72C23 46 32 22 60 22z" fill="#1d5678" stroke="#1a2332" stroke-width="5"/>
+            <ellipse cx="60" cy="92" rx="24" ry="30" fill="#fff8ee" stroke="#1a2332" stroke-width="4"/>
+            <g class="eyes">
+              <ellipse cx="46" cy="62" rx="11" ry="13" fill="#fff" stroke="#1a2332" stroke-width="4"/>
+              <ellipse cx="74" cy="62" rx="11" ry="13" fill="#fff" stroke="#1a2332" stroke-width="4"/>
+              <ellipse cx="49" cy="66" rx="4.5" ry="5.5" fill="#1a2332"/>
+              <ellipse cx="77" cy="66" rx="4.5" ry="5.5" fill="#1a2332"/>
+              <circle cx="51" cy="63" r="2" fill="#fff"/>
+              <circle cx="79" cy="63" r="2" fill="#fff"/>
+            </g>
+            <path d="M52 80h16l-8 12z" fill="#f4a024" stroke="#1a2332" stroke-width="4" stroke-linejoin="round"/>
+            <ellipse cx="34" cy="78" rx="5" ry="3" fill="#f3a0a8" opacity=".7"/>
+            <ellipse cx="86" cy="78" rx="5" ry="3" fill="#f3a0a8" opacity=".7"/>
+          </svg>
+        </div></div>
+        <div class="name"></div>
+        <div class="bubble" hidden></div>
+      </div>
+    </template>
+    <template id="tpl-claude">
+      <div class="being bird claude" data-act="bird" data-bird="claude">
+        <div class="shadow"></div>
+        <div class="turn"><div class="sprite">
+          <svg viewBox="0 0 90 110" aria-hidden="true">
+            <ellipse cx="34" cy="100" rx="12" ry="6" fill="#f4a024" stroke="#1a2332" stroke-width="3.5" transform="rotate(-10 34 100)"/>
+            <ellipse cx="58" cy="100" rx="12" ry="6" fill="#f4a024" stroke="#1a2332" stroke-width="3.5" transform="rotate(10 58 100)"/>
+            <ellipse cx="46" cy="64" rx="28" ry="32" fill="#fff8ee" stroke="#1a2332" stroke-width="4.5"/>
+            <path d="M24 42c10-20 38-22 48-2 2 6-4 12-12 10-6-8-18-10-26-4-4 4-8 2-10-4z" fill="#7eb6d4" stroke="#1a2332" stroke-width="4" stroke-linejoin="round"/>
+            <g class="eyes">
+              <ellipse cx="36" cy="58" rx="8" ry="9" fill="#fff" stroke="#1a2332" stroke-width="3.5"/>
+              <ellipse cx="56" cy="58" rx="8" ry="9" fill="#fff" stroke="#1a2332" stroke-width="3.5"/>
+              <circle cx="38" cy="60" r="3.2" fill="#1a2332"/>
+              <circle cx="58" cy="60" r="3.2" fill="#1a2332"/>
+              <circle cx="39.4" cy="58.6" r="1.3" fill="#fff"/>
+              <circle cx="59.4" cy="58.6" r="1.3" fill="#fff"/>
+            </g>
+            <path d="M40 72h12l-6 8z" fill="#f4a024" stroke="#1a2332" stroke-width="3.5" stroke-linejoin="round"/>
+          </svg>
+        </div></div>
+        <div class="zs" aria-hidden="true">z</div>
+        <div class="name"></div>
+        <div class="bubble" hidden></div>
+      </div>
+    </template>
+    <template id="tpl-codex">
+      <div class="being bird codex" data-act="bird" data-bird="codex">
+        <div class="shadow"></div>
+        <div class="turn"><div class="sprite">
+          <svg viewBox="0 0 90 110" aria-hidden="true">
+            <ellipse cx="36" cy="100" rx="10" ry="5" fill="#f08a2a" stroke="#1a2332" stroke-width="3"/>
+            <ellipse cx="56" cy="100" rx="10" ry="5" fill="#f08a2a" stroke="#1a2332" stroke-width="3"/>
+            <ellipse cx="46" cy="64" rx="30" ry="30" fill="#f0a04a" stroke="#1a2332" stroke-width="3.5"/>
+            <ellipse cx="46" cy="72" rx="18" ry="16" fill="#ffe3bf" stroke="#1a2332" stroke-width="3"/>
+            <ellipse cx="36" cy="56" rx="6" ry="7" fill="#fff" stroke="#1a2332" stroke-width="2.5"/>
+            <ellipse cx="56" cy="56" rx="6" ry="7" fill="#fff" stroke="#1a2332" stroke-width="2.5"/>
+            <circle cx="38" cy="57" r="2.2" fill="#1a2332"/><circle cx="58" cy="57" r="2.2" fill="#1a2332"/>
+            <path d="M40 70h12l-6 8z" fill="#e07a22" stroke="#1a2332" stroke-width="3" stroke-linejoin="round"/>
+          </svg>
+        </div></div>
+        <div class="zs" aria-hidden="true">z</div>
+        <div class="name"></div>
+        <div class="bubble" hidden></div>
+      </div>
+    </template>
+    <template id="tpl-cursor">
+      <div class="being bird cursor" data-act="bird" data-bird="cursor">
+        <div class="shadow"></div>
+        <div class="turn"><div class="sprite">
+          <svg viewBox="0 0 90 110" aria-hidden="true">
+            <ellipse cx="36" cy="100" rx="10" ry="5" fill="#f08a2a" stroke="#1a2332" stroke-width="3"/>
+            <ellipse cx="56" cy="100" rx="10" ry="5" fill="#f08a2a" stroke="#1a2332" stroke-width="3"/>
+            <ellipse cx="46" cy="64" rx="26" ry="32" fill="#1c3d5a" stroke="#1a2332" stroke-width="3.5"/>
+            <ellipse cx="46" cy="74" rx="14" ry="16" fill="#f4efe4" stroke="#1a2332" stroke-width="3"/>
+            <path d="M24 58h16" stroke="#f7f4ee" stroke-width="5" stroke-linecap="round"/>
+            <ellipse cx="36" cy="54" rx="5" ry="6" fill="#fff" stroke="#1a2332" stroke-width="2.5"/>
+            <ellipse cx="54" cy="54" rx="5" ry="6" fill="#fff" stroke="#1a2332" stroke-width="2.5"/>
+            <circle cx="38" cy="55" r="2" fill="#1a2332"/><circle cx="56" cy="55" r="2" fill="#1a2332"/>
+            <path d="M40 68h10l-5 8z" fill="#f08a2a" stroke="#1a2332" stroke-width="3" stroke-linejoin="round"/>
+          </svg>
+        </div></div>
+        <div class="zs" aria-hidden="true">z</div>
+        <div class="name"></div>
+        <div class="bubble" hidden></div>
+      </div>
+    </template>
+    <template id="tpl-custom">
+      <div class="being bird custom" data-act="bird" data-bird="custom">
+        <div class="shadow"></div>
+        <div class="turn"><div class="sprite">
+          <svg viewBox="0 0 90 110" aria-hidden="true">
+            <ellipse cx="36" cy="100" rx="10" ry="5" fill="#f08a2a" stroke="#1a2332" stroke-width="3"/>
+            <ellipse cx="56" cy="100" rx="10" ry="5" fill="#f08a2a" stroke="#1a2332" stroke-width="3"/>
+            <ellipse cx="46" cy="64" rx="28" ry="32" fill="#7dcea0" stroke="#1a2332" stroke-width="3.5"/>
+            <ellipse cx="46" cy="74" rx="16" ry="16" fill="#e9fff3" stroke="#1a2332" stroke-width="3"/>
+            <ellipse cx="36" cy="56" rx="5.5" ry="6.5" fill="#fff" stroke="#1a2332" stroke-width="2.5"/>
+            <ellipse cx="56" cy="56" rx="5.5" ry="6.5" fill="#fff" stroke="#1a2332" stroke-width="2.5"/>
+            <circle cx="38" cy="57" r="2" fill="#1a2332"/><circle cx="58" cy="57" r="2" fill="#1a2332"/>
+            <path d="M40 70h12l-6 8z" fill="#e07a22" stroke="#1a2332" stroke-width="3" stroke-linejoin="round"/>
+          </svg>
+        </div></div>
+        <div class="zs" aria-hidden="true">z</div>
+        <div class="name"></div>
+        <div class="bubble" hidden></div>
+      </div>
+    </template>
+    <template id="tpl-prop">
+      <div class="prop" data-act="lift">
+        <div class="tag"><b class="t-size"></b><span class="t-name"></span><em class="t-phrase"></em></div>
+        <div class="art"></div>
+      </div>
+    </template>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
