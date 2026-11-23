@@ -250,6 +250,8 @@ export interface World {
   rehearsal: boolean
   /** What practice throws would have freed, in tenths. Never added to the pole. */
   rehearsedTenths: number
+  /** Which agent CLIs were found on this Mac. Null until checked. Only a found agent may be called live. */
+  live: { claude: boolean; cursor: boolean; codex: boolean } | null
 }
 
 export interface CardView {
@@ -630,6 +632,7 @@ export function createWorld(name: string, scout: BirdId | null = 'claude'): Worl
     effort: 'high',
     rehearsal: true,
     rehearsedTenths: 0,
+    live: null,
   }
 }
 
@@ -1349,9 +1352,17 @@ function isPlace(world: World, raw: string): boolean {
   )
 }
 
-export function say(world: World, text: string, now: number) {
+/** What `say` did with a line. 'ask' means the caller should ask the live scout and then call `liveReply`. */
+export type SayKind = 'ignored' | 'snore' | 'queued' | 'look' | 'answered' | 'note' | 'ask'
+
+/** True when the current scout is a real agent found on this Mac. Only Claude Code is wired so far. */
+export function scoutIsLive(world: World): boolean {
+  return world.scout === 'claude' && Boolean(world.live?.claude)
+}
+
+export function say(world: World, text: string, now: number): SayKind {
   const line = text.trim().slice(0, 80)
-  if (!line || world.card || world.toss) return
+  if (!line || world.card || world.toss) return 'ignored'
   const you = being(world, 'you')
   sayLine(you, line, now, 5000)
   touch(world, now)
@@ -1359,7 +1370,7 @@ export function say(world: World, text: string, now: number) {
   const named = (['claude', 'codex', 'cursor'] as const).find((id) => lower.startsWith(id))
   if (!world.scout) {
     world.snoreUntil = now + 1400
-    return
+    return 'snore'
   }
   const target = being(world, world.scout)
   if (!target.awake) {
@@ -1372,19 +1383,19 @@ export function say(world: World, text: string, now: number) {
   if (world.tool) {
     world.steering.push(line)
     if (world.steering.length > 6) world.steering.shift()
-    return
+    return 'queued'
   }
   if (look && isPlace(world, look[1])) {
     lookIn(world, look[1], now)
-    return
+    return 'look'
   }
   if (named && named !== world.scout && (lower === named || lower.startsWith(`${named},`) || lower.startsWith(`${named} `) && lower.split(/\s+/).length <= 2)) {
     sayLine(target, "It's just me out here.", now, 4000)
-    return
+    return 'answered'
   }
   if (/^(?:throw|delete|clean|empty|purge|rm)(?:\s+it)?$/.test(lower)) {
     sayLine(target, "You'll have to throw it.", now, 4000)
-    return
+    return 'answered'
   }
   if (/^(?:caches|the big one|heavy one|disk|junk)$/.test(lower)) {
     if (world.room === 'quay') {
@@ -1396,10 +1407,45 @@ export function say(world: World, text: string, now: number) {
     } else {
       sayLine(target, 'The heavy one is the closest sack.', now, 4000)
     }
-    return
+    return 'answered'
   }
-  remember(world, line)
+  // A question is asked, not noted: it doesn't go on the brief.
+  if (!/\?\s*$/.test(line)) remember(world, line)
+  if (scoutIsLive(world)) {
+    beginTool(world, 'Thinking', false)
+    sayLine(target, '…', now, 0, true)
+    return 'ask'
+  }
   sayLine(target, "I'll keep that in mind.", now, 3200)
+  return 'note'
+}
+
+/** The live scout answered. Speak it, point at the item it named, then follow any lines queued meanwhile. */
+export function liveReply(world: World, reply: { say: string; item: string | null; hole: Hole | null }, now: number) {
+  if (!world.scout) return
+  const scout = being(world, world.scout)
+  scout.sticky = false
+  const queued = world.steering.length > 0
+  if (!queued) {
+    sayLine(scout, reply.say, now, Math.min(9000, 2600 + reply.say.length * 70))
+    const item = reply.item ? itemById(world, reply.item) : undefined
+    if (item && propVisible(world, item) && !world.carrying) {
+      scout.mode = 'go'
+      scout.tx = item.x - 46
+      scout.ty = Math.max(BANDS[world.room].y0, item.y)
+    }
+  }
+  finishTool(world, now)
+}
+
+/** The live scout could not be reached. Say so plainly. */
+export function liveFailed(world: World, now: number) {
+  if (!world.scout) return
+  const scout = being(world, world.scout)
+  scout.sticky = false
+  const queued = world.steering.length > 0
+  finishTool(world, now)
+  if (!queued) sayLine(scout, "I couldn't reach Claude Code just now. Your note is kept.", now, 4200)
 }
 
 function arrivalLine(world: World, previous: BirdId | null): string {

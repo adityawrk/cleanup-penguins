@@ -8,6 +8,7 @@ import { HarborAudio } from './audio'
 import quayArt from './art/quay.svg?raw'
 import quayFore from './art/quay-fore.svg?raw'
 import holdArt from './art/hold.svg?raw'
+import helloArt from './art/hello.svg?raw'
 import { itemSvg, sizeScale } from './items'
 import { EMOTES, emoteSvg } from './emotes'
 import {
@@ -45,6 +46,9 @@ import {
   setScout,
   setModel,
   setEffort,
+  liveReply,
+  liveFailed,
+  scoutIsLive,
   shedSlot,
   effortChoice,
   EFFORTS,
@@ -69,8 +73,8 @@ import {
   type World,
 } from './sim'
 
-const ART: Record<string, string> = { quay: quayArt, 'quay-fore': quayFore, hold: holdArt }
-for (const host of document.querySelectorAll<HTMLElement>('.paint[data-art]')) {
+const ART: Record<string, string> = { quay: quayArt, 'quay-fore': quayFore, hold: holdArt, hello: helloArt }
+for (const host of document.querySelectorAll<HTMLElement>('[data-art]')) {
   host.innerHTML = ART[host.dataset.art ?? ''] ?? ''
 }
 
@@ -118,6 +122,7 @@ for (const id of ['you', 'claude', 'codex', 'cursor', 'custom'] as const) {
 
 for (const item of world.items) ensureProp(item)
 void loadThisMac()
+void findAgents()
 
 
 must('#hello-line').textContent = `${being(world, 'you').name} and ${being(world, 'claude').name}`
@@ -142,7 +147,7 @@ must<HTMLFormElement>('#chat').addEventListener('submit', (event) => {
     if (text.trim()) setScout(world, 'custom', now, text.trim())
     return
   }
-  say(world, text, now)
+  if (say(world, text, now) === 'ask') void askScout(text)
 })
 sayInput.addEventListener('input', () => {
   count.hidden = sayInput.value.length < 60
@@ -383,7 +388,7 @@ function syncTuning() {
   const look = world.scout ? modelChoice(world) : null
   const effort = effortChoice(world)
   const scout = world.scout ? being(world, world.scout) : null
-  const key = `${world.scout}|${scout?.name}|${look?.id}|${effort.id}`
+  const key = `${world.scout}|${scout?.name}|${look?.id}|${effort.id}|${JSON.stringify(world.live)}`
   if (key !== tuningKey) {
     tuningKey = key
     const face = must('#dock-face')
@@ -391,6 +396,10 @@ function syncTuning() {
     must('#scout-btn').setAttribute('aria-label', scout ? `Your scout, ${scout.name}` : 'Choose a scout')
     must('#sc-name').textContent = scout?.name ?? 'No scout'
     must('#sc-line').textContent = look ? `${look.label} · ${effort.label} effort` : 'Pick one below.'
+    const status = must<HTMLElement>('#sc-live')
+    const live = scoutIsLive(world)
+    status.dataset.live = String(live)
+    status.textContent = !world.scout ? '' : live ? 'Live · Claude Code on this Mac' : world.live === null ? 'Looking for agents…' : 'Scripted · not connected yet'
     const portrait = must<HTMLElement>('#sc-portrait')
     portrait.replaceChildren()
     if (world.scout) {
@@ -887,4 +896,41 @@ function playEmote(id: string, now: number) {
   audio.pop()
   const scoutEl = world.scout ? beings.get(world.scout) : undefined
   if (scoutEl) window.setTimeout(() => pulse(scoutEl, 'is-posted'), 260)
+}
+
+/** Find signed-in agent CLIs on this Mac. Only the dev server can look, so a built page stays scripted. */
+async function findAgents() {
+  try {
+    const scan = await fetch('/api/agents').then((response) => response.json() as Promise<{ claude: boolean; cursor: boolean; codex: boolean }>)
+    world.live = { claude: Boolean(scan.claude), cursor: Boolean(scan.cursor), codex: Boolean(scan.codex) }
+  } catch {
+    world.live = { claude: false, cursor: false, codex: false }
+  }
+  tuningKey = ''
+}
+
+/** Ask the live scout about a line. It gets the facts in reach and the player's notes; it has no tools. */
+async function askScout(text: string) {
+  const reach = (world.room === 'hold' ? itemsHere(world) : world.items.filter((item) => item.scopeId === world.scope.id || world.scope.kind === 'mac' && item.scopeId === 'mac'))
+    .filter((item) => item.disposed === 'none')
+    .sort((a, b) => b.tenths - a.tenths)
+    .slice(0, 14)
+  const body = {
+    text,
+    model: world.model,
+    effort: world.effort,
+    room: world.room === 'hold' ? `the ${holdTitle(world.hold).toLowerCase()} hold` : world.room,
+    carrying: world.carrying ? world.items.find((item) => item.id === world.carrying)?.name ?? null : null,
+    brief: world.brief,
+    items: reach.map((item) => ({ id: item.id, name: item.name, path: item.path, gb: item.tenths / 10, kind: item.hold, sea: item.sea, note: item.phrase })),
+  }
+  try {
+    const response = await fetch('/api/scout', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) })
+    if (!response.ok) throw new Error(String(response.status))
+    const reply = (await response.json()) as { say: string; item: string | null; hole: 'sea' | 'bin' | null }
+    liveReply(world, reply, performance.now())
+    audio.chirp()
+  } catch {
+    liveFailed(world, performance.now())
+  }
 }
