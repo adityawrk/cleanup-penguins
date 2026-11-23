@@ -211,6 +211,7 @@ export function createNpcs(template: HTMLTemplateElement, objectsFor: (room: Roo
     const node = template.content.firstElementChild!.cloneNode(true) as HTMLElement
     node.classList.remove('you')
     node.classList.add('npc')
+    node.classList.add(`npc-${def.id}`)
     node.dataset.act = 'npc'
     node.dataset.npc = def.id
     delete node.dataset.bird
@@ -223,7 +224,9 @@ export function createNpcs(template: HTMLTemplateElement, objectsFor: (room: Roo
     markup = markup.replace(/youClip/g, `npc-${def.id}-clip`)
     // The prop goes just behind the near flipper, so the flipper draws over it and reads as holding it.
     const at = markup.indexOf('<g class="flipper r">')
-    markup = at < 0 ? markup + PROPS[def.prop] : markup.slice(0, at) + PROPS[def.prop] + markup.slice(at)
+    // Wrapped so CSS can animate the prop (a little task loop) without touching its own placement transform.
+    const prop = `<g class="kit-anim kit-anim-${def.prop}">${PROPS[def.prop]}</g>`
+    markup = at < 0 ? markup + prop : markup.slice(0, at) + prop + markup.slice(at)
     svg.innerHTML = markup + HATS[def.hat]
     svg.style.overflow = 'visible'
     node.querySelector('.name')!.textContent = def.name

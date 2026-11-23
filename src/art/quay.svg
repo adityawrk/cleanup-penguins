@@ -22,6 +22,11 @@
     </g>
   </g>
 
+  <!-- a gull crossing the sky now and then -->
+  <g class="q-flyer" stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round">
+    <g class="q-flyer-wings"><path d="M-40 70q10-12 20 0q10-12 20 0" fill="none" stroke-width="3.4"/></g>
+    <path d="M-24 70c2 3 6 3 8 0" fill="#fff" stroke-width="2"/>
+  </g>
   <!-- FAR MOUNTAINS: lit on the left faces, shaded on the right, with a few crevasse ticks -->
   <g stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round">
     <path d="M360 214L438 150L478 176L552 112L616 166L652 146L730 214Z" fill="#f4faff" stroke-width="3"/>

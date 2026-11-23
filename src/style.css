@@ -685,3 +685,52 @@ svg > g.back { display: none; }
 .h-zzz { animation: zzz 3s ease-in-out infinite; }
 @keyframes cat-tail { 0%, 70%, 100% { transform: rotate(0); } 80% { transform: rotate(-18deg); } 90% { transform: rotate(8deg); } }
 @keyframes zzz { 0% { transform: translate(0, 6px); opacity: 0; } 30% { opacity: 1; } 100% { transform: translate(-8px, -10px); opacity: 0; } }
+
+/* ───────────── Ambient life ─────────────
+   Harbor folk each do a small task on a loop with their prop, and bob as they do it. */
+.being.npc:not(.is-walking) .sprite { animation: folk-bob 3.6s ease-in-out infinite; }
+.being.npc-mo:not(.is-walking) .sprite { animation-duration: 3.1s; }
+.being.npc-bolt:not(.is-walking) .sprite { animation-duration: 4.2s; }
+@keyframes folk-bob { 0%, 100% { transform: translateY(0) rotate(0) scale(1.02, .98); } 30% { transform: translateY(-14px) rotate(-3deg) scale(.98, 1.03); } 60% { transform: translateY(0) rotate(3deg) scale(1.02, .98); } 80% { transform: translateY(-6px) rotate(0) scale(1, 1); } }
+.kit-anim { transform-box: fill-box; }
+.being.npc:not(.is-walking) .kit-anim-basket { transform-origin: 50% 100%; animation: kit-lift 3.1s ease-in-out infinite; }
+.being.npc:not(.is-walking) .kit-anim-coil { transform-origin: 70% 10%; animation: kit-sway 3.6s ease-in-out infinite; }
+.being.npc:not(.is-walking) .kit-anim-clipboard { transform-origin: 50% 90%; animation: kit-tap 4.2s ease-in-out infinite; }
+.being.npc:not(.is-walking) .kit-anim-can { transform-origin: 20% 80%; animation: kit-tip 4s ease-in-out infinite; }
+@keyframes kit-lift { 0%, 55%, 100% { transform: none; } 68% { transform: translateY(-30px) rotate(-10deg); } 80% { transform: translateY(-30px) rotate(8deg); } }
+@keyframes kit-sway { 0%, 100% { transform: rotate(-12deg); } 50% { transform: rotate(14deg); } }
+@keyframes kit-tap { 0%, 55%, 100% { transform: none; } 62%, 76% { transform: rotate(-10deg) translateY(-4px); } 69%, 83% { transform: rotate(-4deg); } }
+@keyframes kit-tip { 0%, 45%, 100% { transform: none; } 58%, 82% { transform: rotate(-40deg) translateY(-8px); } }
+
+/* A real dance: a bouncy rock with both flippers up, about two beats a second. */
+.being.is-dancing .sprite { animation: dance2 520ms ease-in-out infinite; }
+@keyframes dance2 {
+  0%, 100% { transform: rotate(-16deg) translateX(-10px) translateY(0) scale(1.08, .92); }
+  25% { transform: rotate(0deg) translateY(-36px) scale(.95, 1.07); }
+  50% { transform: rotate(16deg) translateX(10px) translateY(0) scale(1.08, .92); }
+  75% { transform: rotate(0deg) translateY(-36px) scale(.95, 1.07); }
+}
+.being.is-dancing .flipper { transform-box: fill-box; transform-origin: center top; animation: dance-arms 520ms ease-in-out infinite; }
+.being.is-dancing .flipper.l { opacity: 1 !important; animation-delay: -260ms; }
+@keyframes dance-arms { 0%, 100% { transform: rotate(-150deg); } 50% { transform: rotate(-110deg); } }
+
+/* The player leans a touch into where they face, and stands on bigger, splayed feet. */
+.being.you .sprite > svg { transform: rotate(4deg); transform-origin: 50% 100%; }
+.being.you .foot { scale: 1.22; transform-origin: center; }
+.being.you .foot.l { rotate: -8deg; }
+.being.you .foot.r { rotate: 8deg; }
+.being.you .foot { transform-box: fill-box; }
+/* One moving thing per room: a gull crosses the quay sky; butterflies drift in the Glasshouse. */
+.q-flyer { animation: flyer 22s linear infinite; }
+.q-flyer-wings { transform-box: fill-box; transform-origin: center; animation: flyer-flap .5s ease-in-out infinite; }
+@keyframes flyer { 0% { transform: translate(0, 0); } 45% { transform: translate(760px, -18px); } 70%, 100% { transform: translate(1400px, 10px); } }
+@keyframes flyer-flap { 50% { transform: scaleY(-.6); } }
+.g-drift { animation: drift-a 9s ease-in-out infinite alternate; }
+.g-drift-2 { animation-name: drift-b; animation-duration: 11s; }
+.g-drift-3 { animation-name: drift-c; animation-duration: 8s; }
+@keyframes drift-a { 0% { translate: 0 0; } 33% { translate: 60px -24px; } 66% { translate: 120px 10px; } 100% { translate: 40px 30px; } }
+@keyframes drift-b { 0% { translate: 0 0; } 50% { translate: -90px 30px; } 100% { translate: -30px -20px; } }
+@keyframes drift-c { 0% { translate: 0 0; } 50% { translate: 70px -40px; } 100% { translate: 140px -10px; } }
+.l-lamp { animation-duration: 3.6s; }
+@keyframes l-sway { 0%, 100% { transform: rotate(-2deg); } 50% { transform: rotate(2deg); } }
+.prop:hover { z-index: 1000 !important; }

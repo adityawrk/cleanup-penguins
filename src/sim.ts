@@ -1767,6 +1767,24 @@ export function step(world: World, now: number, dt: number) {
   const beforeX = you.x
   const beforeY = you.y
   for (const b of world.beings) moveBeing(b, dt)
+  // Personal space: a scout never stands inside the player. Nudge it sideways out of a 76px circle.
+  for (const b of birds(world)) {
+    if (!b.awake) continue
+    const dx = b.x - you.x
+    const dy = (b.y - you.y) * 1.4
+    const dist = Math.hypot(dx, dy)
+    if (dist < 76) {
+      const band = BANDS[world.room]
+      if (b.mode === 'follow') {
+        const side = dx === 0 ? -you.facing : Math.sign(dx)
+        b.x = Math.min(band.x1, Math.max(band.x0, you.x + side * 76))
+      } else {
+        // On an errand: step around behind the player (or in front, at the back wall) and keep going.
+        const behind = you.y - 56 >= band.y0
+        b.y = behind ? you.y - 56 : Math.min(band.y1, you.y + 56)
+      }
+    }
+  }
   for (const b of birds(world)) {
     if (b.mode === 'go' && !moving(b)) {
       b.mode = 'follow'

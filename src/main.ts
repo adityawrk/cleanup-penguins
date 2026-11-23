@@ -491,7 +491,7 @@ function sync(now: number) {
   track.dataset.room = world.room
   renderFlap(must('#flaps'), poleFree(world))
   renderFlap(must('#mini-flaps'), poleFree(world))
-  const sub = `${poleUsed(world)} of ${poleCap(world)}`
+  const sub = `${poleUsed(world)} used of ${poleCap(world)} GB`
   must('#pole-sub').textContent = sub
   must('#mini-sub').textContent = sub
   setText('#label-caches', gbWord(skiffTenths(world, 'caches')))
@@ -529,10 +529,9 @@ function sync(now: number) {
     if (id !== 'you') {
       const you = being(world, 'you')
       const close = Math.abs(actor.x - you.x) < 110 && Math.abs(actor.y - you.y) < 50
-      // Slide the scout's name away from the player's, sideways, so the two never stack.
-      const away = actor.x < you.x ? -1 : 1
-      el.style.setProperty('--nx', close ? `${(away * 46) / depth}px` : '0px')
-      el.style.setProperty('--ny', close ? `${10 / depth}px` : '0px')
+      // Keep the label on the bird; when it would meet the player's, stack it a line lower instead.
+      el.style.setProperty('--nx', '0px')
+      el.style.setProperty('--ny', close ? `${18 / depth}px` : '0px')
     }
     el.style.zIndex = String(Math.round(actor.y))
     const heft = id === world.scout ? effortScale(world.effort) : 1
@@ -616,7 +615,7 @@ function sync(now: number) {
     el.style.transform = `translate(${draw.x + nudge.dx}px, ${draw.y + nudge.dy}px) rotate(${draw.rot + nudge.tilt}deg) scale(${depth})`
     el.style.setProperty('--inv', String(1 / depth))
     const you = being(world, 'you')
-    el.style.zIndex = world.carrying === item.id ? String(Math.round(you.y) + 2) : world.toss?.itemId === item.id ? '900' : String(Math.round(draw.y))
+    el.style.zIndex = world.carrying === item.id ? String(Math.round(you.y) + 2) : world.toss?.itemId === item.id ? '900' : String(Math.round(draw.y) + (nearId === item.id ? 400 : 0))
     el.classList.toggle('is-held', held)
     el.classList.toggle('is-near', !held && nearId === item.id)
     setNodeText(el.querySelector('.t-size')!, gbWord(item.tenths))
