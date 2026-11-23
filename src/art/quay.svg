@@ -34,7 +34,7 @@
   </g>
 
   <!-- LIGHTHOUSE ISLAND -->
-  <g stroke="#1a2332" stroke-linejoin="round">
+  <g stroke="#1a2332" stroke-linejoin="round" transform="translate(290 0)">
     <path d="M660 216C668 200 690 196 702 198C716 192 742 198 756 216Z" fill="#7d8c99" stroke-width="3"/>
     <path d="M700 212C714 204 734 204 748 214Z" fill="#5e6c79" stroke="none"/>
     <path d="M664 208C676 198 694 196 704 199C690 202 676 204 664 208Z" fill="#fff" stroke="none"/>

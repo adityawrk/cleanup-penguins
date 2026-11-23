@@ -9,6 +9,7 @@ import quayArt from './art/quay.svg?raw'
 import quayFore from './art/quay-fore.svg?raw'
 import holdArt from './art/hold.svg?raw'
 import { itemSvg, sizeScale } from './items'
+import { EMOTES, emoteSvg } from './emotes'
 import {
   SPOTS,
   answer,
@@ -90,6 +91,9 @@ const live = must<HTMLElement>('#live')
 const splash = must<HTMLElement>('#splash')
 const hello = must<HTMLElement>('#hello')
 let naming = false
+/** Emotes and dancing are the player's own flourish. They live here, not in the sim: they change no rule. */
+let emote: { id: string; until: number } | null = null
+let danceUntil = 0
 let shownCard = ''
 let lastFoot = 0
 let footHigh = false
@@ -155,6 +159,32 @@ must('#scout-btn').addEventListener('click', () => {
   else closeWho()
 })
 must('#send-btn').addEventListener('click', () => must<HTMLFormElement>('#chat').requestSubmit())
+const emotePanel = must<HTMLElement>('#emotes')
+for (const choice of [...EMOTES, { id: 'dance', label: 'Dance', svg: '' }]) {
+  const button = document.createElement('button')
+  button.type = 'button'
+  button.dataset.emote = choice.id
+  button.setAttribute('aria-label', choice.label)
+  button.title = choice.label
+  button.innerHTML = choice.id === 'dance'
+    ? '<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M14 30V10l16-4v20" fill="none" stroke="#1a2332" stroke-width="3" stroke-linejoin="round"/><ellipse cx="10" cy="30" rx="6" ry="5" fill="#9b6bd6" stroke="#1a2332" stroke-width="3"/><ellipse cx="26" cy="26" rx="6" ry="5" fill="#9b6bd6" stroke="#1a2332" stroke-width="3"/></svg>'
+    : emoteSvg(choice.id)
+  emotePanel.appendChild(button)
+}
+must('#emote-btn').addEventListener('click', () => {
+  audio.unlock()
+  emotePanel.hidden = !emotePanel.hidden
+  must('#emote-btn').classList.toggle('is-on', !emotePanel.hidden)
+  must('#emote-btn').setAttribute('aria-expanded', String(!emotePanel.hidden))
+})
+emotePanel.addEventListener('click', (event) => {
+  const button = (event.target as HTMLElement).closest<HTMLElement>('[data-emote]')
+  if (!button?.dataset.emote) return
+  playEmote(button.dataset.emote, performance.now())
+  emotePanel.hidden = true
+  must('#emote-btn').classList.remove('is-on')
+  must('#emote-btn').setAttribute('aria-expanded', 'false')
+})
 must('#sc-close').addEventListener('click', () => closeWho())
 for (const mini of document.querySelectorAll<HTMLElement>('#scout-choices .mini')) {
   mini.appendChild(faceOf(mini.dataset.face as BirdId))
@@ -261,6 +291,20 @@ function sync(now: number) {
     el.classList.toggle('is-wave', id === 'you' && world.fidget?.kind === 'wave')
     el.classList.toggle('is-hop', id === 'you' && world.fidget?.kind === 'hop')
     el.classList.toggle('is-wiggle', id === 'you' && world.fidget?.kind === 'wiggle')
+    if (id === 'you') {
+      const dancing = danceUntil > now && pose !== 'walk' && !world.carrying
+      if (!dancing && danceUntil > now && pose === 'walk') danceUntil = 0
+      el.classList.toggle('is-dancing', dancing)
+      const badge = el.querySelector<HTMLElement>('.emote')!
+      const showing = emote && emote.until > now && !actor.bubble ? emote.id : ''
+      if (badge.dataset.id !== showing) {
+        badge.dataset.id = showing
+        badge.hidden = !showing
+        badge.innerHTML = showing ? emoteSvg(showing) : ''
+      }
+    } else if (world.scout === id) {
+      el.classList.toggle('is-dancing', danceUntil > now && pose !== 'walk' && Math.hypot(actor.x - being(world, 'you').x, actor.y - being(world, 'you').y) < 220)
+    }
     if (id === world.scout) {
       el.dataset.model = world.model
       el.dataset.effort = world.effort
@@ -686,6 +730,7 @@ function onKey(event: KeyboardEvent) {
     return
   }
   if (key === 'escape') drop(world)
+  if (key === 'd' && !event.repeat) playEmote('dance', now)
   if (key === 'e') {
     const item = nearestLiftable(world)
     if (item) requestLift(world, item.id, now)
@@ -811,4 +856,17 @@ function setText(selector: string, text: string) {
 
 function setNodeText(node: Element, text: string) {
   if (node.textContent !== text) node.textContent = text
+}
+
+function playEmote(id: string, now: number) {
+  audio.unlock()
+  if (id === 'dance') {
+    danceUntil = danceUntil > now ? 0 : now + 6000
+    if (danceUntil) audio.chirp()
+    return
+  }
+  emote = { id, until: now + 3200 }
+  audio.pop()
+  const scoutEl = world.scout ? beings.get(world.scout) : undefined
+  if (scoutEl) window.setTimeout(() => pulse(scoutEl, 'is-posted'), 260)
 }

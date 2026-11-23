@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 708" class="paint-svg" aria-hidden="true">
+  <!-- Foreground: drawn above the penguins. Edges only. -->
+  <g stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round">
+    <!-- crates by the door, snow still on them -->
+    <rect x="-8" y="628" width="92" height="84" rx="2.5" fill="#e0b56a" stroke-width="3.4"/>
+    <rect x="58.2" y="630" width="23.8" height="80" fill="#c99a55" stroke="none"/>
+    <path d="M-6 648.2H82" stroke="#b07a3c" stroke-width="2.4"/>
+    <rect x="34" y="628" width="8" height="20.2" fill="#f3d7a1" stroke-width="2"/>
+    <path d="M0 678.4h27.6M0 685.4h18.4" stroke="#b07a3c" stroke-width="2.2"/>
+    <rect x="-8" y="628" width="92" height="84" rx="2.5" fill="none" stroke-width="3.4"/>
+    <path d="M-3 633v11.8" stroke="#f3d7a1" stroke-width="2.4"/>
+    <rect x="14" y="584" width="62" height="46" rx="2.5" fill="#e0b56a" stroke-width="3.4"/>
+    <rect x="58.6" y="586" width="15.4" height="42" fill="#c99a55" stroke="none"/>
+    <path d="M16 595H74" stroke="#b07a3c" stroke-width="2.4"/>
+    <rect x="41" y="584" width="8" height="11" fill="#f3d7a1" stroke-width="2"/>
+    <path d="M22 611.6h18.6M22 618.6h12.4" stroke="#b07a3c" stroke-width="2.2"/>
+    <rect x="14" y="584" width="62" height="46" rx="2.5" fill="none" stroke-width="3.4"/>
+    <path d="M19 589v6.4" stroke="#f3d7a1" stroke-width="2.4"/>
+    <path d="M10 588c4-10 64-10 70 0c-6 6-62 6-70 0z" fill="#fff" stroke-width="2.8"/>
+    <path d="M24 586c10-3 30-3 42 0" stroke="#d6ecf9" stroke-width="3"/>
+    <path d="M-10 632c10-10 84-10 98 0c-4 6-90 6-98 0z" fill="#fff" stroke-width="2.8"/>
+    <!-- bollard and cone, front right -->
+    <rect x="1218" y="610" width="34" height="100" rx="8" fill="#ffd23f" stroke-width="4"/>
+    <path d="M1218 630h34M1218 660h34M1218 690h34" stroke="#1a2332" stroke-width="9" stroke-linecap="butt"/>
+    <rect x="1240" y="612" width="10" height="96" fill="#d39a2b" stroke="none" opacity=".5"/>
+    <rect x="1218" y="610" width="34" height="100" rx="8" fill="none" stroke-width="4"/>
+    <path d="M1216 612c4-8 34-8 38 0c-6 4-32 4-38 0z" fill="#fff" stroke-width="2.6"/>
+    <path d="M1176 704l12-62h12l12 62z" fill="#f08a2c" stroke-width="3.6"/>
+    <path d="M1182 676h24l2 12h-28z" fill="#fff" stroke="none"/>
+    <path d="M1176 704l12-62h12l12 62z" fill="none" stroke-width="3.6"/>
+    <rect x="1166" y="700" width="56" height="10" rx="3" fill="#c4661a" stroke-width="3.4"/>
+  </g>
+</svg>

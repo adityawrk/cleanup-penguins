@@ -67,7 +67,7 @@
               <div class="objects" data-room="glasshouse"></div>
             </section>
           </div>
-          <div id="splash" hidden><i></i><i></i><i></i></div>
+          <div id="splash" hidden><i></i><i></i><i></i><b></b><b></b><b></b><b></b><b></b></div>
           <div id="wipe"></div>
           <div id="marker" hidden></div>
           <aside id="mini">
@@ -91,6 +91,9 @@
             <input id="say" maxlength="80" placeholder="Tell Opus what matters" autocomplete="off" />
             <span id="count" hidden>0/80</span>
           </form>
+          <button type="button" class="dock-btn" id="emote-btn" aria-label="Emotes" aria-expanded="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="#ffd23f" stroke="currentColor" stroke-width="2"/><circle cx="9" cy="10" r="1.4" fill="currentColor"/><circle cx="15" cy="10" r="1.4" fill="currentColor"/><path d="M8 14c2 3 6 3 8 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </button>
           <button type="button" class="dock-btn" id="send-btn" aria-label="Say it">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M4 5.5C4 4.7 4.7 4 5.5 4h13c.8 0 1.5.7 1.5 1.5v9c0 .8-.7 1.5-1.5 1.5H10l-4.5 4v-4h0C4.7 16 4 15.3 4 14.5z" fill="#fff" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
@@ -98,6 +101,7 @@
             </svg>
           </button>
           <p id="steer" hidden></p>
+          <div id="emotes" hidden role="menu" aria-label="Emotes"></div>
         </footer>
         <div id="catcher" hidden></div>
         <div id="card" hidden>
@@ -332,6 +336,7 @@
         </div></div>
         <div class="name"></div>
         <div class="bubble" hidden></div>
+        <div class="emote" hidden></div>
       </div>
     </template>
     <template id="tpl-claude">
