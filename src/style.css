@@ -552,12 +552,7 @@ button { appearance: none; background: none; border: 0; padding: 0; }
 .q-beam.flash { animation: beam-flash 600ms steps(2) 4; }
 @keyframes beam-flash { 0% { opacity: .2; } 50% { opacity: 1; } }
 
-/* Three-quarter turn: while moving, the face, beak and belly slide toward the heading and the far flipper tucks in,
-   so a walk reads as going somewhere, not sliding sideways. The .turn mirror handles walking left. */
-.being .face, .being .belly { transition: transform 160ms ease-out; }
-.being.is-walking:not(.is-back) .face { transform: translateX(13px) scaleX(.94); }
-.being.is-walking:not(.is-back) .belly { transform: translateX(8px) scaleX(.95); }
-.being.bird.is-walking:not(.is-back) .face { transform: translateX(10px) scaleX(.93); }
+/* Characters are drawn in three-quarter view facing right; the .turn mirror faces them left. While walking, the far flipper tucks away. */
 .being.is-walking:not(.is-back):not(.is-carrying) .flipper.l { opacity: 0; }
 
 /* Keyboard and screen-reader access to the painted hotspots: one real button per .hot group, laid over it.
@@ -589,3 +584,7 @@ button { appearance: none; background: none; border: 0; padding: 0; }
 .map-keys { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 12px; }
 .map-keys button { height: 40px; padding: 0 14px; cursor: pointer; border-radius: 999px; border: 3px solid var(--ink); background: #eef8ff; color: var(--ink); font-size: 15px; font-weight: 700; box-shadow: inset 0 -5px 0 #bcdcf5, 0 3px 0 var(--ink); }
 .map-keys button:hover { background: #ffd23f; box-shadow: inset 0 -5px 0 #e9a913, 0 3px 0 var(--ink); }
+
+/* Carrying: the penguin reaches forward with its near flipper and keeps the far one still. */
+.being.you.is-carrying .flipper.r { transform: rotate(-38deg); }
+.being.you.is-carrying .flipper.l { transform: none; }

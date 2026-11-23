@@ -14,8 +14,8 @@ let cl = tplSvg('tpl-claude').replace(/clClip/g, 't-clClip')
 // Strip template classes (eyes/flipper/foot are styled by game CSS) only where we re-wrap; keep the rest as-is.
 // Pose: wrap the right flipper of the penguin in a static rotate, with an inner hook group for CSS.
 const P = JSON.parse(process.env.POSE || '{}')
-const waveAng = P.wave ?? -128
-const waveCx = P.wcx ?? 142, waveCy = P.wcy ?? 92
+const waveAng = P.wave ?? 100
+const waveCx = P.wcx ?? 74, waveCy = P.wcy ?? 100
 function wrapGroup(src, cls, before, after) {
   const i = src.indexOf(`<g class="${cls}">`)
   // find matching </g>
