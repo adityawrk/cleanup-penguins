@@ -105,6 +105,28 @@ for (const host of document.querySelectorAll<HTMLElement>('.snowfall')) {
   }
 }
 
+// One real, labelled button per painted hotspot, for keyboard and screen readers. Mouse clicks still land on the art.
+for (const room of document.querySelectorAll<HTMLElement>('.room')) {
+  for (const group of room.querySelectorAll<SVGGraphicsElement>('.paint .hot[data-act]')) {
+    const roomBox = room.getBoundingClientRect()
+    const unit = 1280 / roomBox.width
+    const rect = group.getBoundingClientRect()
+    const box = { x: (rect.left - roomBox.left) * unit, y: (rect.top - roomBox.top) * unit, width: rect.width * unit, height: rect.height * unit }
+    const button = document.createElement('button')
+    button.type = 'button'
+    button.className = 'hotspot'
+    Object.assign(button.dataset, group.dataset)
+    button.setAttribute('aria-label', group.querySelector('title')?.textContent ?? group.dataset.act ?? '')
+    button.style.left = `${box.x - 6}px`
+    button.style.top = `${box.y - 6}px`
+    button.style.width = `${box.width + 12}px`
+    button.style.height = `${box.height + 12}px`
+    const title = group.querySelector('title')
+    if (title && !button.querySelector('title')) button.appendChild(title.cloneNode(true))
+    room.appendChild(button)
+  }
+}
+
 /** Sprites are drawn large and shown small, so the room reads as a big place. */
 const YOU_SIZE = 0.56
 const SCOUT_SIZE = 0.46
@@ -240,6 +262,26 @@ emotePanel.addEventListener('click', (event) => {
 })
 must('#sc-close').addEventListener('click', () => closeWho())
 must('#me-close').addEventListener('click', () => closeMe())
+const STILL_KEY = 'harbor-still'
+const setStill = (on: boolean) => {
+  fit.classList.toggle('is-still', on)
+  must('#me-still').setAttribute('aria-pressed', String(on))
+  must('#me-still').textContent = on ? 'Still harbor: on' : 'Still harbor: off'
+}
+try {
+  setStill(localStorage.getItem(STILL_KEY) === 'on' || matchMedia('(prefers-reduced-motion: reduce)').matches)
+} catch {
+  setStill(false)
+}
+must('#me-still').addEventListener('click', () => {
+  const on = !fit.classList.contains('is-still')
+  setStill(on)
+  try {
+    localStorage.setItem(STILL_KEY, on ? 'on' : 'off')
+  } catch {
+    /* not remembered */
+  }
+})
 for (const mini of document.querySelectorAll<HTMLElement>('#scout-choices .mini')) {
   mini.appendChild(faceOf(mini.dataset.face as BirdId))
 }
@@ -291,7 +333,13 @@ function frame(now: number) {
   requestAnimationFrame(frame)
 }
 
+let inertRoom = ''
 function sync(now: number) {
+  if (inertRoom !== world.room) {
+    inertRoom = world.room
+    // Only the current room takes focus and is read out; the others sit off-stage on the track.
+    for (const room of document.querySelectorAll<HTMLElement>('.room')) room.inert = room.id !== `room-${world.room}`
+  }
   fit.dataset.room = world.room
   track.dataset.room = world.room
   renderFlap(must('#flaps'), poleFree(world))

@@ -166,8 +166,8 @@ button { appearance: none; background: none; border: 0; padding: 0; }
   animation: tide 800ms linear forwards;
 }
 .bead-detail { display: block; margin-top: 4px; font-size: 12px; font-weight: 600; }
-#marker { position: absolute; width: 18px; height: 18px; margin: -9px 0 0 -9px; border: 3px solid #fff; border-radius: 50%; z-index: 6; pointer-events: none; }
-#marker.show { animation: ring 400ms ease-out; }
+#marker { position: absolute; width: 18px; height: 18px; margin: -9px 0 0 -9px; border: 3px solid #fff; border-radius: 50%; z-index: 6; pointer-events: none; opacity: 0; }
+#marker.show { animation: ring 420ms ease-out forwards; }
 #hello { position: absolute; inset: 0; z-index: 9; display: grid; place-items: center; background: #7ec8f0; }
 #hello.is-gone { animation: hello-out 380ms ease forwards; pointer-events: none; }
 .hello-card {
@@ -509,10 +509,10 @@ button { appearance: none; background: none; border: 0; padding: 0; }
 .paint .g-barge { animation: g-bob 3.2s ease-in-out infinite alternate; }
 .paint .g-ivy { transform-origin: 50% 0; animation: g-sway 6s ease-in-out infinite alternate; }
 .paint .g-ivy-2 { animation-delay: -3s; }
-@keyframes g-sway { from { rotate: -2.2deg; } to { rotate: 2.2deg; } }
-@keyframes g-flap { from { scale: 1 1; } to { scale: .35 1; } }
-@keyframes g-rise { from { translate: 0 6px; opacity: .4; } 30% { opacity: 1; } to { translate: 0 -10px; opacity: .2; } }
-@keyframes g-bob { from { translate: 0 0; } to { translate: 0 2px; } }
+@keyframes g-sway { from { transform: rotate(-2.2deg); } to { transform: rotate(2.2deg); } }
+@keyframes g-flap { from { transform: scaleX(1); } to { transform: scaleX(.35); } }
+@keyframes g-rise { from { transform: translateY(6px); opacity: .4; } 30% { opacity: 1; } to { transform: translateY(-10px); opacity: .2; } }
+@keyframes g-bob { from { transform: translateY(0); } to { transform: translateY(2px); } }
 
 .hit { cursor: pointer; }
 /* Hold: lanterns sway on their hooks, the sea outside the door swells, a fish crosses the porthole now and then. */
@@ -559,3 +559,13 @@ button { appearance: none; background: none; border: 0; padding: 0; }
 .being.is-walking:not(.is-back) .belly { transform: translateX(8px) scaleX(.95); }
 .being.bird.is-walking:not(.is-back) .face { transform: translateX(10px) scaleX(.93); }
 .being.is-walking:not(.is-back):not(.is-carrying) .flipper.l { opacity: 0; }
+
+/* Keyboard and screen-reader access to the painted hotspots: one real button per .hot group, laid over it.
+   Invisible to the mouse (the painting takes clicks), visible as a ring when focused. */
+.hotspot { position: absolute; z-index: 6; pointer-events: none; background: transparent; border-radius: 18px; }
+.hotspot:focus-visible { outline: 4px solid #ffe066; outline-offset: 2px; box-shadow: 0 0 0 8px rgba(26, 35, 50, .35); }
+/* A still harbor: the player can stop all ambient motion (WCAG 2.2.2), whatever the OS setting. */
+#fit.is-still .paint *, #fit.is-still .snowfall i, #fit.is-still .hello-frame * { animation-play-state: paused !important; }
+#fit.is-still .snowfall { display: none; }
+.me-toggle { margin-top: 12px; height: 44px; padding: 0 18px; cursor: pointer; border-radius: 999px; border: 3px solid var(--ink); background: #eef8ff; color: var(--ink); font-size: 15px; font-weight: 700; box-shadow: inset 0 -5px 0 #bcdcf5, 0 3px 0 var(--ink); }
+.me-toggle[aria-pressed="true"] { background: #ffd23f; box-shadow: inset 0 -5px 0 #e9a913, 0 3px 0 var(--ink); }

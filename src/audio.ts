@@ -21,7 +21,8 @@ export class HarborAudio {
   unlock() {
     if (this.muted) return
     const ctx = this.context()
-    if (ctx.state === 'suspended') void ctx.resume()
+    // Safari can report 'interrupted' as well as 'suspended'; resume from anything but running.
+    if (ctx.state !== 'running') void ctx.resume().catch(() => undefined)
     if (!this.bed) this.ambience(this.room)
     if (!this.song && this.musicOn) this.music(this.room)
   }
@@ -34,9 +35,15 @@ export class HarborAudio {
     if (!this.ctx) return
     if (hidden) {
       if (this.song) window.clearTimeout(this.song.timer)
-      void this.ctx.suspend()
+      window.clearTimeout(this.bedTimer)
+      void this.ctx.suspend().catch(() => undefined)
     } else if (!this.muted) {
-      void this.ctx.resume().then(() => {
+      void this.ctx.resume().catch(() => undefined).then(() => {
+        if (this.bed) {
+          const room = this.bed.room
+          this.stopBed()
+          this.ambience(room)
+        }
         if (this.song) {
           const room = this.song.room
           this.stopMusic()
@@ -379,16 +386,24 @@ export class HarborAudio {
   private master(): AudioNode {
     const ctx = this.context()
     if (!this.bus) {
+      // A gentle glue compressor, then a near-brickwall limiter so stacked voices can never clip.
       const comp = ctx.createDynamicsCompressor()
       comp.threshold.value = -18
       comp.ratio.value = 3
+      const limit = ctx.createDynamicsCompressor()
+      limit.threshold.value = -6
+      limit.knee.value = 0
+      limit.ratio.value = 20
+      limit.attack.value = 0.003
+      limit.release.value = 0.1
       this.bus = ctx.createGain()
       this.bus.gain.value = 0.9
       this.bus.connect(comp)
-      comp.connect(ctx.destination)
+      comp.connect(limit)
+      limit.connect(ctx.destination)
       this.meter = ctx.createAnalyser()
       this.meter.fftSize = 2048
-      comp.connect(this.meter)
+      limit.connect(this.meter)
     }
     return this.bus
   }
