@@ -1,6 +1,63 @@
 export type Room = 'quay' | 'hold' | 'locker' | 'glasshouse'
 export type Hold = 'caches' | 'apps' | 'stuff'
 export type BirdId = 'claude' | 'codex' | 'cursor' | 'custom'
+export type EffortId = 'low' | 'medium' | 'high' | 'xhigh'
+
+export interface ModelChoice {
+  id: string
+  label: string
+  line: string
+}
+
+export interface EffortChoice {
+  id: EffortId
+  label: string
+  line: string
+}
+
+export const EFFORTS: EffortChoice[] = [
+  { id: 'low', label: 'Low', line: 'Smaller. A quick glance.' },
+  { id: 'medium', label: 'Medium', line: 'A proper look.' },
+  { id: 'high', label: 'High', line: 'Bigger. It will look harder.' },
+  { id: 'xhigh', label: 'Extra high', line: 'Biggest. It will look very hard.' },
+]
+
+export function effortScale(id: EffortId): number {
+  if (id === 'low') return 0.72
+  if (id === 'high') return 1.28
+  if (id === 'xhigh') return 1.58
+  return 1
+}
+
+export const MODELS: Record<BirdId, ModelChoice[]> = {
+  claude: [
+    { id: 'fable', label: 'Fable', line: 'Fable. The top of this satchel.' },
+    { id: 'opus', label: 'Opus', line: 'Opus. The middle of the three.' },
+    { id: 'sonnet', label: 'Sonnet', line: 'Sonnet. The lightest of the three.' },
+  ],
+  codex: [
+    { id: 'astra', label: 'Astra', line: 'Astra. The top of this satchel.' },
+    { id: 'sol', label: 'Sol', line: 'Sol. The middle of the three.' },
+    { id: 'terra', label: 'Terra', line: 'Terra. The lightest of the three.' },
+  ],
+  cursor: [
+    { id: 'grok-4.7', label: 'Grok 4.7', line: 'Grok 4.7. The latest one.' },
+    { id: 'grok-4.6', label: 'Grok 4.6', line: 'Grok 4.6. The one before.' },
+    { id: 'grok-4.5', label: 'Grok 4.5', line: 'Grok 4.5. The oldest of these three.' },
+  ],
+  custom: [{ id: 'default', label: 'Default', line: 'The model that agent is signed into.' }],
+}
+
+const ANTIGRAVITY_MODELS: ModelChoice[] = [
+  { id: 'neon', label: 'Neon', line: 'Neon. The top of this satchel.' },
+  { id: 'carbon', label: 'Carbon', line: 'Carbon. The middle of the three.' },
+  { id: 'argon', label: 'Argon', line: 'Argon. The lightest of the three.' },
+]
+
+export function modelsFor(world: World): ModelChoice[] {
+  if (world.scout === 'custom' && world.customName.trim().toLowerCase() === 'antigravity') return ANTIGRAVITY_MODELS
+  return MODELS[world.scout ?? 'claude']
+}
 export type BeingId = 'you' | BirdId
 export type Hole = 'sea' | 'bin'
 
@@ -172,7 +229,14 @@ export interface World {
   scope: Scope
   repos: Scope[]
   brief: string[]
+  steering: string[]
+  tool: { label: string; walk: boolean } | null
+  fidget: { kind: 'wave' | 'hop' | 'wiggle'; until: number } | null
+  fidgetAt: number
+  fidgets: number
   customName: string
+  model: string
+  effort: EffortId
 }
 
 export interface CardView {
@@ -543,7 +607,14 @@ export function createWorld(name: string, scout: BirdId | null = 'claude'): Worl
     scope: MAC_SCOPE,
     repos: starterRepos(),
     brief: [],
+    steering: [],
+    tool: null,
+    fidget: null,
+    fidgetAt: 0,
+    fidgets: 0,
     customName: 'Scout',
+    model: 'opus',
+    effort: 'high',
   }
 }
 
@@ -680,8 +751,8 @@ export function propDraw(world: World, item: Item, now: number): Draw {
   if (world.carrying === item.id) {
     const you = being(world, 'you')
     return {
-      x: you.x + 46 * you.facing,
-      y: you.y - 8,
+      x: you.x + 18 * you.facing,
+      y: you.y - 34,
       rot: -8 * you.facing,
       scale: 1.02,
       hide: false,
@@ -890,14 +961,16 @@ function aboutItem(text: string, item: Item): boolean {
 }
 
 export function advice(world: World, item: Item): { hole: Hole; line: string } {
-  const text = world.brief.join('\n').toLowerCase()
-  const mentioned = text.length > 0 && aboutItem(text, item)
-  if (mentioned && /\b(keep|spare|leave|ignore|save|except)\b/.test(text)) {
-    return { hole: 'bin', line: 'You asked me to leave this.' }
-  }
-  if (mentioned && /\b(throw|toss|clear|delete|remove|junk|purge)\b/.test(text)) {
-    if (item.sea && item.seaLine) return { hole: 'sea', line: item.seaLine }
-    return { hole: 'bin', line: 'You want this gone. The Locker can take it.' }
+  for (let index = world.brief.length - 1; index >= 0; index -= 1) {
+    const text = world.brief[index].toLowerCase()
+    if (!aboutItem(text, item)) continue
+    if (/\b(keep|spare|leave|ignore|save|except)\b/.test(text)) {
+      return { hole: 'bin', line: 'You asked me to leave this.' }
+    }
+    if (/\b(throw|toss|clear|delete|remove|junk|purge)\b/.test(text)) {
+      if (item.sea && item.seaLine) return { hole: 'sea', line: item.seaLine }
+      return { hole: 'bin', line: 'You want this gone. The Locker can take it.' }
+    }
   }
   if (item.sea && item.seaLine) return { hole: 'sea', line: item.seaLine }
   if (item.binLine) return { hole: 'bin', line: item.binLine }
@@ -932,15 +1005,20 @@ export function lift(world: World, id: string, now: number) {
   world.pending = null
   touch(world, now)
   being(world, 'you').bubble = null
-  if (!world.scout) return
+  if (!world.scout || item.disposed === 'locker') return
   const tip = advice(world, item)
   postBird(world, world.scout, tip.hole, tip.line, now)
+  if (world.effort === 'high' || world.effort === 'xhigh') world.sheetItemId = item.id
 }
 
 export function goToHole(world: World, hole: Hole, now: number) {
   if (world.card || world.toss) return
   if (!world.carrying) {
     sayLine(being(world, 'you'), 'Pick something up first.', now, 2200)
+    return
+  }
+  if (world.room !== 'hold') {
+    sayLine(being(world, 'you'), 'Not from here.', now, 1800)
     return
   }
   const spot = hole === 'sea' ? SPOTS.seaStand : SPOTS.binStand
@@ -1020,8 +1098,8 @@ function beginToss(world: World, itemId: string, now: number) {
   if (!item) return
   world.toss = {
     itemId,
-    fromX: you.x + 46 * you.facing,
-    fromY: you.y - 8,
+    fromX: you.x + 18 * you.facing,
+    fromY: you.y - 34,
     toX: SPOTS.chute.x,
     toY: SPOTS.chute.y,
     started: now,
@@ -1039,6 +1117,7 @@ function finishToss(world: World, now: number) {
   world.toss = null
   const item = itemById(world, toss.itemId)
   if (!item || item.disposed === 'sea') return
+  if (item.disposed === 'locker') world.lockerTenths = Math.max(0, world.lockerTenths - item.tenths)
   item.disposed = 'sea'
   world.freeTenths += item.tenths
   world.splash = { until: now + 700, x: SPOTS.chute.x, y: SPOTS.chute.y }
@@ -1071,7 +1150,7 @@ export function answer(world: World, yes: boolean, now: number) {
   if (now < card.lockedUntil) return
   if (card.kind === 'sea' && card.face === 1) {
     card.face = 2
-    card.lockedUntil = now + 300
+    card.lockedUntil = now + 800
     return
   }
   if (card.kind === 'sea' && card.face === 2) {
@@ -1125,7 +1204,7 @@ export function answer(world: World, yes: boolean, now: number) {
   }
   if (card.kind === 'empty' && card.face === 1) {
     card.face = 2
-    card.lockedUntil = now + 300
+    card.lockedUntil = now + 800
     return
   }
   if (card.kind === 'empty' && card.face === 2) {
@@ -1242,6 +1321,15 @@ export function cardModel(world: World, now: number): CardView | null {
   }
 }
 
+function isPlace(world: World, raw: string): boolean {
+  const path = raw.trim().replace(/^["']|["']$/g, '')
+  if (/^(?:~|home|mac|this mac|macintosh(?: hd)?|everything)$/i.test(path)) return true
+  if (path.startsWith('~') || path.startsWith('/')) return true
+  return world.repos.some(
+    (repo) => repo.path === path || repo.label.toLowerCase() === path.toLowerCase() || path.endsWith('/' + repo.label),
+  )
+}
+
 export function say(world: World, text: string, now: number) {
   const line = text.trim().slice(0, 80)
   if (!line || world.card || world.toss) return
@@ -1261,12 +1349,17 @@ export function say(world: World, text: string, now: number) {
     target.tx = you.x - 52
     target.ty = you.y
   }
-  const look = lower.match(/^(?:look in|check|scan|open|repo)\s+(.+)$/)
-  if (look) {
+  const look = lower.match(/^(?:look in|scan|repo)\s+(.+)$/)
+  if (world.tool) {
+    world.steering.push(line)
+    if (world.steering.length > 6) world.steering.shift()
+    return
+  }
+  if (look && isPlace(world, look[1])) {
     lookIn(world, look[1], now)
     return
   }
-  if (named && named !== world.scout) {
+  if (named && named !== world.scout && (lower === named || lower.startsWith(`${named},`) || lower.startsWith(`${named} `) && lower.split(/\s+/).length <= 2)) {
     sayLine(target, "It's just me out here.", now, 4000)
     return
   }
@@ -1279,6 +1372,7 @@ export function say(world: World, text: string, now: number) {
       target.mode = 'go'
       target.tx = SPOTS.bead.x
       target.ty = 630
+      beginTool(world, 'the rope')
       sayLine(target, 'The heavy one is on the rope.', now, 4000)
     } else {
       sayLine(target, 'The heavy one is the closest sack.', now, 4000)
@@ -1287,6 +1381,13 @@ export function say(world: World, text: string, now: number) {
   }
   remember(world, line)
   sayLine(target, "I'll keep that in mind.", now, 3200)
+}
+
+function arrivalLine(world: World, previous: BirdId | null): string {
+  const note = world.brief.at(-1)
+  if (!previous || !note) return 'I am with you.'
+  const clip = note.length > 36 ? `${note.slice(0, 34)}…` : note
+  return `I have your note. “${clip}”`
 }
 
 function remember(world: World, line: string) {
@@ -1323,8 +1424,47 @@ export function lookIn(world: World, raw: string, now: number) {
     scout.mode = 'go'
     scout.tx = scope.x
     scout.ty = 630
+    beginTool(world, scope.label)
   }
   sayLine(scout, `I'll look in ${scope.label}.`, now, 4000)
+}
+
+export function beginTool(world: World, label: string, walk = true) {
+  world.tool = { label, walk }
+}
+
+export function finishTool(world: World, now: number) {
+  if (!world.tool) return
+  world.tool = null
+  const lines = world.steering.splice(0, world.steering.length)
+  if (!lines.length || !world.scout) return
+  for (const line of lines) remember(world, line)
+  const newest = lines[lines.length - 1]
+  const lower = newest.toLowerCase()
+  const scout = being(world, world.scout)
+  const look = lower.match(/^(?:look in|scan|repo)\s+(.+)$/)
+  if (/^(?:stop|wait|come back|come home)$/.test(lower)) {
+    scout.mode = 'follow'
+    sayLine(scout, "Coming back. I'll use what you said.", now, 3600)
+    return
+  }
+  if (look && isPlace(world, look[1])) {
+    lookIn(world, look[1], now)
+    return
+  }
+  if (/^(?:caches|the big one|heavy one|disk|junk)$/.test(lower)) {
+    scout.mode = 'go'
+    scout.tx = SPOTS.bead.x
+    scout.ty = 630
+    beginTool(world, 'the rope')
+    sayLine(scout, 'The heavy one is on the rope.', now, 4000)
+    return
+  }
+  if (/^(?:throw|delete|clean|empty|purge|rm)(?:\s+it)?$/.test(lower)) {
+    sayLine(scout, "You'll have to throw it.", now, 3600)
+    return
+  }
+  sayLine(scout, "Got it. I'll use that on the next one.", now, 3600)
 }
 
 export function requestScope(world: World, id: string, now: number) {
@@ -1337,7 +1477,8 @@ export function requestScope(world: World, id: string, now: number) {
 export function setScout(world: World, id: BirdId, now: number, customName?: string) {
   if (world.card || world.toss) return
   if (world.scout === id && id !== 'custom') return
-  if (world.scout && world.scout !== id) sendHome(world, world.scout)
+  const previous = world.scout
+  if (previous && previous !== id) sendHome(world, previous)
   if (id === 'custom' && customName?.trim()) {
     const name = customName.trim().slice(0, 24)
     being(world, 'custom').name = name
@@ -1353,7 +1494,38 @@ export function setScout(world: World, id: BirdId, now: number, customName?: str
   b.y = NEST.y
   b.tx = you.x - 52
   b.ty = you.y
-  sayLine(b, 'I am with you.', now, 2400)
+  sayLine(b, arrivalLine(world, previous), now, 4200)
+  const choices = modelsFor(world)
+  if (!choices.some((choice) => choice.id === world.model)) world.model = choices[0].id
+  touch(world, now)
+}
+
+export function modelChoice(world: World): ModelChoice {
+  const choices = modelsFor(world)
+  return choices.find((choice) => choice.id === world.model) ?? choices[0]
+}
+
+export function effortChoice(world: World): EffortChoice {
+  return EFFORTS.find((choice) => choice.id === world.effort) ?? EFFORTS[2]
+}
+
+export function setModel(world: World, id: string, now: number) {
+  if (world.card || world.toss || !world.scout) return
+  const choice = modelsFor(world).find((item) => item.id === id)
+  if (!choice) return
+  world.model = choice.id
+  const scout = being(world, world.scout)
+  sayLine(scout, choice.line, now, 2800)
+  touch(world, now)
+}
+
+export function cycleEffort(world: World, now: number) {
+  if (world.card || world.toss || !world.scout) return
+  const index = EFFORTS.findIndex((choice) => choice.id === world.effort)
+  const next = EFFORTS[(index + 1) % EFFORTS.length]
+  world.effort = next.id
+  const scout = being(world, world.scout)
+  sayLine(scout, next.line, now, 2800)
   touch(world, now)
 }
 
@@ -1371,6 +1543,25 @@ function moveBeing(b: Being, dt: number) {
   b.x += (dx / dist) * stepDist
   b.y += (dy / dist) * stepDist
   if (Math.abs(dx) > 3) b.facing = dx > 0 ? 1 : -1
+}
+
+function idleFidget(world: World, now: number) {
+  const you = being(world, 'you')
+  if (moving(you) || world.carrying || world.card || world.toss || sitting(world, you)) {
+    world.fidget = null
+    return
+  }
+  if (world.fidget) {
+    if (world.fidget.until <= now) world.fidget = null
+    return
+  }
+  if (world.lastInput === 0 || now - world.lastInput < 2500) return
+  if (now - world.fidgetAt < 3600) return
+  const kinds = ['wave', 'hop', 'wiggle'] as const
+  const kind = kinds[world.fidgets % kinds.length]
+  world.fidgets += 1
+  world.fidgetAt = now
+  world.fidget = { kind, until: now + 700 }
 }
 
 function follow(world: World) {
@@ -1398,7 +1589,10 @@ export function step(world: World, now: number, dt: number) {
   const beforeY = you.y
   for (const b of world.beings) moveBeing(b, dt)
   for (const b of birds(world)) {
-    if (b.mode === 'go' && !moving(b)) b.mode = 'follow'
+    if (b.mode === 'go' && !moving(b)) {
+      b.mode = 'follow'
+      if (world.tool?.walk && b.id === world.scout) finishTool(world, now)
+    }
   }
   if (Math.hypot(you.x - beforeX, you.y - beforeY) > 0.8) {
     const last = world.trail[world.trail.length - 1]
@@ -1408,6 +1602,7 @@ export function step(world: World, now: number, dt: number) {
     }
   }
   follow(world)
+  idleFidget(world, now)
   if (!moving(you)) tryPending(world, now)
   finishToss(world, now)
   finishEmpty(world, now)
@@ -1424,6 +1619,52 @@ export function step(world: World, now: number, dt: number) {
   ) {
     for (const b of birds(world)) if (b.awake) sendHome(world, b.id as BirdId)
   }
+}
+
+const LIVE_SPOTS: Point[] = [
+  { x: 680, y: 655 },
+  { x: 400, y: 650 },
+  { x: 980, y: 640 },
+  { x: 520, y: 560 },
+  { x: 860, y: 560 },
+  { x: 300, y: 560 },
+  { x: 1100, y: 620 },
+  { x: 680, y: 490 },
+]
+
+export function useRealDisk(world: World, freeTenths: number, capacityTenths: number) {
+  world.freeTenths = freeTenths
+  world.capacityTenths = capacityTenths
+}
+
+export function useRealCaches(world: World, rows: { name: string; path: string; bytes: number }[]) {
+  if (rows.length === 0) return
+  world.items = world.items.filter((item) => !(item.scopeId === 'mac' && item.hold === 'caches'))
+  rows.slice(0, 8).forEach((row, index) => {
+    const spot = LIVE_SPOTS[index] ?? { x: 640, y: 600 }
+    const tenths = Math.max(1, Math.round(row.bytes / 1e8))
+    world.items.push({
+      id: `live-${index}`,
+      hold: 'caches',
+      form: 'sack',
+      name: row.name,
+      path: row.path,
+      tenths,
+      phrase: 'measured on this Mac',
+      sea: true,
+      stale: true,
+      x: spot.x,
+      y: spot.y,
+      disposed: 'none',
+      scopeId: 'mac',
+      seaBird: 'claude',
+      binBird: 'claude',
+      seaLine: 'Cache. It rebuilds.',
+      binLine: 'The Locker can still give it back.',
+      rebuild: 'It rebuilds the next time it is needed.',
+      sheet: `${row.path}. Measured on this Mac. The sea is permanent. The Locker can still give it back.`,
+    })
+  })
 }
 
 export function nearestLiftable(world: World): Item | undefined {

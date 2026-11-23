@@ -15,9 +15,15 @@ import {
   requestLift,
   requestScope,
   say,
+  setModel,
+  setScout,
+  cycleEffort,
+  effortScale,
+  modelsFor,
   skiffTenths,
   step,
   takeRope,
+  walkTo,
   type World,
 } from '../src/sim'
 
@@ -64,9 +70,9 @@ describe('harbor rules', () => {
     answer(world, true, 1800)
     expect(world.card?.kind).toBe('sea')
     expect(world.freeTenths).toBe(438)
-    answer(world, true, 2100)
+    answer(world, true, 2600)
     expect(world.toss).not.toBeNull()
-    step(world, 2600, 0.016)
+    step(world, 3200, 0.016)
     expect(world.freeTenths).toBe(459)
     expect(poleFree(world)).toBe('45.9')
     expect(world.items.find((item) => item.id === 'codex')?.disposed).toBe('sea')
@@ -152,6 +158,12 @@ describe('harbor rules', () => {
     expect(chrome).toBeTruthy()
     expect(advice(world, chrome!).hole).toBe('bin')
     expect(advice(world, world.items.find((item) => item.id === 'codex')!).hole).toBe('sea')
+    say(world, 'throw the npm cache', 150)
+    expect(advice(world, world.items.find((item) => item.id === 'npm')!).hole).toBe('sea')
+    expect(advice(world, chrome!).hole).toBe('bin')
+    say(world, 'check with me before throwing anything', 180)
+    expect(world.repos.some((repo) => repo.label.includes('throwing'))).toBe(false)
+    expect(world.brief.at(-1)).toMatch(/check with me/)
 
     lookIn(world, 'lighthouse', 200)
     expect(world.scope.label).toBe('lighthouse')
@@ -178,5 +190,105 @@ describe('harbor rules', () => {
     expect(world.carrying).toBeNull()
     settle(world, 2000, 100)
     expect(world.carrying).toBe('codex')
+  })
+
+  it('changes the model and how hard the scout looks', () => {
+    const world = createWorld('ada')
+    expect(world.model).toBe('opus')
+    expect(world.effort).toBe('high')
+    expect(effortScale(world.effort)).toBeGreaterThan(1)
+    cycleEffort(world, 10)
+    expect(world.effort).toBe('xhigh')
+    expect(being(world, 'claude').bubble).toMatch(/very hard/)
+    setModel(world, 'fable', 20)
+    expect(world.model).toBe('fable')
+    expect(being(world, 'claude').bubble).toMatch(/top of this satchel/)
+    expect(modelsFor(world).map((choice) => choice.id)).toEqual(['fable', 'opus', 'sonnet'])
+
+    world.room = 'hold'
+    world.hold = 'caches'
+    world.effort = 'xhigh'
+    lift(world, 'codex', 40)
+    expect(world.sheetItemId).toBe('codex')
+
+    const quiet = createWorld('ada')
+    quiet.room = 'hold'
+    quiet.hold = 'caches'
+    quiet.effort = 'low'
+    lift(quiet, 'codex', 40)
+    expect(quiet.sheetItemId).toBeNull()
+
+    setScout(quiet, 'codex', 50)
+    expect(quiet.model).toBe('astra')
+    expect(modelsFor(quiet).map((choice) => choice.id)).toEqual(['astra', 'sol', 'terra'])
+    setModel(quiet, 'opus', 60)
+    expect(quiet.model).toBe('astra')
+    setScout(quiet, 'cursor', 70)
+    expect(modelsFor(quiet).map((choice) => choice.id)).toEqual(['grok-4.7', 'grok-4.6', 'grok-4.5'])
+    setScout(quiet, 'custom', 80, 'Antigravity')
+    expect(quiet.model).toBe('neon')
+    expect(modelsFor(quiet).map((choice) => choice.id)).toEqual(['neon', 'carbon', 'argon'])
+  })
+
+  it('gives the next scout the notes you already gave', () => {
+    const world = createWorld('ada')
+    say(world, 'leave the chrome cache alone', 10)
+    setScout(world, 'codex', 20)
+    expect(world.scout).toBe('codex')
+    expect(being(world, 'claude').awake).toBe(false)
+    expect(being(world, 'codex').bubble).toMatch(/chrome cache/)
+    const chrome = world.items.find((item) => item.id === 'chrome')!
+    expect(advice(world, chrome)).toMatchObject({ hole: 'bin', line: 'You asked me to leave this.' })
+    say(world, 'the installer can go', 30)
+    expect(world.brief).toEqual(['leave the chrome cache alone', 'the installer can go'])
+    expect(advice(world, chrome).line).toBe('You asked me to leave this.')
+  })
+
+  it('sends a new instruction after the look the scout is already on', () => {
+    const world = createWorld('ada')
+    lookIn(world, 'lighthouse', 100)
+    const scout = being(world, 'claude')
+    expect(world.tool?.label).toBe('lighthouse')
+    expect(scout.mode).toBe('go')
+    say(world, 'leave the chrome cache alone', 120)
+    expect(world.brief).toEqual([])
+    expect(world.steering).toEqual(['leave the chrome cache alone'])
+    expect(scout.bubble).toBe("I'll look in lighthouse.")
+    expect(scout.tx).toBe(world.repos.find((repo) => repo.label === 'lighthouse')!.x)
+    scout.x = scout.tx
+    scout.y = scout.ty
+    step(world, 200, 0.016)
+    expect(world.tool).toBeNull()
+    expect(world.steering).toEqual([])
+    expect(world.brief).toEqual(['leave the chrome cache alone'])
+    expect(scout.bubble).toBe("Got it. I'll use that on the next one.")
+    const chrome = world.items.find((item) => item.id === 'chrome')!
+    expect(advice(world, chrome).hole).toBe('bin')
+
+    lookIn(world, 'lighthouse', 300)
+    say(world, 'look in cleanup-penguins', 320)
+    scout.x = scout.tx
+    scout.y = scout.ty
+    step(world, 400, 0.016)
+    expect(world.scope.label).toBe('cleanup-penguins')
+    expect(world.tool?.label).toBe('cleanup-penguins')
+    expect(scout.bubble).toBe("I'll look in cleanup-penguins.")
+  })
+
+  it('lets you waddle while the scout is still out', () => {
+    const world = createWorld('ada')
+    lookIn(world, 'lighthouse', 100)
+    const you = being(world, 'you')
+    const scout = being(world, 'claude')
+    const errand = scout.tx
+    walkTo(world, 220, 640, null, 150)
+    expect(you.tx).not.toBe(you.x)
+    expect(scout.tx).toBe(errand)
+    expect(scout.mode).toBe('go')
+    expect(world.tool?.label).toBe('lighthouse')
+    you.x = you.tx
+    you.y = you.ty
+    step(world, 4200, 0.016)
+    expect(world.fidget?.kind).toBe('wave')
   })
 })

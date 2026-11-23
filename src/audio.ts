@@ -14,8 +14,14 @@ export class HarborAudio {
     return !this.muted
   }
 
-  foot(high: boolean) {
-    this.blip(high ? 230 : 168, 0.045, 'triangle', 0.07)
+  foot(high: boolean, room: 'quay' | 'hold' | 'locker' | 'glasshouse' = 'quay') {
+    const tone = {
+      quay: { freq: 168, type: 'triangle' as const, dur: 0.07 },
+      hold: { freq: 120, type: 'sine' as const, dur: 0.09 },
+      locker: { freq: 340, type: 'square' as const, dur: 0.04 },
+      glasshouse: { freq: 520, type: 'triangle' as const, dur: 0.035 },
+    }[room]
+    this.blip(high ? tone.freq * 1.28 : tone.freq, 0.05, tone.type, tone.dur)
   }
 
   pop() {
@@ -24,6 +30,25 @@ export class HarborAudio {
 
   card() {
     this.blip(440, 0.04, 'sine', 0.12)
+  }
+
+  tide() {
+    this.blip(330, 0.05, 'sine', 0.14)
+    window.setTimeout(() => this.blip(246, 0.045, 'sine', 0.18), 90)
+  }
+
+  heave() {
+    this.blip(196, 0.06, 'triangle', 0.08)
+    window.setTimeout(() => this.blip(310, 0.05, 'triangle', 0.07), 70)
+  }
+
+  setDown() {
+    this.blip(110, 0.07, 'triangle', 0.12)
+  }
+
+  chirp() {
+    this.blip(880, 0.04, 'sine', 0.06)
+    window.setTimeout(() => this.blip(1240, 0.03, 'sine', 0.05), 70)
   }
 
   flap() {
