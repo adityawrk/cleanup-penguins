@@ -56,7 +56,8 @@ function sack(item: Pick<Item, 'name' | 'tenths'>): string {
   <ellipse cx="60" cy="95" rx="40" ry="6" fill="${INK}" opacity=".18"/>
   <g stroke="${INK}" stroke-linejoin="round" stroke-linecap="round">
     <path d="${body}" fill="${c.body}" stroke-width="4.4"/>
-    <path d="M86 40C96 52 100 62 100 72C100 88 86 96 60 96C74 90 84 80 86 62C87 54 87 46 86 40Z" fill="${c.shade}" stroke="none"/>
+    <path d="M86 40C96 52 100 62 100 72C100 88 86 96 60 96C74 90 84 80 86 62C87 54 87 46 86 40Z" fill="${c.shade}" stroke="none" opacity=".6"/>
+    <path d="${body}" fill="url(#it-gloss)" stroke="none"/>
     <path d="M30 60C34 50 40 44 46 40" fill="none" stroke="#fff" stroke-width="3.4" opacity=".55"/>
     <path d="${body}" fill="none" stroke-width="4.4"/>
     ${(h >> 8) % 3 === 0 ? `<path d="M30 80c6 4 14 6 22 6M74 46c6 4 10 10 12 16" fill="none" stroke="${c.shade}" stroke-width="3"/>` : ''}
@@ -185,6 +186,42 @@ function barrel(item: Pick<Item, 'name' | 'tenths'>): string {
   </g>`
 }
 
+/**
+ * Era finish, applied to every drawing: thin outlines in each object's own darker tone instead of black ink,
+ * and a glossy shading pass (a sheen top-left fading to a soft shade bottom-right) over the main silhouette.
+ */
+const OUTLINE: Record<Item['form'], string> = {
+  sack: '#6e4a20', packed: '#6e4a20', crate: '#7a4a1c', trunk: '#4a2418', disk: '#3d4d63', barrel: '#5a3618',
+}
+const GLOSS_ON: Partial<Record<Item['form'], string>> = {
+  crate: '<rect x="16" y="38" width="70" height="58" rx="2" fill="url(#it-gloss)"/>',
+  trunk: '<rect x="12" y="52" width="96" height="44" rx="5" fill="url(#it-gloss)"/>',
+  disk: '<circle cx="60" cy="56" r="40" fill="url(#it-gloss)"/>',
+  barrel: '<path d="M28 26C24 44 24 76 28 94H92C96 76 96 44 92 26Z" fill="url(#it-gloss)"/>',
+}
+const GLOSS_DEFS = '<defs><linearGradient id="it-gloss" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".5"/><stop offset=".42" stop-color="#fff" stop-opacity="0"/><stop offset=".6" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".2"/></linearGradient></defs>'
+
+function eraFinish(svg: string, form: Item['form']): string {
+  const outline = OUTLINE[form]
+  // Thin every ink stroke; leave painted stripes (ties, hoops, straps) at their width.
+  let out = svg.replace(/<(path|rect|circle|ellipse|g)\b([^>]*)>/g, (tag, name: string, attrs: string) => {
+    const strokeMatch = attrs.match(/stroke="([^"]+)"/)
+    const inked = !strokeMatch || strokeMatch[1] === INK
+    let next = attrs.replace(/stroke="#1a2332"/g, `stroke="${outline}"`)
+    if (inked) next = next.replace(/stroke-width="([0-9.]+)"/g, (_m, w: string) => `stroke-width="${(Number(w) >= 2.6 ? Number(w) * 0.55 : Number(w) * 0.75).toFixed(2)}"`)
+    return `<${name}${next}>`
+  })
+  // A sheen over the main silhouette, drawn before its outline so the line stays crisp.
+  const gloss = form === 'sack' || form === 'packed' ? null : GLOSS_ON[form]
+  if (gloss) {
+    const key = gloss.match(/^<(rect|circle|path)[^/]*?(?= fill)/)![0]
+    const at = out.indexOf(key)
+    const end = at < 0 ? -1 : out.indexOf('/>', at)
+    if (end > 0) out = out.slice(0, end + 2) + gloss + out.slice(end + 2)
+  }
+  return GLOSS_DEFS + out
+}
+
 export function itemSvg(item: Pick<Item, 'form' | 'name' | 'tenths'>): string {
   const body =
     item.form === 'packed' ? packed(item)
@@ -193,7 +230,7 @@ export function itemSvg(item: Pick<Item, 'form' | 'name' | 'tenths'>): string {
     : item.form === 'disk' ? disk(item)
     : item.form === 'barrel' ? barrel(item)
     : sack(item)
-  return `<svg viewBox="0 0 120 100" class="item-art" aria-hidden="true">${body}</svg>`
+  return `<svg viewBox="0 0 120 100" class="item-art" aria-hidden="true">${eraFinish(body, item.form)}</svg>`
 }
 
 /** A small, stable tilt and nudge per item, so the floor looks set down by hand. */
