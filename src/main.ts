@@ -656,7 +656,7 @@ function syncSheds() {
     button.style.left = `${slot.x}px`
     button.style.top = `${slot.y}px`
     button.style.setProperty('--wall', SHED_COLORS[index % SHED_COLORS.length])
-    button.style.zIndex = index < 2 ? '2' : '1'
+    button.style.zIndex = index < 2 ? '1' : '2'
     if (index >= 2) button.style.scale = '0.82'
     button.classList.toggle('is-scope', world.scope.id === repo.id)
     const tenths = scopeTenths(world, repo.id)

@@ -1,21 +1,49 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 708" class="paint-svg" aria-hidden="true">
-  <!-- Foreground: drawn above the penguins so they can walk behind it. -->
+  <!-- Foreground: drawn above the penguins so they can walk behind it. Kept to the corners. -->
   <g stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round">
-    <!-- snow drift, bottom left -->
-    <path d="M-10 712C-6 672 22 650 58 656C74 630 116 628 132 652C150 646 172 656 176 676C190 680 196 700 190 712Z" fill="#fff" stroke-width="4.4"/>
-    <path d="M10 700C40 690 92 688 132 694C150 696 170 700 186 706L-6 710Z" fill="#d6ecf9" stroke="none"/>
-    <path d="M64 664c8-6 20-8 30-6" fill="none" stroke="#d6ecf9" stroke-width="4"/>
+    <!-- a big iron bollard, bottom left, cut by the frame, with a hawser looped round it -->
+    <path d="M-20 712V700Q50 686 150 704V712Z" fill="#1a2332" opacity=".14" stroke="none"/>
+    <path d="M6 716V646H96V716Z" fill="#4e5f74" stroke-width="5"/>
+    <path d="M66 648H94V714H66Z" fill="#3a4758" stroke="none"/>
+    <path d="M14 652v52" stroke="#6f839a" stroke-width="3"/>
+    <path d="M6 716V646H96V716" fill="none" stroke-width="5"/>
+    <path d="M-10 646C-10 630 8 620 51 620C94 620 112 630 112 646C112 656 94 660 51 660C8 660 -10 656 -10 646Z" fill="#5c6f86" stroke-width="5"/>
+    <path d="M70 621C96 624 112 632 112 646C112 654 98 659 74 660C88 652 90 634 70 621Z" fill="#43526a" stroke="none"/>
+    <path d="M-10 646C-10 630 8 620 51 620C94 620 112 630 112 646C112 656 94 660 51 660C8 660 -10 656 -10 646Z" fill="none" stroke-width="5"/>
+    <path d="M4 640c8-6 20-9 32-10" fill="none" stroke="#8fa3b8" stroke-width="3"/>
+    <path d="M-6 640C-4 626 14 616 34 618C42 608 66 608 76 616C92 612 108 622 108 636C96 644 70 646 50 644C26 646 4 646 -6 640Z" fill="#fff" stroke-width="3.2"/>
+    <path d="M6 638c20 3 60 4 92-2" fill="none" stroke="#c7e4f6" stroke-width="3"/>
+    <path d="M30 692l6 4M80 676l-4 6M22 668l3 5" fill="none" stroke-width="2"/>
+    <!-- hawser: a turn round the post, then off the frame -->
+    <path d="M-20 694C10 704 40 702 60 690C80 678 104 676 118 686C130 696 126 712 112 716" fill="none" stroke-width="15"/>
+    <path d="M-20 694C10 704 40 702 60 690C80 678 104 676 118 686C130 696 126 712 112 716" fill="none" stroke="#d8b57a" stroke-width="8"/>
+    <path d="M2 698l5-6M22 700l5-6M42 696l5-7M76 684l4-7M98 680l2-7M118 690l-6-4" fill="none" stroke="#a8844c" stroke-width="2.2"/>
+    <path d="M4 674C24 670 52 670 74 676C86 680 98 676 98 676" fill="none" stroke-width="13"/>
+    <path d="M4 674C24 670 52 670 74 676C86 680 98 676 98 676" fill="none" stroke="#e3c48c" stroke-width="6.4"/>
+    <path d="M20 670l3 6M40 670l3 6M60 672l3 6M80 678l3 5" fill="none" stroke="#a8844c" stroke-width="2"/>
+    <!-- snow heaped at its foot -->
+    <path d="M96 712C98 700 108 694 118 696C124 688 140 688 144 698C150 698 154 706 152 712Z" fill="#fff" stroke-width="3.2"/>
+    <path d="M104 708c12-2 30-2 44 0" fill="none" stroke="#c7e4f6" stroke-width="2.6"/>
+
     <!-- lamp post, front right -->
-    <path d="M1222 704V478" stroke-width="9"/>
-    <path d="M1222 704V478" stroke="#3d4d63" stroke-width="4"/>
-    <path d="M1208 708v-12h28v12" fill="#3d4d63" stroke-width="3.6"/>
-    <path d="M1204 480h36l-7-34h-22z" fill="#ffe27a" stroke-width="4"/>
-    <path d="M1222 446v34" stroke-width="2.6"/>
-    <path d="M1198 448h48l-9-16h-30z" fill="#3d4d63" stroke-width="4"/>
-    <path d="M1198 437c6-12 42-12 48 0c-9 5-39 5-48 0z" fill="#fff" stroke-width="3"/>
-    <path d="M1222 532c-16 0-26 4-26 10c0 6 10 10 26 10" fill="none" stroke="#c9a46a" stroke-width="4"/>
+    <ellipse cx="1224" cy="700" rx="30" ry="5" fill="#1a2332" opacity=".14" stroke="none"/>
+    <path d="M1222 704V478" stroke-width="10"/>
+    <path d="M1222 704V478" stroke="#3d4d63" stroke-width="5"/>
+    <path d="M1223.6 702V480" stroke="#2a3646" stroke-width="1.8"/>
+    <path d="M1208 708v-12h28v12" fill="#3d4d63" stroke-width="4"/>
+    <path d="M1204 480h36l-7-34h-22z" fill="#ffe27a" stroke-width="4.4"/>
+    <path d="M1226 448h7l7 32h-14z" fill="#f2c14e" stroke="none"/>
+    <path d="M1204 480h36l-7-34h-22z" fill="none" stroke-width="4.4"/>
+    <path d="M1222 446v34" stroke-width="2"/>
+    <path d="M1212 470l3-14" stroke="#fff8d0" stroke-width="2.4"/>
+    <path d="M1198 448h48l-9-16h-30z" fill="#3d4d63" stroke-width="4.4"/>
+    <path d="M1198 437c6-12 42-12 48 0c-9 5-39 5-48 0z" fill="#fff" stroke-width="2.8"/>
+    <path d="M1222 532c-16 0-26 4-26 10c0 6 10 10 26 10" fill="none" stroke="#1a2332" stroke-width="7"/>
+    <path d="M1222 532c-16 0-26 4-26 10c0 6 10 10 26 10" fill="none" stroke="#d8b57a" stroke-width="3.4"/>
     <!-- snow drift, bottom right -->
-    <path d="M1130 712C1134 684 1160 668 1188 674C1204 654 1240 654 1256 672C1274 668 1292 680 1292 712Z" fill="#fff" stroke-width="4.4"/>
-    <path d="M1146 704C1180 696 1240 694 1290 700V712H1140Z" fill="#d6ecf9" stroke="none"/>
+    <path d="M1130 712C1134 684 1160 668 1188 674C1204 654 1240 654 1256 672C1274 668 1292 680 1292 712Z" fill="#fff" stroke-width="4.6"/>
+    <path d="M1146 704C1180 696 1240 694 1290 700V712H1140Z" fill="#c7e4f6" stroke="none"/>
+    <path d="M1196 672c8-6 20-8 30-6M1160 690c6-4 12-5 18-4" fill="none" stroke="#d6ecf9" stroke-width="3"/>
+    <path d="M1250 684l6-3" fill="none" stroke-width="2"/>
   </g>
 </svg>

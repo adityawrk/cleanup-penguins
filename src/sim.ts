@@ -116,8 +116,8 @@ export const MAC_SCOPE: Scope = { id: 'mac', kind: 'mac', label: 'This Mac', pat
 /** Where the nth shed stands on the quay's back edge. Sheds sit between the third boat and the Glasshouse. */
 export function shedSlot(index: number): Point {
   if (index < 2) return { x: 936 + index * 78, y: 448 }
-  // More sheds stand a row back, between and behind the first two, drawn smaller.
-  return { x: 936 + ((index - 2) % 3) * 39, y: 430 - Math.floor((index - 2) / 3) * 14 }
+  // More sheds stand on the deck just in front, drawn smaller, never over the water behind the rail.
+  return { x: [975, 897, 1053][(index - 2) % 3], y: 460 + Math.floor((index - 2) / 3) * 10 }
 }
 
 export function starterRepos(): Scope[] {

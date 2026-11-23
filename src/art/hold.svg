@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 708" class="paint-svg" aria-hidden="true">
-  <!-- HULL WALL: warm planks bowing with the hull, with a darker band where the ceiling meets it -->
+  <!-- HULL WALL: warm planks bowing with the hull, darker toward the bilge and under the deck above -->
   <rect width="1280" height="450" fill="#9a643a"/>
   <path d="M0 70Q640 96 1280 70V0H0Z" fill="#7d4c29"/>
   <g stroke="none" fill="#8d5a32">
@@ -7,31 +7,41 @@
     <path d="M0 270Q640 296 1280 270V310Q640 336 0 310Z"/>
     <path d="M0 390Q640 416 1280 390V430Q640 456 0 430Z"/>
   </g>
+  <path d="M0 70Q640 96 1280 70V92Q640 118 0 92Z" fill="#83512c"/>
+  <path d="M0 414Q640 440 1280 414V450H0Z" fill="#7d4c29"/>
   <path d="M0 70Q640 96 1280 70M0 110Q640 136 1280 110M0 150Q640 176 1280 150M0 190Q640 216 1280 190M0 230Q640 256 1280 230M0 270Q640 296 1280 270M0 310Q640 336 1280 310M0 350Q640 376 1280 350M0 390Q640 416 1280 390M0 430Q640 456 1280 430" stroke="#6e4322" stroke-width="3" fill="none"/>
+  <path d="M0 113Q640 139 1280 113M0 233Q640 259 1280 233M0 353Q640 379 1280 353" stroke="#b07a48" stroke-width="1.6" fill="none" opacity=".7"/>
+  <path d="M120 80.8L120 116.8M760 97.1L760 133.1M410 134.6L410 170.6M1010 129.3L1010 165.3M300 170.7L300 206.7M880 174.3L880 210.3M1180 159.5L1180 195.5M90 198.8L90 234.8M560 217.6L560 253.6M250 248.3L250 284.3M720 257.6L720 293.6M1150 241.5L1150 277.5M470 296.2L470 332.2M990 290.2L990 326.2M140 322.1L140 358.1M840 335.5L840 371.5M360 373L360 409M1060 366.8L1060 402.8M210 406.3L210 442.3M700 417.8L700 453.8M1200 398.1L1200 434.1" stroke="#5f391d" stroke-width="2.4" fill="none"/><g fill="#5f391d"><circle cx="113" cy="98.8" r="2"/><circle cx="127" cy="98.8" r="2"/><circle cx="753" cy="115.1" r="2"/><circle cx="767" cy="115.1" r="2"/><circle cx="403" cy="152.6" r="2"/><circle cx="417" cy="152.6" r="2"/><circle cx="1003" cy="147.3" r="2"/><circle cx="1017" cy="147.3" r="2"/><circle cx="293" cy="188.7" r="2"/><circle cx="307" cy="188.7" r="2"/><circle cx="873" cy="192.3" r="2"/><circle cx="887" cy="192.3" r="2"/><circle cx="1173" cy="177.5" r="2"/><circle cx="1187" cy="177.5" r="2"/><circle cx="83" cy="216.8" r="2"/><circle cx="97" cy="216.8" r="2"/><circle cx="553" cy="235.6" r="2"/><circle cx="567" cy="235.6" r="2"/><circle cx="243" cy="266.3" r="2"/><circle cx="257" cy="266.3" r="2"/><circle cx="713" cy="275.6" r="2"/><circle cx="727" cy="275.6" r="2"/><circle cx="1143" cy="259.5" r="2"/><circle cx="1157" cy="259.5" r="2"/><circle cx="463" cy="314.2" r="2"/><circle cx="477" cy="314.2" r="2"/><circle cx="983" cy="308.2" r="2"/><circle cx="997" cy="308.2" r="2"/><circle cx="133" cy="340.1" r="2"/><circle cx="147" cy="340.1" r="2"/><circle cx="833" cy="353.5" r="2"/><circle cx="847" cy="353.5" r="2"/><circle cx="353" cy="391" r="2"/><circle cx="367" cy="391" r="2"/><circle cx="1053" cy="384.8" r="2"/><circle cx="1067" cy="384.8" r="2"/><circle cx="203" cy="424.3" r="2"/><circle cx="217" cy="424.3" r="2"/><circle cx="693" cy="435.8" r="2"/><circle cx="707" cy="435.8" r="2"/><circle cx="1193" cy="416.1" r="2"/><circle cx="1207" cy="416.1" r="2"/></g><path d="M90 108.8q8 -2 16 0M300 162.7q8 -2 16 0M470 90.2q8 -2 16 0M610 249.9q8 -2 16 0M760 171.1q8 -2 16 0M900 363.7q8 -2 16 0M1010 123.3q8 -2 16 0M1150 273.5q8 -2 16 0M380 331.7q8 -2 16 0M560 409.6q8 -2 16 0M820 415.9q8 -2 16 0M140 234.1q8 -2 16 0M1200 380.1q8 -2 16 0M700 329.8q8 -2 16 0M980 242.7q8 -2 16 0" stroke="#1a2332" stroke-width="1.6" fill="none" stroke-linecap="round"/>
 
-  <g fill="#6e4322">
-    <circle cx="70" cy="90" r="2.4"/><circle cx="330" cy="102" r="2.4"/><circle cx="590" cy="106" r="2.4"/><circle cx="950" cy="100" r="2.4"/><circle cx="1210" cy="90" r="2.4"/>
-    <circle cx="200" cy="216" r="2.4"/><circle cx="700" cy="226" r="2.4"/><circle cx="1010" cy="220" r="2.4"/>
-    <circle cx="120" cy="334" r="2.4"/><circle cx="560" cy="346" r="2.4"/><circle cx="880" cy="342" r="2.4"/>
-  </g>
-
-  <!-- RIBS: curved frames of the hull -->
-  <g stroke="#1a2332" stroke-width="4" stroke-linejoin="round">
+  <!-- RIBS: curved frames of the hull, lit on the left edge, with knees under the deck beam -->
+  <g stroke="#1a2332" stroke-width="4.6" stroke-linejoin="round" stroke-linecap="round">
     <path d="M196 0C176 120 170 300 180 452H214C204 300 210 120 230 0Z" fill="#7a4a27"/>
     <path d="M216 0C200 120 196 300 204 452H214C206 300 210 120 230 0Z" fill="#5f391d" stroke="none"/>
+    <path d="M194 30C182 130 178 300 186 446" fill="none" stroke="#a8713c" stroke-width="3"/>
     <path d="M196 0C176 120 170 300 180 452H214C204 300 210 120 230 0Z" fill="none"/>
+    <path d="M190 240l3 10M196 380l2 8" fill="none" stroke-width="1.6"/>
     <path d="M1084 0C1104 120 1110 300 1100 452H1066C1076 300 1070 120 1050 0Z" fill="#7a4a27"/>
     <path d="M1084 0C1100 120 1104 300 1096 452H1086C1094 300 1090 120 1072 0Z" fill="#5f391d" stroke="none"/>
+    <path d="M1060 30C1074 130 1080 300 1072 446" fill="none" stroke="#a8713c" stroke-width="3"/>
     <path d="M1084 0C1104 120 1110 300 1100 452H1066C1076 300 1070 120 1050 0Z" fill="none"/>
+    <path d="M1082 300l2 10M1076 180l-1 8" fill="none" stroke-width="1.6"/>
     <path d="M628 0V452H660V0Z" fill="#7a4a27"/>
     <path d="M648 0V452H660V0Z" fill="#5f391d" stroke="none"/>
+    <path d="M633 50V446" fill="none" stroke="#a8713c" stroke-width="3"/>
     <path d="M628 0V452H660V0Z" fill="none"/>
+    <path d="M638 200v10M640 320l2 8" fill="none" stroke-width="1.6"/>
+    <!-- knees -->
+    <path d="M226 42H276Q246 50 222 92Z" fill="#6e4322" stroke-width="3.6"/>
+    <path d="M1054 42H1004Q1034 50 1058 92Z" fill="#6e4322" stroke-width="3.6"/>
+    <path d="M628 46H592Q614 54 628 84Z" fill="#6e4322" stroke-width="3.6"/>
+    <path d="M660 46H696Q674 54 660 84Z" fill="#6e4322" stroke-width="3.6"/>
   </g>
-  <!-- ceiling beam -->
-  <g stroke="#1a2332" stroke-width="4" stroke-linejoin="round">
+  <!-- ceiling beam, with the ends of the deck joists showing -->
+  <g stroke="#1a2332" stroke-width="4.6" stroke-linejoin="round">
     <path d="M-4 -4H1284V40Q640 60 -4 40Z" fill="#6e4322"/>
     <path d="M-4 30Q640 50 1284 30V40Q640 60 -4 40Z" fill="#553219" stroke="none"/>
     <path d="M-4 40Q640 60 1284 40" fill="none"/>
+    <path d="M140 18h40M1100 18h40" fill="none" stroke="#83512c" stroke-width="2"/>
   </g>
   <text x="644" y="34" text-anchor="middle" class="tag-word strong" fill="#e8c48a" stroke="none">CARGO HOLD</text>
 
@@ -57,8 +67,9 @@
     <circle cx="440" cy="190" r="34" fill="none" stroke="#f2c14e" stroke-width="12"/>
     <circle cx="850" cy="190" r="34" fill="none" stroke="#f2c14e" stroke-width="12"/>
     <path d="M466 160a40 40 0 0 1 8 52M876 160a40 40 0 0 1 8 52" fill="none" stroke="#d39a2b" stroke-width="6"/>
-    <circle cx="440" cy="190" r="41" fill="none" stroke-width="3.4"/><circle cx="440" cy="190" r="28" fill="none" stroke-width="3"/>
-    <circle cx="850" cy="190" r="41" fill="none" stroke-width="3.4"/><circle cx="850" cy="190" r="28" fill="none" stroke-width="3"/>
+    <path d="M410 166a40 40 0 0 1 22-14M820 166a40 40 0 0 1 22-14" fill="none" stroke="#ffe08a" stroke-width="3"/>
+    <circle cx="440" cy="190" r="41" fill="none" stroke-width="4.4"/><circle cx="440" cy="190" r="28" fill="none" stroke-width="2.4"/>
+    <circle cx="850" cy="190" r="41" fill="none" stroke-width="4.4"/><circle cx="850" cy="190" r="28" fill="none" stroke-width="2.4"/>
     <g fill="#d39a2b" stroke-width="1.6">
       <circle cx="440" cy="153" r="3"/><circle cx="477" cy="190" r="3"/><circle cx="440" cy="227" r="3"/><circle cx="403" cy="190" r="3"/>
       <circle cx="850" cy="153" r="3"/><circle cx="887" cy="190" r="3"/><circle cx="850" cy="227" r="3"/><circle cx="813" cy="190" r="3"/>
@@ -66,119 +77,323 @@
     <path d="M422 172l10-8M832 172l10-8" stroke="#fff" stroke-width="4" opacity=".85"/>
   </g>
 
+  <!-- A SPARE SHIP'S WHEEL hung on the wall -->
+  <g stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M560 128v12" stroke-width="3"/>
+    <g stroke-width="8">
+      <path d="M560 128v96M512 176h96M526 142l68 68M594 142l-68 68"/>
+    </g>
+    <g stroke="#b07a3c" stroke-width="3.6">
+      <path d="M560 128v96M512 176h96M526 142l68 68M594 142l-68 68"/>
+    </g>
+    <circle cx="560" cy="176" r="32" fill="none" stroke-width="12"/>
+    <circle cx="560" cy="176" r="32" fill="none" stroke="#c48945" stroke-width="6.4"/>
+    <path d="M582 199a32 32 0 0 1-38 5" fill="none" stroke="#8d5a32" stroke-width="5"/>
+    <path d="M536 160a30 30 0 0 1 14-14" fill="none" stroke="#e8b878" stroke-width="2.4"/>
+    <circle cx="560" cy="176" r="10" fill="#d39a2b" stroke-width="3.4"/>
+    <circle cx="560" cy="176" r="3.4" fill="#1a2332" stroke="none"/>
+    <path d="M560 136l-2-4M516 176l-4-1" fill="none" stroke-width="1.6"/>
+  </g>
+
+  <!-- PEG RAIL: an oilskin coat, a sou'wester and a small life ring -->
+  <g stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round">
+    <rect x="466" y="244" width="148" height="12" rx="3" fill="#7a4a27" stroke-width="3.4"/>
+    <path d="M470 247h60" stroke="#a8713c" stroke-width="2"/>
+    <circle cx="490" cy="254" r="4" fill="#5f391d" stroke-width="2.2"/><circle cx="540" cy="254" r="4" fill="#5f391d" stroke-width="2.2"/><circle cx="590" cy="254" r="4" fill="#5f391d" stroke-width="2.2"/>
+    <!-- coat -->
+    <path d="M472 266L456 318L468 322L478 292Z" fill="#f4c534" stroke-width="3.6"/>
+    <path d="M508 266L524 318L512 322L502 292Z" fill="#d39a2b" stroke-width="3.6"/>
+    <path d="M472 266Q490 256 508 266L516 350Q490 356 464 350Z" fill="#f4c534" stroke-width="4.4"/>
+    <path d="M494 262Q504 262 508 266L516 350Q506 353 496 354Z" fill="#d39a2b" stroke="none"/>
+    <path d="M472 266Q490 256 508 266L516 350Q490 356 464 350Z" fill="none" stroke-width="4.4"/>
+    <path d="M480 262l10 14l10-14" fill="none" stroke-width="2.4"/>
+    <path d="M490 276V350" fill="none" stroke-width="2"/>
+    <circle cx="486" cy="294" r="1.8" fill="#1a2332" stroke="none"/><circle cx="486" cy="314" r="1.8" fill="#1a2332" stroke="none"/><circle cx="486" cy="334" r="1.8" fill="#1a2332" stroke="none"/>
+    <path d="M472 316h10M498 316h10" fill="none" stroke-width="2"/>
+    <path d="M476 274l2 12" stroke="#fff3c4" stroke-width="2.4"/>
+    <!-- sou'wester -->
+    <path d="M524 282Q540 262 556 282Z" fill="#f4c534" stroke-width="3.6"/>
+    <path d="M542 268Q552 272 556 282H544Z" fill="#d39a2b" stroke="none"/>
+    <path d="M524 282Q540 262 556 282Z" fill="none" stroke-width="3.6"/>
+    <path d="M514 284Q540 276 570 288Q544 298 514 284Z" fill="#f4c534" stroke-width="3.4"/>
+    <path d="M546 286Q560 286 570 288Q560 292 548 292Z" fill="#d39a2b" stroke="none"/>
+    <path d="M514 284Q540 276 570 288Q544 298 514 284Z" fill="none" stroke-width="3.4"/>
+    <!-- small life ring -->
+    <circle cx="590" cy="280" r="17" fill="#fff" stroke-width="3.6"/>
+    <path d="M602 268a17 17 0 0 1 0 24l-5-5a10 10 0 0 0 0-14z" fill="#dde8f0" stroke="none"/>
+    <path d="M578 268l5 5M602 268l-5 5M578 292l5-5M602 292l-5-5" stroke="#e24b3f" stroke-width="7" stroke-linecap="butt"/>
+    <circle cx="590" cy="280" r="17" fill="none" stroke-width="3.6"/>
+    <circle cx="590" cy="280" r="7.6" fill="#9a643a" stroke-width="2.2"/>
+    <path d="M590 258v6" stroke-width="2.4"/>
+  </g>
+
+  <!-- lantern light falling down the wall, flat and pale -->
+  <g fill="#ffe9a8" opacity=".16"><path d="M318 134H342L410 446H250Z"/><path d="M948 136H972L1040 446H880Z"/></g>
+
   <!-- LANTERNS hanging from the beam -->
   <g stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round">
     <g class="h-lantern h-lantern-a">
-      <path d="M330 48V82" stroke-width="3"/>
-      <path d="M316 84h28l-4 10h-20z" fill="#3d4d63" stroke-width="3"/>
-      <rect x="318" y="94" width="24" height="32" rx="5" fill="#ffe27a" stroke-width="3.4"/>
-      <path d="M330 96v28M320 110h20" stroke="#3d4d63" stroke-width="2.4"/>
-      <path d="M316 126h28l-3 8h-22z" fill="#3d4d63" stroke-width="3"/>
+      <path d="M330 48V82" stroke-width="2.6"/>
+      <path d="M316 84h28l-4 10h-20z" fill="#3d4d63" stroke-width="3.4"/>
+      <rect x="318" y="94" width="24" height="32" rx="5" fill="#ffe27a" stroke-width="3.8"/>
+      <path d="M333 96h6a3 3 0 0 1 3 3v24h-9z" fill="#f2c14e" stroke="none"/>
+      <rect x="318" y="94" width="24" height="32" rx="5" fill="none" stroke-width="3.8"/>
+      <path d="M330 96v28M320 110h20" stroke="#3d4d63" stroke-width="2"/>
+      <path d="M322 100v6" stroke="#fff8d0" stroke-width="2.4"/>
+      <path d="M316 126h28l-3 8h-22z" fill="#3d4d63" stroke-width="3.4"/>
     </g>
     <g class="h-lantern h-lantern-b">
-      <path d="M960 50V84" stroke-width="3"/>
-      <path d="M946 86h28l-4 10h-20z" fill="#3d4d63" stroke-width="3"/>
-      <rect x="948" y="96" width="24" height="32" rx="5" fill="#ffe27a" stroke-width="3.4"/>
-      <path d="M960 98v28M950 112h20" stroke="#3d4d63" stroke-width="2.4"/>
-      <path d="M946 128h28l-3 8h-22z" fill="#3d4d63" stroke-width="3"/>
+      <path d="M960 50V84" stroke-width="2.6"/>
+      <path d="M946 86h28l-4 10h-20z" fill="#3d4d63" stroke-width="3.4"/>
+      <rect x="948" y="96" width="24" height="32" rx="5" fill="#ffe27a" stroke-width="3.8"/>
+      <path d="M963 98h6a3 3 0 0 1 3 3v24h-9z" fill="#f2c14e" stroke="none"/>
+      <rect x="948" y="96" width="24" height="32" rx="5" fill="none" stroke-width="3.8"/>
+      <path d="M960 98v28M950 112h20" stroke="#3d4d63" stroke-width="2"/>
+      <path d="M952 102v6" stroke="#fff8d0" stroke-width="2.4"/>
+      <path d="M946 128h28l-3 8h-22z" fill="#3d4d63" stroke-width="3.4"/>
     </g>
   </g>
 
   <!-- CARGO NET slung between the ribs with floats in it -->
   <g stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round">
-    <path d="M700 60Q760 170 820 60" fill="none" stroke="#c9a46a" stroke-width="4"/>
+    <path d="M700 60Q760 170 820 60" fill="none" stroke-width="7"/>
+    <path d="M700 60Q760 170 820 60" fill="none" stroke="#c9a46a" stroke-width="3.4"/>
     <path d="M712 84l94 0M722 108l74 0M736 132l46 0M716 70l34 70M748 64l10 90M784 66l-10 86M804 70l-30 70" fill="none" stroke="#c9a46a" stroke-width="2.4"/>
-    <circle cx="742" cy="116" r="12" fill="#e24b3f" stroke-width="3"/>
-    <circle cx="772" cy="122" r="10" fill="#ffd23f" stroke-width="3"/>
+    <circle cx="742" cy="116" r="12" fill="#e24b3f" stroke-width="3.4"/>
+    <path d="M750 107a12 12 0 0 1 2 18a12 12 0 0 1-14 3a14 14 0 0 0 12-21z" fill="#b03329" stroke="none"/>
+    <circle cx="742" cy="116" r="12" fill="none" stroke-width="3.4"/>
+    <circle cx="772" cy="122" r="10" fill="#ffd23f" stroke-width="3.4"/>
+    <path d="M779 115a10 10 0 0 1 0 14a10 10 0 0 1-10 3a12 12 0 0 0 10-17z" fill="#d39a2b" stroke="none"/>
+    <circle cx="772" cy="122" r="10" fill="none" stroke-width="3.4"/>
     <path d="M736 110a8 8 0 0 1 10-4" stroke="#fff" stroke-width="3" fill="none"/>
+    <path d="M748 116l-2 10M770 112l4 3" stroke="#c9a46a" stroke-width="2.4"/>
+    <circle cx="700" cy="60" r="3.4" fill="#5c6f86" stroke-width="2"/><circle cx="820" cy="60" r="3.4" fill="#5c6f86" stroke-width="2"/>
   </g>
 
-  <!-- WALL DETAIL: a sea chart, a rope on a peg, a life ring, a tally board -->
+  <!-- WALL DETAIL: a sea chart, a rope on a peg, a tally board -->
   <g stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round">
-    <path d="M928 252l96-6l4 70l-96 6z" fill="#f3e3bf" stroke-width="3.6"/>
-    <path d="M940 270c14-8 22 6 34-2s20 4 30-2M944 296c10 4 20-6 30 0s22-4 34 2" fill="none" stroke="#7fb2d4" stroke-width="3"/>
-    <path d="M956 282l6 6m0-6l-6 6" stroke="#e24b3f" stroke-width="2.6"/>
+    <path d="M928 252l96-6l4 70l-96 6z" fill="#f3e3bf" stroke-width="3.8"/>
+    <path d="M1004 248l20-2l4 70l-20 1z" fill="#e3cfa2" stroke="none"/>
+    <path d="M928 252l96-6l4 70l-96 6z" fill="none" stroke-width="3.8"/>
+    <path d="M940 270c14-8 22 6 34-2s20 4 30-2M944 296c10 4 20-6 30 0s22-4 34 2" fill="none" stroke="#7fb2d4" stroke-width="2.6"/>
+    <path d="M956 282l6 6m0-6l-6 6" stroke="#e24b3f" stroke-width="2.4"/>
     <path d="M990 262c6 8 4 20-4 26" fill="none" stroke="#8d5a32" stroke-width="2" stroke-dasharray="3 4"/>
+    <path d="M1012 306l-6 4l8 2z" fill="#e3cfa2" stroke-width="1.8"/>
     <circle cx="976" cy="250" r="4" fill="#e24b3f" stroke-width="2"/>
     <path d="M296 232v-12" stroke-width="5"/>
-    <path d="M296 226c-26 0-34 18-30 34c4 18 26 22 34 10c10-14-2-30-16-26" fill="none" stroke="#c9a46a" stroke-width="7"/>
-    <path d="M296 226c-26 0-34 18-30 34c4 18 26 22 34 10c10-14-2-30-16-26" fill="none" stroke-width="1.8" opacity=".6"/>
-    <path d="M300 272c2 14-2 26-6 34" fill="none" stroke="#c9a46a" stroke-width="5"/>
-    <rect x="712" y="250" width="84" height="64" rx="6" fill="#2d3d34" stroke-width="3.6"/>
-    <rect x="712" y="250" width="84" height="64" rx="6" fill="none" stroke="#9a6236" stroke-width="6"/>
-    <rect x="706" y="244" width="96" height="76" rx="9" fill="none" stroke-width="3"/>
-    <path d="M726 268v18M734 268v18M742 268v18M750 268v18M722 284l32-14M770 268v18M778 268v18" stroke="#eef3f7" stroke-width="2.6"/>
-    <path d="M726 300h44" stroke="#eef3f7" stroke-width="2.6" opacity=".6"/>
+    <path d="M296 226c-26 0-34 18-30 34c4 18 26 22 34 10c10-14-2-30-16-26" fill="none" stroke-width="10"/>
+    <path d="M296 226c-26 0-34 18-30 34c4 18 26 22 34 10c10-14-2-30-16-26" fill="none" stroke="#c9a46a" stroke-width="5.6"/>
+    <path d="M272 236l4 4M268 256l5 1M282 274l2-5M296 262l-5 2" fill="none" stroke="#a8844c" stroke-width="1.8"/>
+    <path d="M300 272c2 14-2 26-6 34" fill="none" stroke-width="8"/>
+    <path d="M300 272c2 14-2 26-6 34" fill="none" stroke="#c9a46a" stroke-width="4"/>
+    <rect x="706" y="244" width="96" height="76" rx="9" fill="#9a6236" stroke-width="4"/>
+    <path d="M790 246h3a7 7 0 0 1 7 7v58a7 7 0 0 1-7 7h-3z" fill="#7a4a27" stroke="none"/>
+    <rect x="706" y="244" width="96" height="76" rx="9" fill="none" stroke-width="4"/>
+    <rect x="714" y="252" width="80" height="60" rx="5" fill="#2d3d34" stroke-width="2.6"/>
+    <path d="M726 268v18M734 268v18M742 268v18M750 268v18M722 284l32-14M770 268v18M778 268v18" stroke="#eef3f7" stroke-width="2.4"/>
+    <path d="M726 300h44" stroke="#eef3f7" stroke-width="2.2" opacity=".6"/>
+    <path d="M780 302h8" stroke="#f2c14e" stroke-width="3"/>
   </g>
 
-  <!-- back-wall cargo: barrels and crates against the hull -->
-  <g stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round">
-    <path d="M520 448V384c0-8 52-8 52 0v64z" fill="#b07a3c" stroke-width="4"/>
-    <path d="M520 400c0 6 52 6 52 0M520 432c0 6 52 6 52 0" fill="none" stroke="#5f391d" stroke-width="4"/>
-    <path d="M556 386v60" stroke="#8d5a32" stroke-width="6"/>
-    <path d="M520 448V384c0-8 52-8 52 0v64z" fill="none" stroke-width="4"/>
-    <ellipse cx="546" cy="384" rx="26" ry="5" fill="#c48945" stroke-width="3"/>
-    <rect x="732" y="398" width="62" height="50" rx="3" fill="#e0b56a" stroke-width="4"/>
-    <path d="M734 414h58M734 430h58" stroke="#b07a3c" stroke-width="3"/>
-    <rect x="770" y="398" width="24" height="50" fill="#c9974f" stroke="none"/>
-    <rect x="732" y="398" width="62" height="50" rx="3" fill="none" stroke-width="4"/>
-    <rect x="744" y="360" width="40" height="38" rx="3" fill="#e0b56a" stroke-width="4"/>
-    <path d="M746 374h36" stroke="#b07a3c" stroke-width="3"/>
-    <text x="764" y="392" text-anchor="middle" font-size="11" font-weight="700" fill="#8d5a32" stroke="none" font-family="Fredoka">FRAGILE</text>
-  </g>
 
-  <!-- FLOOR: planks toward the viewer -->
-  <g stroke="none"><path d="M-37.3 446L40.6 446L-68 708L-160 708Z" fill="#cc955a"/><path d="M40.6 446L118.5 446L24 708L-68 708Z" fill="#c48a4e"/><path d="M118.5 446L196.4 446L116 708L24 708Z" fill="#cc955a"/><path d="M196.4 446L274.3 446L208 708L116 708Z" fill="#c48a4e"/><path d="M274.3 446L352.2 446L300 708L208 708Z" fill="#cc955a"/><path d="M352.2 446L430.0 446L392 708L300 708Z" fill="#c48a4e"/><path d="M430.0 446L507.9 446L484 708L392 708Z" fill="#cc955a"/><path d="M507.9 446L585.8 446L576 708L484 708Z" fill="#c48a4e"/><path d="M585.8 446L663.7 446L668 708L576 708Z" fill="#cc955a"/><path d="M663.7 446L741.6 446L760 708L668 708Z" fill="#c48a4e"/><path d="M741.6 446L819.5 446L852 708L760 708Z" fill="#cc955a"/><path d="M819.5 446L897.4 446L944 708L852 708Z" fill="#c48a4e"/><path d="M897.4 446L975.3 446L1036 708L944 708Z" fill="#cc955a"/><path d="M975.3 446L1053.1 446L1128 708L1036 708Z" fill="#c48a4e"/><path d="M1053.1 446L1131.0 446L1220 708L1128 708Z" fill="#cc955a"/><path d="M1131.0 446L1208.9 446L1312 708L1220 708Z" fill="#c48a4e"/><path d="M1208.9 446L1286.8 446L1404 708L1312 708Z" fill="#cc955a"/><path d="M1286.8 446L1364.7 446L1496 708L1404 708Z" fill="#c48a4e"/></g>
-  <path d="M-37.3 446L-160 708M40.6 446L-68 708M118.5 446L24 708M196.4 446L116 708M274.3 446L208 708M352.2 446L300 708M430.0 446L392 708M507.9 446L484 708M585.8 446L576 708M663.7 446L668 708M741.6 446L760 708M819.5 446L852 708M897.4 446L944 708M975.3 446L1036 708M1053.1 446L1128 708M1131.0 446L1220 708M1208.9 446L1312 708M1286.8 446L1404 708" stroke="#8d5a32" stroke-width="3" fill="none"/>
-  <path d="M-57.9 490L22.4 490M-6.7 560L77.4 560M52.1 630L139.9 630M173.7 520L255.6 520M235.3 600L321.5 600M305.6 680L396.1 680M416.4 540L499.3 540M503.9 490L584.2 490M581.5 560L665.6 560M666.7 630L754.5 630M746.8 520L828.7 520M838.6 600L924.8 600M939.0 680L1029.5 680M997.0 540L1080.0 540M1065.7 490L1146.0 490M1169.7 560L1253.8 560M1281.3 630L1369.1 630M1319.9 520L1401.8 520" stroke="#8d5a32" stroke-width="3" fill="none"/>
+  <!-- FLOOR: wide planks running to a vanishing point -->
+  <g stroke="none"><path d="M-198.7 446L-140.9 446L-1102.5 712L-1231.5 712Z" fill="#cc955a"/><path d="M-140.9 446L-83 446L-973.4 712L-1102.5 712Z" fill="#d29c60"/><path d="M-83 446L-25.2 446L-844.3 712L-973.4 712Z" fill="#cc955a"/><path d="M-25.2 446L32.7 446L-715.2 712L-844.3 712Z" fill="#c48a4e"/><path d="M32.7 446L90.5 446L-586.2 712L-715.2 712Z" fill="#cc955a"/><path d="M90.5 446L148.4 446L-457.1 712L-586.2 712Z" fill="#c48a4e"/><path d="M148.4 446L206.2 446L-328 712L-457.1 712Z" fill="#d29c60"/><path d="M206.2 446L264 446L-199 712L-328 712Z" fill="#c48a4e"/><path d="M264 446L321.9 446L-69.9 712L-199 712Z" fill="#cc955a"/><path d="M321.9 446L379.7 446L59.2 712L-69.9 712Z" fill="#c48a4e"/><path d="M379.7 446L437.6 446L188.3 712L59.2 712Z" fill="#cc955a"/><path d="M437.6 446L495.4 446L317.3 712L188.3 712Z" fill="#d29c60"/><path d="M495.4 446L553.2 446L446.4 712L317.3 712Z" fill="#cc955a"/><path d="M553.2 446L611.1 446L575.5 712L446.4 712Z" fill="#c48a4e"/><path d="M611.1 446L668.9 446L704.5 712L575.5 712Z" fill="#cc955a"/><path d="M668.9 446L726.8 446L833.6 712L704.5 712Z" fill="#c48a4e"/><path d="M726.8 446L784.6 446L962.7 712L833.6 712Z" fill="#d29c60"/><path d="M784.6 446L842.4 446L1091.7 712L962.7 712Z" fill="#c48a4e"/><path d="M842.4 446L900.3 446L1220.8 712L1091.7 712Z" fill="#cc955a"/><path d="M900.3 446L958.1 446L1349.9 712L1220.8 712Z" fill="#c48a4e"/><path d="M958.1 446L1016 446L1479 712L1349.9 712Z" fill="#cc955a"/><path d="M1016 446L1073.8 446L1608 712L1479 712Z" fill="#d29c60"/><path d="M1073.8 446L1131.6 446L1737.1 712L1608 712Z" fill="#cc955a"/><path d="M1131.6 446L1189.5 446L1866.2 712L1737.1 712Z" fill="#c48a4e"/><path d="M1189.5 446L1247.3 446L1995.2 712L1866.2 712Z" fill="#cc955a"/><path d="M1247.3 446L1305.2 446L2124.3 712L1995.2 712Z" fill="#c48a4e"/><path d="M1305.2 446L1363 446L2253.4 712L2124.3 712Z" fill="#d29c60"/><path d="M1363 446L1420.9 446L2382.5 712L2253.4 712Z" fill="#c48a4e"/></g>
+  <path d="M-198.7 446L-1231.5 712M-140.9 446L-1102.5 712M-83 446L-973.4 712M-25.2 446L-844.3 712M32.7 446L-715.2 712M90.5 446L-586.2 712M148.4 446L-457.1 712M206.2 446L-328 712M264 446L-199 712M321.9 446L-69.9 712M379.7 446L59.2 712M437.6 446L188.3 712M495.4 446L317.3 712M553.2 446L446.4 712M611.1 446L575.5 712M668.9 446L704.5 712M726.8 446L833.6 712M784.6 446L962.7 712M842.4 446L1091.7 712M900.3 446L1220.8 712M958.1 446L1349.9 712M1016 446L1479 712M1073.8 446L1608 712M1131.6 446L1737.1 712M1189.5 446L1866.2 712M1247.3 446L1995.2 712M1305.2 446L2124.3 712M1363 446L2253.4 712M1420.9 446L2382.5 712" stroke="#8d5a32" stroke-width="2.6" fill="none"/>
+  <path d="M264 486L330.5 486M440.2 530L518.5 530M674.2 478L738.6 478M829.8 512L903.3 512M1023.9 490L1091.6 490M183.1 610L282.8 610M594.1 580L685.9 580M1025.3 640L1133.1 640M-222.6 660L-109.5 660M1285 600L1382.1 600M461.9 676L579.3 676" stroke="#8d5a32" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+  <g fill="#6e4322"><circle cx="276.7" cy="490" r="1.4"/><circle cx="317.8" cy="490" r="1.4"/><circle cx="455.2" cy="534" r="1.6"/><circle cx="503.4" cy="534" r="1.6"/><circle cx="686.5" cy="482" r="1.4"/><circle cx="726.3" cy="482" r="1.4"/><circle cx="843.9" cy="516" r="1.5"/><circle cx="889.2" cy="516" r="1.5"/><circle cx="1036.9" cy="494" r="1.4"/><circle cx="1078.6" cy="494" r="1.4"/><circle cx="202.4" cy="614" r="2"/><circle cx="263.5" cy="614" r="2"/><circle cx="611.9" cy="584" r="1.9"/><circle cx="668.1" cy="584" r="1.9"/><circle cx="1046.2" cy="644" r="2.2"/><circle cx="1112.1" cy="644" r="2.2"/><circle cx="-200.6" cy="664" r="2.3"/><circle cx="-131.5" cy="664" r="2.3"/><circle cx="1303.8" cy="604" r="2"/><circle cx="1363.3" cy="604" r="2"/><circle cx="484.7" cy="680" r="2.3"/><circle cx="556.4" cy="680" r="2.3"/></g>
+  <path d="M277.7 560Q261.9 578 238.2 596M582.2 470Q583.5 481 576.9 492M833.2 620Q848.1 642 855 664M954.5 520Q974.8 535 987 550M1012.8 470Q1032.3 480 1043.8 490M-23.6 650Q-51.2 670 -86.8 690M787.8 690Q794.7 699 793.6 708M1242.5 680Q1262.6 692 1274.6 704" stroke="#b47a42" stroke-width="2" fill="none" stroke-linecap="round"/>
 
-  <path d="M0 446H1280V462Q640 470 0 462Z" fill="#a8713c"/>
-  <path d="M-4 446H1284" stroke="#1a2332" stroke-width="4"/>
+  <!-- the floor runs under the wall: a flat shade band, then the wall line -->
+  <path d="M0 446H1280V464Q640 472 0 464Z" fill="#a8713c"/>
+  <path d="M-4 446H1284" stroke="#1a2332" stroke-width="4.6"/>
   <!-- warm lantern light pooled on the floor -->
-  <!-- floor detail: a coiled hawser, a dropped float, knots in the planks -->
+  <g fill="#ffe9a8" opacity=".28">
+    <ellipse cx="350" cy="486" rx="120" ry="18"/>
+    <ellipse cx="940" cy="486" rx="120" ry="18"/>
+  </g>
+
+  <!-- BACK-WALL CARGO, left: a crate stack and two barrels -->
   <g stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round">
-    <ellipse cx="1000" cy="676" rx="40" ry="13" fill="#c9a46a" stroke-width="3.4"/>
-    <ellipse cx="1000" cy="671" rx="27" ry="8" fill="#b88d52" stroke-width="2.6"/>
-    <ellipse cx="1000" cy="667" rx="13" ry="4" fill="#a07a42" stroke-width="2.2"/>
-    <path d="M1040 676c14 4 22 12 30 20" fill="none" stroke="#c9a46a" stroke-width="5"/>
-    <circle cx="214" cy="664" r="13" fill="#e24b3f" stroke-width="3"/>
+    <ellipse cx="418" cy="494" rx="84" ry="7" fill="#1a2332" opacity=".14" stroke="none"/>
+    <rect x="352" y="418" width="84" height="76" rx="3" fill="#e0b56a" stroke-width="4.8"/>
+    <path d="M358 424H430V488H358Z" fill="none" stroke="#c9974f" stroke-width="8"/>
+    <path d="M362 484L426 428" stroke="#c9974f" stroke-width="9"/>
+    <rect x="420" y="420" width="14" height="72" fill="#b07a3c" stroke="none"/>
+    <path d="M362 484L426 428" stroke-width="1.8" opacity=".55"/>
+    <rect x="352" y="418" width="84" height="76" rx="3" fill="none" stroke-width="4.8"/>
+    <path d="M366 436h8M396 476l6 2M378 458l-3 6" fill="none" stroke-width="1.6"/>
+    <!-- a lobster pot on the crate: arched ribs over netting -->
+    <path d="M362 418V396Q362 366 395 366Q428 366 428 396V418Z" fill="#e6cf9e" stroke-width="4.4"/>
+    <path d="M366 412L392 372M378 416L414 372M394 416L424 384M368 384L400 416M372 370L418 416M392 368L426 402" fill="none" stroke="#b59a68" stroke-width="1.6"/>
+    <path d="M412 372Q428 380 428 396V418H414Z" fill="#c9ad78" stroke="none" opacity=".7"/>
+    <path d="M378 418V376M395 418V367M412 418V376" fill="none" stroke="#8d5a32" stroke-width="3.4"/>
+    <path d="M362 404H428" stroke="#8d5a32" stroke-width="3.4"/>
+    <path d="M362 418V396Q362 366 395 366Q428 366 428 396V418Z" fill="none" stroke-width="4.4"/>
+    <ellipse cx="395" cy="392" rx="9" ry="7" fill="#7a4a27" stroke-width="2.4"/>
+    <!-- a pail with a fish tail poking out -->
+    <path d="M466 458C468 450 470 446 472 442L464 430L478 435L488 428L484 444C480 448 478 452 478 458Z" fill="#9cc7e3" stroke-width="3"/>
+    <path d="M478 436l8-6l-3 12z" fill="#7fb2d4" stroke="none"/>
+    <path d="M442 456L486 456L481 494L447 494Z" fill="#8fa6ba" stroke-width="4.4"/>
+    <path d="M470 458H484L480 492H468Z" fill="#6d859b" stroke="none"/>
+    <path d="M444 470H484" stroke="#6d859b" stroke-width="2"/>
+    <path d="M442 456L486 456L481 494L447 494Z" fill="none" stroke-width="4.4"/>
+    <ellipse cx="464" cy="456" rx="22" ry="4" fill="#5c7388" stroke-width="3"/>
+    <path d="M446 458Q464 436 482 458" fill="none" stroke-width="4.4"/>
+    <path d="M446 458Q464 436 482 458" fill="none" stroke="#b9c7d3" stroke-width="1.6"/>
+    <path d="M452 462v8" stroke="#c9d6e0" stroke-width="2.4"/>
+    <path d="M466 484l4 2" fill="none" stroke-width="1.6"/>
+
+    <ellipse cx="550" cy="470" rx="38" ry="6" fill="#1a2332" opacity=".14" stroke="none"/>
+    <path d="M520 466V392c0-8 52-8 52 0v74c0 7-52 7-52 0z" fill="#b07a3c" stroke-width="4.8"/>
+    <path d="M552 386c10 1 20 3 20 6v74c0 4-10 6-20 7z" fill="#8d5a32" stroke="none"/>
+    <path d="M520 408c0 6 52 6 52 0M520 448c0 6 52 6 52 0" fill="none" stroke="#5f391d" stroke-width="4"/>
+    <path d="M532 396v66M544 398v68" stroke="#9a643a" stroke-width="2"/>
+    <path d="M520 466V392c0-8 52-8 52 0v74c0 7-52 7-52 0z" fill="none" stroke-width="4.8"/>
+    <ellipse cx="546" cy="392" rx="26" ry="5" fill="#c48945" stroke-width="3"/>
+    <path d="M528 426l3 6M562 420l-2 6" fill="none" stroke-width="1.6"/>
+  </g>
+
+  <!-- an ANCHOR leaning on the centre post, its chain heaped at the foot -->
+  <g stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round">
+    <ellipse cx="640" cy="492" rx="60" ry="6" fill="#1a2332" opacity=".14" stroke="none"/>
+    <g transform="rotate(-10 620 480)">
+      <circle cx="620" cy="350" r="11" fill="none" stroke-width="11"/>
+      <circle cx="620" cy="350" r="11" fill="none" stroke="#5c6f86" stroke-width="5"/>
+      <path d="M612 362H628V470H612Z" fill="#5c6f86" stroke-width="4.6"/>
+      <path d="M621 364H627V468H621Z" fill="#43526a" stroke="none"/>
+      <path d="M612 362H628V470H612Z" fill="none" stroke-width="4.6"/>
+      <path d="M594 384H646" stroke-width="12"/>
+      <path d="M594 384H646" stroke="#5c6f86" stroke-width="6"/>
+      <path d="M576 438C580 466 600 482 620 482C640 482 660 466 664 438L676 448L668 420L646 432L656 436C650 456 638 466 620 466C602 466 590 456 584 436L594 432L572 420L564 448Z" fill="#5c6f86" stroke-width="4.6"/>
+      <path d="M620 466C638 466 650 456 656 436L646 432L668 420L676 448L664 438C660 466 640 482 620 482Z" fill="#43526a" stroke="none"/>
+      <path d="M576 438C580 466 600 482 620 482C640 482 660 466 664 438L676 448L668 420L646 432L656 436C650 456 638 466 620 466C602 466 590 456 584 436L594 432L572 420L564 448Z" fill="none" stroke-width="4.6"/>
+      <path d="M615 380v60" stroke="#8fa3b8" stroke-width="2"/>
+    </g>
+    <path d="M608 352C640 344 676 380 680 430C682 456 670 470 672 484" fill="none" stroke-width="8"/>
+    <path d="M608 352C640 344 676 380 680 430C682 456 670 470 672 484" fill="none" stroke="#7690a6" stroke-width="4" stroke-dasharray="7 3"/>
+    <ellipse cx="688" cy="486" rx="26" ry="8" fill="none" stroke-width="9"/>
+    <ellipse cx="688" cy="486" rx="26" ry="8" fill="none" stroke="#7690a6" stroke-width="4.4" stroke-dasharray="7 3"/>
+    <ellipse cx="690" cy="480" rx="16" ry="5" fill="none" stroke-width="8"/>
+    <ellipse cx="690" cy="480" rx="16" ry="5" fill="none" stroke="#8fa3b8" stroke-width="4" stroke-dasharray="6 3"/>
+  </g>
+
+  <!-- FRAGILE crates against the wall -->
+  <g stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round">
+    <ellipse cx="766" cy="474" rx="44" ry="6" fill="#1a2332" opacity=".14" stroke="none"/>
+    <rect x="732" y="422" width="66" height="52" rx="3" fill="#e0b56a" stroke-width="4.6"/>
+    <rect x="780" y="424" width="16" height="48" fill="#b07a3c" stroke="none"/>
+    <path d="M734 440h46M734 456h46" stroke="#b07a3c" stroke-width="2.4"/>
+    <rect x="732" y="422" width="66" height="52" rx="3" fill="none" stroke-width="4.6"/>
+    <path d="M740 466l6-1" fill="none" stroke-width="1.6"/>
+    <rect x="738" y="382" width="54" height="40" rx="3" fill="#e9c27e" stroke-width="4.4"/>
+    <rect x="780" y="384" width="10" height="36" fill="#c59a55" stroke="none"/>
+    <rect x="738" y="382" width="54" height="40" rx="3" fill="none" stroke-width="4.4"/>
+    <text x="762" y="406" text-anchor="middle" font-size="9.5" font-weight="700" fill="#b03329" stroke="none" font-family="Fredoka">FRAGILE</text>
+    <path d="M752 412h20" stroke="#b03329" stroke-width="1.8"/>
+  </g>
+
+  <!-- BACK-WALL CARGO, right: barrels on their sides, chocked, and a chain heap -->
+  <g stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round">
+    <ellipse cx="920" cy="494" rx="94" ry="7" fill="#1a2332" opacity=".14" stroke="none"/>
+    <g>
+      <circle cx="884" cy="462" r="30" fill="#b07a3c" stroke-width="4.8"/>
+      <path d="M905 441a30 30 0 0 1-42 42a32 32 0 0 0 42-42z" fill="#8d5a32" stroke="none"/>
+      <circle cx="884" cy="462" r="30" fill="none" stroke-width="4.8"/>
+      <circle cx="884" cy="462" r="22" fill="none" stroke="#5f391d" stroke-width="4"/>
+      <path d="M874 444v36M884 441v42M894 444v36" stroke="#9a643a" stroke-width="2"/>
+      <circle cx="884" cy="462" r="4" fill="#5f391d" stroke-width="2"/>
+      <path d="M864 450a24 24 0 0 1 8-10" fill="none" stroke="#d29c60" stroke-width="2.4"/>
+    </g>
+    <circle cx="948" cy="462" r="30" fill="#b07a3c" stroke-width="4.8"/>
+    <path d="M969 441a30 30 0 0 1-42 42a32 32 0 0 0 42-42z" fill="#8d5a32" stroke="none"/>
+    <circle cx="948" cy="462" r="30" fill="none" stroke-width="4.8"/>
+    <circle cx="948" cy="462" r="22" fill="none" stroke="#5f391d" stroke-width="4"/>
+    <path d="M938 444v36M948 441v42M958 444v36" stroke="#9a643a" stroke-width="2"/>
+    <circle cx="948" cy="462" r="4" fill="#5f391d" stroke-width="2"/>
+    <path d="M932 476l4 4" fill="none" stroke-width="1.6"/>
+    <circle cx="916" cy="408" r="28" fill="#c48945" stroke-width="4.8"/>
+    <path d="M936 388a28 28 0 0 1-40 40a30 30 0 0 0 40-40z" fill="#9a643a" stroke="none"/>
+    <circle cx="916" cy="408" r="28" fill="none" stroke-width="4.8"/>
+    <circle cx="916" cy="408" r="20" fill="none" stroke="#5f391d" stroke-width="4"/>
+    <path d="M906 392v32M916 389v38M926 392v32" stroke="#a8713c" stroke-width="2"/>
+    <circle cx="916" cy="408" r="3.6" fill="#5f391d" stroke-width="2"/>
+    <path d="M898 398a22 22 0 0 1 8-10" fill="none" stroke="#e0aa6a" stroke-width="2.4"/>
+    <path d="M852 494l10-10l10 10zM968 494l10-10l10 10z" fill="#7a4a27" stroke-width="3"/>
+    <!-- chain heap -->
+    <ellipse cx="1010" cy="488" rx="22" ry="7" fill="none" stroke-width="9"/>
+    <ellipse cx="1010" cy="488" rx="22" ry="7" fill="none" stroke="#7690a6" stroke-width="4.4" stroke-dasharray="7 3"/>
+    <ellipse cx="1012" cy="482" rx="13" ry="4.4" fill="none" stroke-width="8"/>
+    <ellipse cx="1012" cy="482" rx="13" ry="4.4" fill="none" stroke="#8fa3b8" stroke-width="4" stroke-dasharray="6 3"/>
+  </g>
+
+  <!-- floor detail: a coiled hawser, a dropped float -->
+  <g stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round">
+    <ellipse cx="1004" cy="684" rx="44" ry="8" fill="#1a2332" opacity=".13" stroke="none"/>
+    <ellipse cx="1000" cy="676" rx="40" ry="13" fill="#c9a46a" stroke-width="4"/>
+    <path d="M1020 665c12 3 20 8 20 11c0 5-10 10-24 12z" fill="#a8844c" stroke="none"/>
+    <ellipse cx="1000" cy="676" rx="40" ry="13" fill="none" stroke-width="4"/>
+    <ellipse cx="1000" cy="671" rx="27" ry="8" fill="#b88d52" stroke-width="2.2"/>
+    <ellipse cx="1000" cy="667" rx="13" ry="4" fill="#a07a42" stroke-width="2"/>
+    <path d="M968 674l4 4M1030 672l-4 4M986 684l3 2" fill="none" stroke-width="1.6"/>
+    <path d="M1040 676c14 4 22 12 30 20" fill="none" stroke-width="9"/>
+    <path d="M1040 676c14 4 22 12 30 20" fill="none" stroke="#c9a46a" stroke-width="4.4"/>
+    <ellipse cx="216" cy="676" rx="16" ry="4" fill="#1a2332" opacity=".14" stroke="none"/>
+    <circle cx="214" cy="664" r="13" fill="#e24b3f" stroke-width="3.6"/>
+    <path d="M222 654a13 13 0 0 1 0 20a13 13 0 0 1-14 2a14 14 0 0 0 14-22z" fill="#b03329" stroke="none"/>
+    <circle cx="214" cy="664" r="13" fill="none" stroke-width="3.6"/>
     <path d="M205 657a9 9 0 0 1 9-4" fill="none" stroke="#fff" stroke-width="3"/>
     <path d="M201 666h26" stroke="#fff" stroke-width="3"/>
   </g>
-  <g fill="#8d5a32"><ellipse cx="430" cy="690" rx="7" ry="3"/><ellipse cx="820" cy="520" rx="6" ry="2.4"/><ellipse cx="600" cy="600" rx="6" ry="2.6"/></g>
 
   <!-- LADDER up to the hatch: the way back to the quay -->
   <g class="hot h-exit" data-act="enter" data-room="quay" stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round">
     <title>Up to the quay</title>
-    <path d="M30 0H150V44Q90 52 30 44Z" fill="#8fd2f6" stroke-width="4"/>
+    <path d="M30 0H150V44Q90 52 30 44Z" fill="#8fd2f6" stroke-width="4.6"/>
     <path d="M36 0H144V20Q90 26 36 20Z" fill="#c4ebfb" stroke="none"/>
+    <path d="M44 6c10 2 20 2 30 0" fill="none" stroke="#fff" stroke-width="3"/>
     <path d="M44 44L22 470H160L136 44Z" fill="#fff6c8" opacity=".28" stroke="none"/>
-    <rect x="58" y="40" width="12" height="474" rx="4" fill="#9a6236" stroke-width="3.6"/>
-    <rect x="112" y="40" width="12" height="474" rx="4" fill="#9a6236" stroke-width="3.6"/>
-    <path d="M70 80h42M70 130h42M70 180h42M70 230h42M70 280h42M70 330h42M70 380h42M70 430h42M70 480h42" stroke="#c48945" stroke-width="9"/>
-    <path d="M70 80h42M70 130h42M70 180h42M70 230h42M70 280h42M70 330h42M70 380h42M70 430h42M70 480h42" stroke="#1a2332" stroke-width="2" opacity=".5" transform="translate(0 4)"/>
-    <rect x="46" y="250" width="92" height="30" rx="8" fill="#f3d7a1" stroke-width="3.4"/>
+    <ellipse cx="94" cy="514" rx="52" ry="7" fill="#1a2332" opacity=".14" stroke="none"/>
+    <path d="M70 80h42M70 130h42M70 180h42M70 230h42M70 280h42M70 330h42M70 380h42M70 430h42M70 480h42" stroke="#1a2332" stroke-width="12"/>
+    <path d="M70 80h42M70 130h42M70 180h42M70 230h42M70 280h42M70 330h42M70 380h42M70 430h42M70 480h42" stroke="#c48945" stroke-width="6.4"/>
+    <path d="M72 79h20M72 129h20M72 179h20M72 329h20M72 379h20M72 429h20" stroke="#e0ac6b" stroke-width="2"/>
+    <rect x="58" y="40" width="12" height="474" rx="4" fill="#9a6236" stroke-width="4.4"/>
+    <rect x="64" y="44" width="4" height="466" fill="#7a4a27" stroke="none"/>
+    <rect x="58" y="40" width="12" height="474" rx="4" fill="none" stroke-width="4.4"/>
+    <rect x="112" y="40" width="12" height="474" rx="4" fill="#9a6236" stroke-width="4.4"/>
+    <rect x="118" y="44" width="4" height="466" fill="#7a4a27" stroke="none"/>
+    <rect x="112" y="40" width="12" height="474" rx="4" fill="none" stroke-width="4.4"/>
+    <path d="M61 150v10M115 360v12M61 420v8" fill="none" stroke-width="1.6"/>
+    <rect x="46" y="250" width="92" height="30" rx="8" fill="#f3d7a1" stroke-width="3.6"/>
+    <path d="M48 270h88v2a6 6 0 0 1-6 6H54a6 6 0 0 1-6-6z" fill="#e3bd80" stroke="none"/>
+    <rect x="46" y="250" width="92" height="30" rx="8" fill="none" stroke-width="3.6"/>
     <text x="92" y="271" text-anchor="middle" class="tag-word strong" fill="#1a2332" stroke="none">QUAY &#8593;</text>
   </g>
 
   <!-- THE LOCKER BIN: a steel footlocker with its lid up. It keeps things and gives them back. -->
   <g class="hot h-bin" data-act="hole" data-hole="bin" stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round">
     <title>The Locker bin. It comes back.</title>
-    <ellipse cx="248" cy="512" rx="98" ry="12" fill="#8d5a32" opacity=".55" stroke="none"/>
-    <path d="M168 400L182 330H318L328 400Z" fill="#6d859b" stroke-width="4.4"/>
+    <ellipse cx="252" cy="512" rx="100" ry="10" fill="#1a2332" opacity=".16" stroke="none"/>
+    <path d="M168 400L182 330H318L328 400Z" fill="#6d859b" stroke-width="4.6"/>
     <path d="M182 330H318L322 352H178Z" fill="#7d95ab" stroke="none"/>
-    <path d="M190 344h120M188 360h126M186 376h130" stroke="#5c7388" stroke-width="3"/>
-    <path d="M168 400L182 330H318L328 400Z" fill="none" stroke-width="4.4"/>
-    <rect x="160" y="400" width="176" height="18" rx="3" fill="#243044" stroke-width="4"/>
-    <rect x="156" y="410" width="184" height="98" rx="8" fill="#5c7388" stroke-width="4.6"/>
+    <path d="M296 334H318L328 400H304Z" fill="#5c7388" stroke="none"/>
+    <path d="M190 344h120M188 360h126M186 376h130" stroke="#5c7388" stroke-width="2.4"/>
+    <path d="M168 400L182 330H318L328 400Z" fill="none" stroke-width="4.6"/>
+    <path d="M196 338l10 0" stroke="#a9bccc" stroke-width="2.4"/>
+    <rect x="160" y="400" width="176" height="18" rx="3" fill="#243044" stroke-width="4.4"/>
+    <rect x="156" y="410" width="184" height="98" rx="8" fill="#5c7388" stroke-width="5"/>
     <rect x="294" y="414" width="42" height="90" fill="#4b6075" stroke="none"/>
-    <path d="M160 436h176" stroke="#45596c" stroke-width="3"/>
-    <rect x="156" y="410" width="184" height="98" rx="8" fill="none" stroke-width="4.6"/>
+    <rect x="160" y="490" width="176" height="14" fill="#4b6075" stroke="none"/>
+    <path d="M160 436h176" stroke="#45596c" stroke-width="2.4"/>
+    <path d="M168 442h60" stroke="#7690a6" stroke-width="2"/>
+    <rect x="156" y="410" width="184" height="98" rx="8" fill="none" stroke-width="5"/>
     <path d="M156 424v-12a6 6 0 0 1 6-6h14v18zM340 424v-12a6 6 0 0 0-6-6h-14v18zM156 494v12a6 6 0 0 0 6 6h14v-18zM340 494v12a6 6 0 0 1-6 6h-14v-18z" fill="#f2c14e" stroke-width="2.6"/>
+    <path d="M176 452l4 3M318 466l-3 5" fill="none" stroke-width="1.6"/>
     <text x="248" y="470" text-anchor="middle" class="sign-word" fill="#e6f4ff" stroke="none">LOCKER</text>
     <rect x="200" y="478" width="96" height="22" rx="6" fill="#fff6e4" stroke-width="2.6"/>
     <text x="248" y="494" text-anchor="middle" class="tag-word" font-size="12" fill="#1a2332" stroke="none">comes back</text>
     <rect x="236" y="410" width="24" height="18" rx="3" fill="#f2c14e" stroke-width="2.6"/>
+    <path d="M250 412h8v14h-8z" fill="#d39a2b" stroke="none"/>
+    <rect x="236" y="410" width="24" height="18" rx="3" fill="none" stroke-width="2.6"/>
   </g>
 
   <!-- THE SEA DOOR: a cargo door open in the hull, with a slide down to the water. It is permanent. -->
@@ -190,22 +405,28 @@
       <rect x="1100" y="240" width="160" height="96" fill="#8fd2f6"/>
       <rect x="1100" y="320" width="160" height="16" fill="#62b8ee"/>
       <path d="M1130 336L1154 304L1170 316L1186 296L1212 336Z" fill="#f4faff" stroke="#1a2332" stroke-width="2.4"/>
+      <path d="M1186 296L1200 318L1194 336H1212Z" fill="#c7e4f6" stroke="none"/>
       <g class="h-swell" fill="none" stroke="#c9ecff" stroke-width="3" stroke-linecap="round">
         <path d="M1116 372q8-6 16 0t16 0"/><path d="M1180 392q8-6 16 0t16 0"/><path d="M1130 420q8-6 16 0t16 0"/><path d="M1206 352q6-5 12 0t12 0"/>
       </g>
     </g>
     <path d="M1100 456V284Q1100 240 1144 240H1218Q1262 240 1262 284V456" fill="none" stroke="#7a4a27" stroke-width="20"/>
     <path d="M1100 456V284Q1100 240 1144 240H1218Q1262 240 1262 284V456" fill="none" stroke="#e24b3f" stroke-width="10" stroke-dasharray="14 14" stroke-linecap="butt"/>
-    <path d="M1088 456V284Q1088 228 1144 228H1218Q1274 228 1274 284V456" fill="none" stroke-width="4"/>
-    <path d="M1112 456V286Q1112 252 1146 252H1216Q1250 252 1250 286V456" fill="none" stroke-width="4"/>
+    <path d="M1088 456V284Q1088 228 1144 228H1218Q1274 228 1274 284V456" fill="none" stroke-width="4.8"/>
+    <path d="M1112 456V286Q1112 252 1146 252H1216Q1250 252 1250 286V456" fill="none" stroke-width="3.4"/>
+    <g fill="#1a2332" stroke="none"><circle cx="1094" cy="300" r="2"/><circle cx="1094" cy="380" r="2"/><circle cx="1268" cy="300" r="2"/><circle cx="1268" cy="380" r="2"/></g>
     <!-- the slide from the floor to the sill -->
-    <path d="M1040 540L1112 456H1250L1196 540Z" fill="#c48945" stroke-width="4"/>
+    <path d="M1040 540L1112 456H1250L1196 540Z" fill="#c48945" stroke-width="4.8"/>
+    <path d="M1196 540L1250 456H1258L1204 546Z" fill="#7a4a27" stroke-width="3"/>
     <path d="M1060 530L1118 464H1132L1076 530Z" fill="#e0b56a" stroke="none"/>
-    <path d="M1048 530L1112 456M1190 540L1246 458" stroke="#8d5a32" stroke-width="3"/>
-    <path d="M1040 540L1112 456H1250L1196 540Z" fill="none" stroke-width="4"/>
+    <path d="M1048 530L1112 456M1190 540L1246 458" stroke="#8d5a32" stroke-width="2.6"/>
+    <path d="M1040 540L1112 456H1250L1196 540Z" fill="none" stroke-width="4.8"/>
+    <path d="M1150 500l10-2M1120 520l8-1" fill="none" stroke-width="1.6"/>
     <!-- sign -->
-    <rect x="1098" y="160" width="166" height="56" rx="10" fill="#2f6fb8" stroke-width="4"/>
+    <rect x="1098" y="160" width="166" height="56" rx="10" fill="#2f6fb8" stroke-width="4.6"/>
     <rect x="1104" y="166" width="154" height="10" rx="4" fill="#5aa0e6" stroke="none"/>
+    <path d="M1100 200h162v6a8 8 0 0 1-8 8h-146a8 8 0 0 1-8-8z" fill="#225a99" stroke="none"/>
+    <rect x="1098" y="160" width="166" height="56" rx="10" fill="none" stroke-width="4.6"/>
     <text x="1166" y="196" text-anchor="middle" class="sign-word" fill="#fff6e4" stroke="none">SEA</text>
     <path d="M1206 186q6-6 12 0t12 0t12 0" fill="none" stroke="#c9ecff" stroke-width="3"/>
     <rect x="1112" y="206" width="138" height="20" rx="6" fill="#fff6e4" stroke-width="2.6"/>
