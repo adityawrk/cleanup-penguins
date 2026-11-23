@@ -574,6 +574,7 @@ function sound(now: number) {
   if (world.room !== prevRoom) {
     prevRoom = world.room
     audio.creak()
+    audio.ambience(world.room)
     const wipe = must<HTMLElement>('#wipe')
     wipe.style.setProperty('--wx', `${you.x}px`)
     wipe.style.setProperty('--wy', `${you.y - 50}px`)
@@ -661,7 +662,10 @@ function onClick(event: MouseEvent) {
     showMarker(spot.x, spot.y)
     return
   }
-  if (act === 'rope') takeRope(world, now)
+  if (act === 'rope') {
+    audio.bell()
+    takeRope(world, now)
+  }
   if (act === 'board') requestBoard(world, hit.dataset.hold as Hold, now)
   if (act === 'enter') requestEnter(world, hit.dataset.room as Room, now)
   if (act === 'gang') requestGang(world, now)
@@ -738,7 +742,10 @@ function onKey(event: KeyboardEvent) {
   if (key === 'x') goToHole(world, 'sea', now)
   if (key === 'b') goToHole(world, 'bin', now)
   if (key === 'f') {
-    if (world.room === 'quay') takeRope(world, now)
+    if (world.room === 'quay') {
+      audio.bell()
+      takeRope(world, now)
+    }
     else {
       const item = nearestLiftable(world)
       if (item) requestLift(world, item.id, now)
