@@ -12,6 +12,8 @@ export interface ScannedCache {
   name: string
   path: string
   bytes: number
+  /** Days since the folder last changed (its own mtime). Undefined when it couldn't be read. */
+  days?: number
 }
 
 export function parseDu(stdout: string, root: string, hidden = false): { name: string; kb: number }[] {
@@ -70,10 +72,17 @@ export async function scanCaches(): Promise<ScannedCache[]> {
     const rows = parseDu(await du(root), root)
     for (const row of rows) {
       if (row.kb < 50_000) continue
+      let days: number | undefined
+      try {
+        days = Math.max(0, Math.round((Date.now() - (await stat(`${root}/${row.name}`)).mtimeMs) / 86_400_000))
+      } catch {
+        days = undefined
+      }
       found.push({
         name: row.name,
         path: displayPath(`${root}/${row.name}`),
         bytes: row.kb * 1024,
+        days,
       })
     }
   }

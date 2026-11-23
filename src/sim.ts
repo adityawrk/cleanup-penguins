@@ -1788,7 +1788,7 @@ export function useRealDisk(world: World, freeTenths: number, capacityTenths: nu
   world.capacityTenths = capacityTenths
 }
 
-export function useRealCaches(world: World, rows: { name: string; path: string; bytes: number }[]) {
+export function useRealCaches(world: World, rows: { name: string; path: string; bytes: number; days?: number }[]) {
   if (rows.length === 0) return
   // A rescan replaces what's still lying in the hold. Anything thrown, kept in the Locker or being carried stays as it is.
   const kept = (item: Item) => item.disposed !== 'none' || world.carrying === item.id
@@ -1806,7 +1806,7 @@ export function useRealCaches(world: World, rows: { name: string; path: string; 
       name: row.name,
       path: row.path,
       tenths,
-      phrase: 'measured on this Mac',
+      phrase: row.days === undefined ? 'measured on this Mac' : `last changed ${ago(row.days)}`,
       sea: true,
       stale: true,
       x: spot.x,
