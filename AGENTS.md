@@ -115,6 +115,15 @@ The bar is a polished kids' MMO: dense rooms of recognizable objects, small char
 
 ## Run, test, look
 
+With `npm run dev` running, two end-to-end checks use real headless Chrome (pass the URL if the port isn't 5173):
+
+```sh
+npm run check:play -- http://localhost:5173/    # plays the full loop: board, lift, both sea cards, an honest practice throw, the Locker, the map, Q, D, frame rate, no page errors
+npm run check:sound -- http://localhost:5173/   # plays every sound alone; each must be audible over the ambience and none may clip
+```
+
+Run both before pushing anything that touches motion, flow or audio. `check:sound` is a machine check, not a listen: it caught three effects (the tide-board flap, the room whoosh, the snore) that were silent under the ambience.
+
 ```sh
 npm run build                                          # tsc --noEmit && vite build -> dist/
 node scripts/svgview.mjs src/art/hold.svg /tmp/h.png   # render one art file with the game fonts

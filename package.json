@@ -6,7 +6,9 @@
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
-    "test": "vitest run"
+    "test": "vitest run",
+    "check:play": "node scripts/play.mjs",
+    "check:sound": "node scripts/sound.mjs"
   },
   "devDependencies": {
     "@types/node": "^24.10.1",

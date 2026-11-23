@@ -230,7 +230,7 @@ export class HarborAudio {
 
   /** The tide board flipping: a rattle of small clicks. */
   flap() {
-    for (let i = 0; i < 6; i += 1) this.later(i * 38, () => this.burst(0.012, 2400 + i * 120, 4, 0.05, 'bandpass'))
+    for (let i = 0; i < 6; i += 1) this.later(i * 38, () => this.burst(0.018, 2400 + i * 120, 2.5, 0.26, 'bandpass'))
   }
 
   oof() {
@@ -238,7 +238,7 @@ export class HarborAudio {
   }
 
   snore() {
-    this.burst(0.5, 380, 1, 0.05, 'lowpass')
+    this.burst(0.5, 380, 1, 0.16, 'lowpass')
   }
 
   /** Something hits the water: a wash of noise falling in pitch, then a few droplets. */
@@ -271,7 +271,7 @@ export class HarborAudio {
     bp.Q.value = 1.4
     bp.frequency.setValueAtTime(300, ctx.currentTime)
     bp.frequency.exponentialRampToValueAtTime(1800, ctx.currentTime + 0.32)
-    const amp = this.envelope(0.06, 0.12, 0.42)
+    const amp = this.envelope(0.17, 0.12, 0.42)
     src.connect(bp)
     bp.connect(amp)
     src.start()
