@@ -166,6 +166,8 @@ let prevSplash = 0
 let prevSnore = 0
 let prevCarry: string | null = null
 let prevToss: string | null = null
+let prevRehearsed = 0
+let prevLocker = 0
 const poseSeen = new Map<string, string>()
 /** Last drawn position and whether we're seeing a being's back (walking away from the camera). */
 const heading = new Map<string, { x: number; y: number; back: boolean }>()
@@ -633,6 +635,14 @@ function sync(now: number) {
     if (youEl) pulse(youEl, 'is-throw', 460)
   }
   prevToss = world.toss?.itemId ?? null
+  // Celebrate a finished throw: a rising size number and a burst of confetti where it landed.
+  if (world.rehearsedTenths > prevRehearsed) {
+    const at = world.splash ?? { x: 1180, y: 392 }
+    celebrate(at.x, at.y - 30, `+${gbWord(world.rehearsedTenths - prevRehearsed)}`, 'practice')
+  }
+  prevRehearsed = world.rehearsedTenths
+  if (world.lockerTenths > prevLocker && world.room === 'hold') celebrate(248, 360, `+${gbWord(world.lockerTenths - prevLocker)}`, 'kept')
+  prevLocker = world.lockerTenths
   if (world.carrying !== prevCarry) {
     const youEl = beings.get('you')
     if (world.carrying && youEl) {
@@ -1385,7 +1395,8 @@ function syncGuide(now: number) {
       el.style.top = `${spot.y}px`
     }
   }
-  const settled = hello.hidden && !world.card && who.hidden && world.scout !== null && world.lastInput > 0
+  const talking = world.beings.some((b) => b.bubble)
+  const settled = hello.hidden && !world.card && who.hidden && world.scout !== null && world.lastInput > 0 && !talking
   if (guide === 'done' || !settled) {
     point(a, null)
     point(b, null)
@@ -1462,4 +1473,38 @@ function playToy(toy: string, now: number) {
     if (you) pulse(you, 'is-hop')
     if (world.scout && Math.random() < 0.5) window.setTimeout(() => scoutSay(world, 'Save one for me.', performance.now(), 2600), 700)
   }
+}
+
+const CONFETTI = ['#ffd23f', '#e24b3f', '#3aa0f2', '#5bb04b', '#f08a2c', '#fff', '#8d62d6']
+
+/** A finished throw or keep: a number floats up and confetti pops. Quieter under Still harbor. */
+function celebrate(x: number, y: number, text: string, kind: 'practice' | 'kept') {
+  const stage = must('#stage')
+  const tag = document.createElement('div')
+  tag.className = `celebrate celebrate-${kind}`
+  tag.style.left = `${x}px`
+  tag.style.top = `${y}px`
+  tag.innerHTML = `<b></b><small>${kind === 'practice' ? 'practice throw' : 'in the Locker'}</small>`
+  tag.querySelector('b')!.textContent = text
+  stage.appendChild(tag)
+  if (!fit.classList.contains('is-still')) {
+    for (let i = 0; i < 18; i += 1) {
+      const bit = document.createElement('i')
+      bit.className = 'confetti'
+      const angle = (Math.PI * 2 * i) / 18 + Math.random() * 0.3
+      const dist = 60 + Math.random() * 70
+      bit.style.left = `${x}px`
+      bit.style.top = `${y}px`
+      bit.style.background = CONFETTI[i % CONFETTI.length]
+      bit.style.setProperty('--cx', `${Math.cos(angle) * dist}px`)
+      bit.style.setProperty('--cy', `${Math.sin(angle) * dist - 50}px`)
+      bit.style.setProperty('--cr', `${Math.round(Math.random() * 720 - 360)}deg`)
+      stage.appendChild(bit)
+      window.setTimeout(() => bit.remove(), 1300)
+    }
+    const scoutEl = world.scout ? beings.get(world.scout) : undefined
+    if (scoutEl) pulse(scoutEl, 'is-posted', 500)
+  }
+  audio.chirp()
+  window.setTimeout(() => tag.remove(), 1900)
 }

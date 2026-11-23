@@ -734,3 +734,12 @@ svg > g.back { display: none; }
 .l-lamp { animation-duration: 3.6s; }
 @keyframes l-sway { 0%, 100% { transform: rotate(-2deg); } 50% { transform: rotate(2deg); } }
 .prop:hover { z-index: 1000 !important; }
+
+/* Celebration: a size number floats up from where the thing landed, with a pop of confetti. */
+.celebrate { position: absolute; z-index: 9; translate: -50% -50%; pointer-events: none; text-align: center; animation: celebrate-up 1.9s cubic-bezier(.2, .9, .3, 1) forwards; }
+.celebrate b { display: block; font-size: 30px; font-weight: 700; color: #ffd23f; -webkit-text-stroke: 6px var(--ink); paint-order: stroke fill; text-shadow: 0 4px 0 var(--ink); }
+.celebrate small { display: block; margin-top: 2px; font-size: 13px; font-weight: 700; color: #fff; -webkit-text-stroke: 4px var(--ink); paint-order: stroke fill; }
+.celebrate-kept b { color: #8fd2f6; }
+@keyframes celebrate-up { 0% { opacity: 0; transform: translateY(14px) scale(.5); } 15% { opacity: 1; transform: translateY(0) scale(1.15); } 25% { transform: scale(1); } 80% { opacity: 1; } 100% { opacity: 0; transform: translateY(-70px); } }
+.confetti { position: absolute; z-index: 9; width: 9px; height: 13px; margin: -6px 0 0 -4px; border: 2px solid var(--ink); border-radius: 2px; pointer-events: none; animation: confetti 1.25s cubic-bezier(.15, .7, .4, 1) forwards; }
+@keyframes confetti { 0% { transform: translate(0, 0) rotate(0) scale(.4); opacity: 1; } 55% { transform: translate(var(--cx), var(--cy)) rotate(var(--cr)) scale(1); opacity: 1; } 100% { transform: translate(var(--cx), calc(var(--cy) + 70px)) rotate(var(--cr)); opacity: 0; } }
