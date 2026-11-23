@@ -4,18 +4,12 @@ How the harbor is drawn. The reference room is `src/art/quay.svg`. Match that fi
 
 ## The look
 
-Crisp flat vector in the style of a late-2000s kids' MMO: a room full of objects you recognize before you read a label, small characters in a big place, and chunky glossy UI. The harbor is its own place. Never trace or replicate another game's avatars, pets, rooms, logos or maps.
+Glossy late-2000s Flash-era vector, the finish of that era's kids' MMOs: rounded chunky shapes, soft gradient shading, thin colored outlines, bright clean skies, and airy rooms with big shapes and open floor. Small characters in a big place, chunky glossy UI. The harbor is its own place: never trace or replicate another game's avatars, pets, rooms, logos or maps. (Until 2026-11-23 the rule was flat fills with thick black ink; that read as modern sticker art next to the reference and was retired at the user's direction.)
 
-- **Ink.** Every outline is one color, `#1a2332`. Never black, never gray.
-- **Line hierarchy.** This contrast is what makes the art read as illustration; monoline outlines read as a stock icon set.
-  - Silhouettes are 4.4 to 5px.
-  - Inner structure (windows, planks, folds) is 1.6 to 2.4px.
-  - Every prop gets 2 to 4 open "ink ticks" (grain flicks, cracks, snow flecks): short open strokes, not closed shapes.
-  - A thin object drawn as one ink stroke (a mast, a rail) can be 5px.
-  - Painted stripes drawn as wide strokes use their paint color, not ink.
-  - Use round joins and caps everywhere (`stroke-linejoin="round" stroke-linecap="round"`).
-- **Fill.** Flat colors only. The art has no `<linearGradient>`, no `<radialGradient>`, no blur, no filter, no glow and no drop shadow. Use opacity only for the lighthouse beam, highlights, cel shade and floor shade. The hover brighten is CSS on `.hot`, not part of the drawing.
-- **Cel shade.** Light comes from the upper left. Each object gets one darker shadow shape on its right or lower faces, drawn with `stroke="none"` after the fill and before the outline. Then redraw the silhouette with `fill="none"` so the ink sits on top. Add one highlight, a short white or pale stroke, where the light hits.
+- **Outlines.** Thin, 1.8 to 2.6px on silhouettes, 1 to 1.6px inside, drawn in a darker shade of the shape's own fill (navy `#0d2a52` on the penguin, deep red on a red hull, brown on wood), never black. Small inner details can drop the outline entirely. Round joins and caps.
+- **Shading.** Soft gradients lit from the upper left: a `radialGradient` (or `linearGradient`) from a lighter tint top-left to a darker shade bottom-right on every body, hull, roof and prop. Add one glossy sheen (a soft white ellipse or crescent at 40 to 70% opacity) on rounded tops: heads, hulls, roofs, barrels. Gradient ids must be prefixed per file (`q-`, `h-`, `l-`, `g-`, `t-`, `m-`) or per character (`you-`, `cl-`…) so copies never collide.
+- **No blur or filters.** Gradients and opacity only; no `filter`, no `feGaussianBlur`, no CSS blur. Shadows are flat soft ellipses (`#1a2332` at about 13%).
+- **Airy composition.** Big clean shapes, fewer and larger props, an open walkable floor. Keep the clickable objects; trim the clutter around them.
 - **Snow.** Roofs, posts and crates get a lumpy white cap (`#fff`, with 2.6 to 3.4px ink) and a pale-blue inner line (`#d6ecf9`).
 - **Contact shadow.** Anything standing on a floor gets a flat ellipse under it: `#1a2332` at about 13% opacity, no ink.
 - **Depth.** Rooms have a vanishing point and things at different depths. The quay's back edge is an arch and its planks converge. Its boats moor at three scales. Each boat's scale lives on a wrapper `<g transform>`, because CSS owns the `.q-boat` group's own transform. Buildings show a receding side wall.

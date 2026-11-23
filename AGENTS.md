@@ -102,14 +102,14 @@ A Mac disk cleanup tool that plays like a late-2000s kids' MMO. You are a pengui
    - For the live scout, only its prompt blocks a false "scanned" claim. `clean()` catches delete, throw and move claims only.
 7. **Original art and sound.**
    - The player is an original classic cartoon penguin of the genre, and the scouts are original birds. Never trace or replicate another game's avatars, pets, rooms or maps, and never use another game's assets, names or sounds. Don't trace the reference video either.
-   - Match the craft in [docs/art.md](docs/art.md): flat fills, one heavy ink outline, three-quarter view, three-toed feet, a blue ring under the player, and props that read as objects.
+   - Match the craft in [docs/art.md](docs/art.md): glossy late-2000s Flash-era vector (thin outlines in a darker shade of each fill, soft gradient shading with sheens, airy rooms), three-quarter view, three-toed feet, a blue ring under the player, and props that read as objects.
    - Every visual is vector: `src/art/*.svg`, the `index.html` templates, the SVG strings in `items.ts`, `emotes.ts`, `npcs.ts` and `main.ts`, or CSS. No raster images.
    - Every sound is synthesized in `src/audio.ts`.
    - Fonts are Fredoka and IBM Plex Mono, self-hosted from `@fontsource` (latin only). Never load them from Google.
 
 ## Quality bar
 
-The bar is a polished kids' MMO: dense rooms of recognizable objects, small characters in a big place, glossy chunky UI, and constant small life (harbor folk, bobbing boats and buoys, puffing smoke, a swinging bell, a pecking gull, lanterns, a fish past the hold's porthole, a mouse on the hold's baseboard). A change isn't done just because it works. Screenshot it and compare it with `quay.svg`.
+The bar is a polished late-2000s Flash-era kids' MMO: glossy, rounded, airy rooms of recognizable objects, small characters in a big place, glossy chunky UI, and constant small life (harbor folk, bobbing boats and buoys, puffing smoke, a swinging bell, a pecking gull, lanterns, a fish past the hold's porthole, a mouse on the hold's baseboard). A change isn't done just because it works. Screenshot it and compare it with the era style described in docs/art.md.
 
 **Review history.** Nine rounds of blind art-director reviews against reference frames (stills plus motion contact sheets from `scripts/shot.mjs` bursts and `scripts/sheet.mjs`). Overall went 6.5 → 7 → 7.5 → 7.8 → 8.0 → 8.2 → 8.4 → 8.5 out of 9. Round 9's verdict: it matches the reference's craft and, with the scout kept off the player on screen, its feel. Remaining polish from that round: speech bubbles and tags near the player (bubbles now lean away, a tag hides when you stand on its item), and depth (a flatter walk than the reference). Re-run a review after any big art or motion change, and judge motion from strips, not single stills.
 
