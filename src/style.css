@@ -22,7 +22,7 @@
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
 html, body, #app { height: 100%; margin: 0; }
-body { overflow: hidden; background: #9fd6f2; }
+body { overflow: hidden; background: #0f2c4c; }
 button, input { font: inherit; color: inherit; }
 button { appearance: none; background: none; border: 0; padding: 0; }
 #app { display: grid; place-items: center; }
@@ -601,3 +601,6 @@ button { appearance: none; background: none; border: 0; padding: 0; }
 /* Hold life: now and then a mouse runs the baseboard. */
 .h-mouse { animation: h-scurry 16s linear infinite; }
 @keyframes h-scurry { 0%, 72% { transform: translateX(0); } 90%, 100% { transform: translateX(1360px); } }
+
+/* The game sits in a rounded frame on a deep harbor-night page, so letterboxing looks deliberate. */
+#fit { border-radius: 22px; overflow: hidden; box-shadow: 0 0 0 4px #1a3f66, 0 12px 0 4px #0a1f36; }
