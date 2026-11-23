@@ -14,7 +14,7 @@ import glassArt from './art/glasshouse.svg?raw'
 import mapArt from './art/map.svg?raw'
 import { itemSvg, jitter, sizeScale } from './items'
 import { EMOTES, emoteSvg } from './emotes'
-import { HATS, NAVY, createNpcs, stepNpcs, talkTo, type Hat } from './npcs'
+import { HATS, NAVY, createNpcs, prefixIds, stepNpcs, talkTo, type Hat } from './npcs'
 import { createDecor } from './decor'
 import {
   SPOTS,
@@ -330,15 +330,16 @@ emotePanel.addEventListener('click', (event) => {
 must('#sc-close').addEventListener('click', () => closeWho())
 must('#me-close').addEventListener('click', () => closeMe())
 // Dress-up: the player picks a penguin color and a hat on their card. Remembered per browser.
-const COLORS: { id: string; label: string; body: [string, string, string] }[] = [
+// Each body is base, shade, light, then the outline: the four values that replace NAVY.
+const COLORS: { id: string; label: string; body: [string, string, string, string] }[] = [
   { id: 'navy', label: 'Navy', body: NAVY },
-  { id: 'red', label: 'Red', body: ['#d8463b', '#a8302a', '#f08a80'] },
-  { id: 'green', label: 'Green', body: ['#3f9f63', '#2c7a4a', '#7fd09a'] },
-  { id: 'yellow', label: 'Yellow', body: ['#f4c534', '#c9981f', '#ffe7a0'] },
-  { id: 'purple', label: 'Purple', body: ['#8d62d6', '#6a46ad', '#b99af0'] },
-  { id: 'pink', label: 'Pink', body: ['#ef7fb0', '#c95a8c', '#ffb6d4'] },
-  { id: 'aqua', label: 'Aqua', body: ['#2fb3c9', '#1f8a9c', '#86e0ee'] },
-  { id: 'black', label: 'Black', body: ['#2e3440', '#1c2129', '#5d6878'] },
+  { id: 'red', label: 'Red', body: ['#d8463b', '#a8302a', '#f08a80', '#6e1a15'] },
+  { id: 'green', label: 'Green', body: ['#3f9f63', '#2c7a4a', '#7fd09a', '#164a2a'] },
+  { id: 'yellow', label: 'Yellow', body: ['#f4c534', '#c9981f', '#ffe7a0', '#7d5c0c'] },
+  { id: 'purple', label: 'Purple', body: ['#8d62d6', '#6a46ad', '#b99af0', '#3a2170'] },
+  { id: 'pink', label: 'Pink', body: ['#ef7fb0', '#c95a8c', '#ffb6d4', '#7e2a52'] },
+  { id: 'aqua', label: 'Aqua', body: ['#2fb3c9', '#1f8a9c', '#86e0ee', '#0f5562'] },
+  { id: 'black', label: 'Black', body: ['#2e3440', '#1c2129', '#5d6878', '#0b0e13'] },
 ]
 const HAT_CHOICES: { id: Hat | 'none'; label: string }[] = [
   { id: 'none', label: 'No hat' },
@@ -361,9 +362,11 @@ function dressPlayer() {
   let markup = playerBase
   NAVY.forEach((from, i) => (markup = markup.split(from).join(color.body[i])))
   const hat = look.hat !== 'none' ? HATS[look.hat as Hat] : ''
-  for (const svg of [beings.get('you')?.querySelector('svg'), must('#me-portrait').querySelector('svg')]) {
+  // Each copy gets its own gradient ids (see prefixIds), so the recolored sprite never paints with the template's navy.
+  const copies = [[beings.get('you')?.querySelector('svg'), 'self-'], [must('#me-portrait').querySelector('svg'), 'selfp-']] as const
+  for (const [svg, prefix] of copies) {
     if (!svg) continue
-    svg.innerHTML = markup + hat
+    svg.innerHTML = prefixIds(markup + hat, prefix)
     svg.style.overflow = 'visible'
   }
   for (const button of document.querySelectorAll<HTMLElement>('#me-colors button')) button.classList.toggle('is-on', button.dataset.color === look.color)

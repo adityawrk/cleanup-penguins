@@ -16,7 +16,8 @@ interface NpcDef {
   home: { x: number; y: number }
   /** How far they wander from home, in stage px. */
   range: { x: number; y: number }
-  body: [string, string, string]
+  /** Base, shade, light and outline: the four body colors swapped in for NAVY. */
+  body: [string, string, string, string]
   hat: Hat
   /** What they carry. Drawn just behind the near flipper, so the flipper reads as holding it. */
   prop: Prop
@@ -25,7 +26,8 @@ interface NpcDef {
   lines: string[]
 }
 
-export const NAVY: [string, string, string] = ['#1d4e89', '#153a66', '#4f8ad0']
+/** The player template's four body colors, gradient stops included: base, shade, light, outline. */
+export const NAVY: [string, string, string, string] = ['#1d4e89', '#153a66', '#4f8ad0', '#0d2a52']
 
 export const NPCS: NpcDef[] = [
   {
@@ -34,7 +36,7 @@ export const NPCS: NpcDef[] = [
     room: 'quay',
     home: { x: 170, y: 636 },
     range: { x: 26, y: 18 },
-    body: ['#d8463b', '#a8302a', '#f08a80'],
+    body: ['#d8463b', '#a8302a', '#f08a80', '#6e1a15'],
     hat: 'captain',
     prop: 'coil',
     size: 1.05,
@@ -51,7 +53,7 @@ export const NPCS: NpcDef[] = [
     room: 'quay',
     home: { x: 1090, y: 652 },
     range: { x: 34, y: 18 },
-    body: ['#f4c534', '#c9981f', '#ffe7a0'],
+    body: ['#f4c534', '#c9981f', '#ffe7a0', '#7d5c0c'],
     hat: 'beanie',
     prop: 'basket',
     size: 0.95,
@@ -68,7 +70,7 @@ export const NPCS: NpcDef[] = [
     room: 'glasshouse',
     home: { x: 520, y: 636 },
     range: { x: 120, y: 26 },
-    body: ['#3f9f63', '#2c7a4a', '#7fd09a'],
+    body: ['#3f9f63', '#2c7a4a', '#7fd09a', '#164a2a'],
     hat: 'souwester',
     prop: 'can',
     size: 0.97,
@@ -85,7 +87,7 @@ export const NPCS: NpcDef[] = [
     room: 'locker',
     home: { x: 620, y: 540 },
     range: { x: 120, y: 14 },
-    body: ['#8d62d6', '#6a46ad', '#b99af0'],
+    body: ['#8d62d6', '#6a46ad', '#b99af0', '#3a2170'],
     hat: 'beanie',
     prop: 'clipboard',
     size: 1.03,
@@ -97,29 +99,43 @@ export const NPCS: NpcDef[] = [
   },
 ]
 
+// Gradient ids here start with `hat-` or `kit-`. `prefixIds` gives every copy its own, like the body's `you-` ids.
 export const HATS: Record<Hat, string> = {
-  captain: `<g class="hat" stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round">
-    <path d="M64 30C62 12 84 2 104 4C124 6 140 16 136 32Z" fill="#f4f8fb" stroke-width="4.4"/>
-    <path d="M112 8C126 12 136 20 136 32H118C120 24 118 16 112 8Z" fill="#d6e2ec" stroke="none"/>
-    <path d="M64 30C62 12 84 2 104 4C124 6 140 16 136 32Z" fill="none" stroke-width="4.4"/>
-    <path d="M62 28h76v10h-76z" fill="#1a2f52" stroke-width="3.6"/>
-    <path d="M120 36c14 0 28 2 36 8c-12 4-28 4-38 0z" fill="#1a2332" stroke-width="2.6"/>
-    <circle cx="98" cy="33" r="4.4" fill="#f2c14e" stroke-width="2"/>
+  captain: `<g class="hat" stroke-linejoin="round" stroke-linecap="round">
+    <defs>
+      <linearGradient id="hat-cap-crown" x1="0" y1="0" x2=".8" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".55" stop-color="#eef3f8"/><stop offset="1" stop-color="#c3d1de"/></linearGradient>
+      <linearGradient id="hat-cap-band" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#34558a"/><stop offset="1" stop-color="#1a2f52"/></linearGradient>
+      <linearGradient id="hat-cap-visor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a4a62"/><stop offset="1" stop-color="#121a28"/></linearGradient>
+      <radialGradient id="hat-cap-badge" cx=".38" cy=".32" r=".75"><stop offset="0" stop-color="#ffeaa0"/><stop offset=".55" stop-color="#f2c14e"/><stop offset="1" stop-color="#c8901c"/></radialGradient>
+    </defs>
+    <path d="M64 30C62 12 84 2 104 4C124 6 140 16 136 32Z" fill="url(#hat-cap-crown)" stroke="#5c6f84" stroke-width="2.2"/>
+    <path d="M72 22C76 13 86 8 98 7" fill="none" stroke="#fff" stroke-opacity=".9" stroke-width="2.6"/>
+    <path d="M62 28h76v10h-76z" fill="url(#hat-cap-band)" stroke="#0e1a30" stroke-width="2"/>
+    <path d="M120 36c14 0 28 2 36 8c-12 4-28 4-38 0z" fill="url(#hat-cap-visor)" stroke="#0b111b" stroke-width="1.8"/>
+    <path d="M126 38c10 0 18 1 24 4" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="1.4"/>
+    <circle cx="98" cy="33" r="4.4" fill="url(#hat-cap-badge)" stroke="#8a5e0c" stroke-width="1.4"/>
   </g>`,
-  beanie: `<g class="hat" stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round">
-    <path d="M66 34C64 14 82 2 100 2C120 2 138 14 136 34Z" fill="#e24b3f" stroke-width="4.4"/>
-    <path d="M114 6C128 12 136 22 136 34H120C122 24 120 14 114 6Z" fill="#b5342b" stroke="none"/>
-    <path d="M80 10v20M92 6v26M104 5v27M116 8v24" stroke="#b5342b" stroke-width="2.4"/>
-    <path d="M66 34C64 14 82 2 100 2C120 2 138 14 136 34Z" fill="none" stroke-width="4.4"/>
-    <rect x="62" y="28" width="78" height="12" rx="6" fill="#f4f8fb" stroke-width="3.6"/>
-    <circle cx="100" cy="0" r="9" fill="#f4f8fb" stroke-width="3.6"/>
+  beanie: `<g class="hat" stroke-linejoin="round" stroke-linecap="round">
+    <defs>
+      <linearGradient id="hat-bea-knit" x1="0" y1="0" x2=".8" y2="1"><stop offset="0" stop-color="#f47a6c"/><stop offset=".55" stop-color="#e24b3f"/><stop offset="1" stop-color="#b3342b"/></linearGradient>
+      <linearGradient id="hat-bea-cuff" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#cfdae5"/></linearGradient>
+      <radialGradient id="hat-bea-pom" cx=".36" cy=".3" r=".8"><stop offset="0" stop-color="#ffffff"/><stop offset=".6" stop-color="#eef3f8"/><stop offset="1" stop-color="#c3d1de"/></radialGradient>
+    </defs>
+    <path d="M66 34C64 14 82 2 100 2C120 2 138 14 136 34Z" fill="url(#hat-bea-knit)" stroke="#7e1d16" stroke-width="2.2"/>
+    <path d="M80 10v20M92 6v26M104 5v27M116 8v24" stroke="#a52e26" stroke-opacity=".6" stroke-width="1.6"/>
+    <path d="M74 20C78 12 86 7 94 5" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="2.4"/>
+    <rect x="62" y="28" width="78" height="12" rx="6" fill="url(#hat-bea-cuff)" stroke="#7f91a4" stroke-width="2"/>
+    <circle cx="100" cy="0" r="9" fill="url(#hat-bea-pom)" stroke="#7f91a4" stroke-width="2"/>
   </g>`,
-  souwester: `<g class="hat" stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round">
-    <path d="M70 30C68 12 84 2 100 2C118 2 134 12 132 30Z" fill="#f4c534" stroke-width="4.4"/>
-    <path d="M114 6C126 12 132 20 132 30H118C120 22 118 12 114 6Z" fill="#d6a521" stroke="none"/>
-    <path d="M70 30C68 12 84 2 100 2C118 2 134 12 132 30Z" fill="none" stroke-width="4.4"/>
-    <path d="M52 36C66 26 136 24 156 34C140 42 70 44 52 36Z" fill="#f4c534" stroke-width="4"/>
-    <path d="M84 8c6-4 14-5 20-4" fill="none" stroke="#fff3c4" stroke-width="3"/>
+  souwester: `<g class="hat" stroke-linejoin="round" stroke-linecap="round">
+    <defs>
+      <linearGradient id="hat-sou" x1="0" y1="0" x2=".8" y2="1"><stop offset="0" stop-color="#ffe27a"/><stop offset=".55" stop-color="#f4c534"/><stop offset="1" stop-color="#d3a01d"/></linearGradient>
+      <linearGradient id="hat-sou-brim" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd85a"/><stop offset="1" stop-color="#d3a01d"/></linearGradient>
+    </defs>
+    <path d="M70 30C68 12 84 2 100 2C118 2 134 12 132 30Z" fill="url(#hat-sou)" stroke="#8a6608" stroke-width="2.2"/>
+    <path d="M52 36C66 26 136 24 156 34C140 42 70 44 52 36Z" fill="url(#hat-sou-brim)" stroke="#8a6608" stroke-width="2"/>
+    <path d="M84 8c6-4 14-5 20-4" fill="none" stroke="#fff6d0" stroke-opacity=".9" stroke-width="2.6"/>
+    <path d="M64 34c16-5 50-6 72-3" fill="none" stroke="#fff6d0" stroke-opacity=".55" stroke-width="1.4"/>
   </g>`,
 }
 
@@ -129,59 +145,80 @@ export const HATS: Record<Hat, string> = {
  * inside the flipper group (its walk and wave pivot on its own fill box). No lettering: the sprite is mirrored.
  */
 export const PROPS: Record<Prop, string> = {
-  // Gil: a coil of rope hung on the near shoulder, bulging out past the silhouette.
+  // Gil: a coil of rope hung on the near shoulder, bulging out past the silhouette. Each strand is a thin brown
+  // outline stroke under a rope-colored one.
   coil: `<g class="kit kit-coil" fill="none" stroke-linecap="round" stroke-linejoin="round" transform="rotate(-10 40 128)">
-    <path d="M40 150C38 162 40 172 46 180" stroke="#1a2332" stroke-width="15"/>
+    <path d="M40 150C38 162 40 172 46 180" stroke="#6e4520" stroke-width="9.4"/>
     <path d="M40 150C38 162 40 172 46 180" stroke="#e0b56a" stroke-width="6"/>
-    <ellipse cx="34" cy="130" rx="20" ry="28" stroke="#1a2332" stroke-width="15"/>
+    <ellipse cx="34" cy="130" rx="20" ry="28" stroke="#6e4520" stroke-width="9.4"/>
     <ellipse cx="34" cy="130" rx="20" ry="28" stroke="#c99550" stroke-width="6"/>
-    <ellipse cx="40" cy="128" rx="20" ry="29" stroke="#1a2332" stroke-width="15"/>
+    <ellipse cx="40" cy="128" rx="20" ry="29" stroke="#6e4520" stroke-width="9.4"/>
     <ellipse cx="40" cy="128" rx="20" ry="29" stroke="#e0b56a" stroke-width="6"/>
-    <ellipse cx="46" cy="126" rx="20" ry="30" stroke="#1a2332" stroke-width="15"/>
+    <ellipse cx="46" cy="126" rx="20" ry="30" stroke="#6e4520" stroke-width="9.4"/>
     <ellipse cx="46" cy="126" rx="20" ry="30" stroke="#e8b878" stroke-width="6"/>
     <ellipse cx="46" cy="126" rx="20" ry="30" stroke="#b07a3c" stroke-width="6" stroke-dasharray="2.2 5.5"/>
-    <path d="M30 108C32 102 36 98 41 97" stroke="#fff6e4" stroke-width="2.4"/>
+    <path d="M30 108C32 102 36 98 41 97" stroke="#fff6e4" stroke-opacity=".9" stroke-width="2.4"/>
+    <path d="M28 126C27 118 28 112 30 107" stroke="#fff6e4" stroke-opacity=".45" stroke-width="1.8"/>
   </g>`,
   // Mo: a wicker fish basket on the near flipper, two fish poking out.
-  basket: `<g class="kit kit-basket" stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round" transform="translate(-31.5 -42.5) scale(1.25)">
-    <path d="M44 156C44 134 78 134 78 156" fill="none" stroke-width="7.2"/>
-    <path d="M44 156C44 134 78 134 78 156" fill="none" stroke="#e0b56a" stroke-width="3.2"/>
-    <path d="M42 156L36 140L46 146L50 138L52 156Z" fill="#8fa6ba" stroke-width="2.72"/>
-    <path d="M58 158C58 144 68 140 78 144C82 148 82 154 80 158Z" fill="#6cc2f2" stroke-width="2.72"/>
-    <circle cx="74" cy="148" r="1.8" fill="#1a2332" stroke="none"/>
-    <path d="M36 158H88L82 188C81 192 78 194 74 194H48C44 194 41 192 40 188Z" fill="#e0b56a" stroke="none"/>
-    <path d="M72 158H88L82 188C81 192 78 194 74 194H68Z" fill="#b07a3c" stroke="none"/>
-    <path d="M40 170H85M42 181H83M52 160V193M62 160V194M72 160V193" fill="none" stroke="#a8713c" stroke-width="1.6"/>
-    <path d="M36 158H88L82 188C81 192 78 194 74 194H48C44 194 41 192 40 188Z" fill="none" stroke-width="3.52"/>
-    <rect x="32" y="152" width="60" height="9" rx="4" fill="#e8b878" stroke-width="2.88"/>
+  basket: `<g class="kit kit-basket" stroke-linejoin="round" stroke-linecap="round" transform="translate(-31.5 -42.5) scale(1.25)">
+    <defs>
+      <linearGradient id="kit-wicker" x1="0" y1="0" x2=".7" y2="1"><stop offset="0" stop-color="#f2cc8c"/><stop offset=".55" stop-color="#e0b56a"/><stop offset="1" stop-color="#b07a3c"/></linearGradient>
+      <linearGradient id="kit-rim" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6d49c"/><stop offset="1" stop-color="#d29e5c"/></linearGradient>
+      <linearGradient id="kit-fish-a" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c3d2df"/><stop offset="1" stop-color="#7f97ab"/></linearGradient>
+      <linearGradient id="kit-fish-b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a6e0fb"/><stop offset="1" stop-color="#4fb0e8"/></linearGradient>
+    </defs>
+    <path d="M44 156C44 134 78 134 78 156" fill="none" stroke="#6e4520" stroke-width="5.4"/>
+    <path d="M44 156C44 134 78 134 78 156" fill="none" stroke="#e0b56a" stroke-width="3"/>
+    <path d="M42 156L36 140L46 146L50 138L52 156Z" fill="url(#kit-fish-a)" stroke="#4c6178" stroke-width="1.6"/>
+    <path d="M58 158C58 144 68 140 78 144C82 148 82 154 80 158Z" fill="url(#kit-fish-b)" stroke="#226e9e" stroke-width="1.6"/>
+    <circle cx="74" cy="148" r="1.8" fill="#14243a"/>
+    <path d="M36 158H88L82 188C81 192 78 194 74 194H48C44 194 41 192 40 188Z" fill="url(#kit-wicker)"/>
+    <path d="M40 170H85M42 181H83M52 160V193M62 160V194M72 160V193" fill="none" stroke="#9a6532" stroke-opacity=".7" stroke-width="1.2"/>
+    <path d="M36 158H88L82 188C81 192 78 194 74 194H48C44 194 41 192 40 188Z" fill="none" stroke="#6e4520" stroke-width="1.8"/>
+    <rect x="32" y="152" width="60" height="9" rx="4" fill="url(#kit-rim)" stroke="#6e4520" stroke-width="1.6"/>
     <path d="M40 155H52" fill="none" stroke="#fff6e4" stroke-width="1.6"/>
   </g>`,
   // Bolt: a clipboard hugged to the chest under the near flipper.
-  clipboard: `<g class="kit kit-clipboard" stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round" transform="rotate(10 104 134)">
-    <rect x="82" y="106" width="44" height="56" rx="5" fill="#b07a3c" stroke="none"/>
-    <path d="M118 108H121C124 108 126 110 126 113V157C126 160 124 162 121 162H118Z" fill="#7a4a27" stroke="none"/>
-    <rect x="82" y="106" width="44" height="56" rx="5" fill="none" stroke-width="4.4"/>
-    <rect x="88" y="115" width="31" height="41" rx="1.5" fill="#fff6e4" stroke-width="2"/>
+  clipboard: `<g class="kit kit-clipboard" stroke-linejoin="round" stroke-linecap="round" transform="rotate(10 104 134)">
+    <defs>
+      <linearGradient id="kit-board" x1="0" y1="0" x2=".8" y2="1"><stop offset="0" stop-color="#cf9658"/><stop offset=".55" stop-color="#b07a3c"/><stop offset="1" stop-color="#83532a"/></linearGradient>
+      <linearGradient id="kit-clip" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d6e1ea"/><stop offset="1" stop-color="#8399ad"/></linearGradient>
+    </defs>
+    <rect x="82" y="106" width="44" height="56" rx="5" fill="url(#kit-board)" stroke="#5a371a" stroke-width="2.2"/>
+    <rect x="88" y="115" width="31" height="41" rx="1.5" fill="#fffaf0" stroke="#a88c68" stroke-width="1.2"/>
     <path d="M93 125H114M93 132H114M93 139H108" fill="none" stroke="#8fa6ba" stroke-width="2.2"/>
     <path d="M93 146H112" fill="none" stroke="#8fa6ba" stroke-width="2.2"/>
-    <circle cx="111" cy="150" r="2.6" fill="#d9493e" stroke="none"/>
-    <rect x="95" y="101" width="18" height="10" rx="3" fill="#8fa6ba" stroke-width="3"/>
+    <circle cx="111" cy="150" r="2.6" fill="#d9493e"/>
+    <rect x="95" y="101" width="18" height="10" rx="3" fill="url(#kit-clip)" stroke="#4c6178" stroke-width="1.6"/>
     <path d="M99 104H106" fill="none" stroke="#f4f8fb" stroke-width="1.8"/>
   </g>`,
   // Fern: a steel watering can, spout forward, rose up.
-  can: `<g class="kit kit-can" stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round" transform="translate(-30.25 -43.75) scale(1.25)">
-    <path d="M48 160C48 142 74 142 74 160" fill="none" stroke-width="7.2"/>
-    <path d="M48 160C48 142 74 142 74 160" fill="none" stroke="#8fa6ba" stroke-width="3.2"/>
-    <path d="M76 184L102 160" fill="none" stroke-width="8.0"/>
-    <path d="M76 184L102 160" fill="none" stroke="#8fa6ba" stroke-width="3.68"/>
-    <path d="M98 156L108 150C111 152 112 157 110 161L101 164Z" fill="#7690a6" stroke-width="2.72"/>
-    <path d="M40 160H82L80 190C80 193 78 195 75 195H47C44 195 42 193 42 190Z" fill="#8fa6ba" stroke="none"/>
-    <path d="M70 160H82L80 190C80 193 78 195 75 195H68Z" fill="#7690a6" stroke="none"/>
-    <path d="M41 168H81" fill="none" stroke="#5c7388" stroke-width="1.6"/>
-    <path d="M48 174V186" fill="none" stroke="#f4f8fb" stroke-width="2.08"/>
-    <path d="M40 160H82L80 190C80 193 78 195 75 195H47C44 195 42 193 42 190Z" fill="none" stroke-width="3.52"/>
+  can: `<g class="kit kit-can" stroke-linejoin="round" stroke-linecap="round" transform="translate(-30.25 -43.75) scale(1.25)">
+    <defs>
+      <linearGradient id="kit-steel" x1="0" y1="0" x2="1" y2=".4"><stop offset="0" stop-color="#c9d7e3"/><stop offset=".5" stop-color="#93a9bc"/><stop offset="1" stop-color="#647c91"/></linearGradient>
+      <linearGradient id="kit-rose" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a3b6c7"/><stop offset="1" stop-color="#5f778c"/></linearGradient>
+    </defs>
+    <path d="M48 160C48 142 74 142 74 160" fill="none" stroke="#3d4f61" stroke-width="5.4"/>
+    <path d="M48 160C48 142 74 142 74 160" fill="none" stroke="#a3b6c7" stroke-width="3"/>
+    <path d="M76 184L102 160" fill="none" stroke="#3d4f61" stroke-width="6.2"/>
+    <path d="M76 184L102 160" fill="none" stroke="#93a9bc" stroke-width="3.6"/>
+    <path d="M98 156L108 150C111 152 112 157 110 161L101 164Z" fill="url(#kit-rose)" stroke="#3d4f61" stroke-width="1.6"/>
+    <path d="M40 160H82L80 190C80 193 78 195 75 195H47C44 195 42 193 42 190Z" fill="url(#kit-steel)" stroke="#3d4f61" stroke-width="1.8"/>
+    <path d="M41 168H81" fill="none" stroke="#5c7388" stroke-width="1.4"/>
+    <path d="M48 174V186" fill="none" stroke="#f4f8fb" stroke-opacity=".9" stroke-width="2.08"/>
     <path d="M113 156l4 1M112 162l4 3" fill="none" stroke="#3aa0f2" stroke-width="1.76"/>
   </g>`,
+}
+
+/**
+ * Give one copy of the player drawing its own gradient ids. Every copy is cloned from the same template, and Chrome
+ * paints `url(#id)` from the first element with that id in the document. A recolored copy would otherwise wear another
+ * copy's navy, and any copy would go unpainted when the first one sits in a hidden panel. `you-` becomes the prefix;
+ * hat and prop ids keep their `hat-` or `kit-` after it.
+ */
+export function prefixIds(markup: string, prefix: string): string {
+  return markup.replace(/(id="|url\(#)(you-|hat-|kit-)/g, (_, lead: string, kind: string) => lead + prefix + (kind === 'you-' ? '' : kind))
 }
 
 interface NpcState {
@@ -227,7 +264,7 @@ export function createNpcs(template: HTMLTemplateElement, objectsFor: (room: Roo
     // Wrapped so CSS can animate the prop (a little task loop) without touching its own placement transform.
     const prop = `<g class="kit-anim kit-anim-${def.prop}">${PROPS[def.prop]}</g>`
     markup = at < 0 ? markup + prop : markup.slice(0, at) + prop + markup.slice(at)
-    svg.innerHTML = markup + HATS[def.hat]
+    svg.innerHTML = prefixIds(markup + HATS[def.hat], `npc-${def.id}-`)
     svg.style.overflow = 'visible'
     node.querySelector('.name')!.textContent = def.name
     node.querySelector<SVGElement>('.eyes')?.style.setProperty('animation-delay', `-${(def.id.length * 1.3) % 5}s`)
