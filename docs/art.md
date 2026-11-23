@@ -33,7 +33,7 @@ Crisp flat vector in the style of a late-2000s kids' MMO: a room full of objects
 Characters live in the `index.html` templates, not in the art files.
 
 - **Shared rules.** Flat fills, one heavy ink outline (bodies are 5px), three-toed feet, and a three-quarter view facing right. The code mirrors them to face left.
-  - Face parts sit in `<g class="face">` and the belly in `<g class="belly">`, so the back view (`.is-back`) can hide both.
+  - Face parts sit in `<g class="face">` and the belly in `<g class="belly">`, and each template ends with its own drawn back view, `<g class="back" display="none">` (parts `back-flipper l/r`, `back-foot l/r`); walking away (`.is-back`) hides every front part and shows the back. Keep the back's navy to the same three values so recolored harbor folk work.
   - Eyes are in `<g class="eyes">`, which blinks.
   - Flippers and feet are `.flipper` and `.foot` (`l` or `r`), which the walk animates.
 - **The player** is an original classic cartoon penguin of the genre:

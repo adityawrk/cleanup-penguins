@@ -444,8 +444,6 @@ button { appearance: none; background: none; border: 0; padding: 0; }
 @keyframes drop { 0% { transform: translate(0, 0) scale(.6); opacity: 1; } 60% { transform: translate(var(--dx), var(--dy)) scale(1); opacity: 1; } 100% { transform: translate(calc(var(--dx) * 1.3), calc(var(--dy) * .2)) scale(.8); opacity: 0; } }
 
 /* Walking away from the camera shows the back: the face disc, eyes, cheeks and beak go, the body stays. */
-.being.is-back .face, .being.is-back .belly { display: none; }
-.being.is-back .flipper { filter: brightness(.92); }
 .sc-live { margin: 8px 0 0; padding: 3px 12px; border-radius: 999px; font-size: 13px; font-weight: 700; background: #1d66b4; color: #cfe8ff; border: 2.5px solid var(--ink); }
 .sc-live:empty { display: none; }
 .sc-live[data-live="true"] { background: #5bb04b; color: #fff; }
@@ -605,7 +603,6 @@ button { appearance: none; background: none; border: 0; padding: 0; }
 /* The game sits in a rounded frame on a deep harbor-night page, so letterboxing looks deliberate. */
 #fit { border-radius: 22px; overflow: hidden; box-shadow: 0 0 0 4px #1a3f66, 0 12px 0 4px #0a1f36; }
 /* From behind, both flippers show (the far one isn't hidden by the body), so the back view isn't a bare egg. */
-.being.is-back .flipper.l { opacity: 1 !important; transform: scaleX(-1) translateX(-6px); transform-box: fill-box; transform-origin: center; }
 /* Extra sheds stand in front, smaller; their sign shows on hover or focus so the strip doesn't crowd. */
 .shed.is-extra .shed-sign { opacity: 0; transition: opacity 140ms ease; }
 .shed.is-extra:hover .shed-sign, .shed.is-extra:focus-visible .shed-sign, .shed.is-extra.is-scope .shed-sign { opacity: 1; }
@@ -650,3 +647,23 @@ button { appearance: none; background: none; border: 0; padding: 0; }
 .being.npc.is-met .npc-badge { display: none; }
 .being.npc:has(.bubble:not([hidden])) .npc-badge { display: none; }
 @keyframes badge-bob { 50% { translate: -50% -4px; } }
+/* Back view. Each character template ends with its own drawn back, <g class="back" display="none">, so dock faces,
+   portraits and copies of the template never show it. Walking away swaps the whole front drawing for it. */
+svg > g.back { display: none; }
+.being.is-back .sprite svg > :not(.back):not(defs) { display: none; }
+.being.is-back .sprite svg > g.back { display: inline; }
+.back-flipper, .back-foot { transform-box: fill-box; }
+.back-flipper.l { transform-origin: 85% 6%; }
+.back-flipper.r { transform-origin: 15% 6%; }
+.back-foot { transform-origin: 50% 100%; }
+/* Walking away: heels lift in turn (the sole tips toward us), flippers swing against each other at the shoulder. */
+.being.is-walking .back-foot { animation: back-step 420ms ease-in-out infinite; }
+.being.is-walking .back-foot.r { animation-delay: -210ms; }
+@keyframes back-step { 0%, 50%, 100% { transform: translateY(0) scale(1, 1); } 25% { transform: translateY(-10px) scale(.92, 1.08); } }
+.being.is-walking .back-flipper.l { animation: back-swing-l 420ms ease-in-out infinite; }
+.being.is-walking .back-flipper.r { animation: back-swing-r 420ms ease-in-out infinite; }
+@keyframes back-swing-l { 0%, 100% { transform: rotate(12deg); } 50% { transform: rotate(-8deg); } }
+@keyframes back-swing-r { 0%, 100% { transform: rotate(8deg); } 50% { transform: rotate(-12deg); } }
+/* Carrying away from us: the load is out of sight in front, so both flippers reach in toward it and stay there. */
+.being.is-back.is-carrying .back-flipper.l { animation: none; transform: rotate(-22deg); }
+.being.is-back.is-carrying .back-flipper.r { animation: none; transform: rotate(22deg); }
