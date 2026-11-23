@@ -614,8 +614,8 @@ function sync(now: number) {
     const flying = Boolean(world.emptying?.ids.includes(item.id))
     const held = world.carrying === item.id || world.toss?.itemId === item.id || flying
     const depth = ITEM_SIZE * draw.scale * (held && !flying ? 0.9 : sizeScale(item.tenths)) * (0.9 + Math.min(1, Math.max(0, (draw.y - 470) / 220)) * 0.16)
-    const nudge = held || item.disposed === 'locker' ? { dx: 0, dy: 0, tilt: 0 } : jitter(item.name)
-    el.style.transform = `translate(${draw.x + nudge.dx}px, ${draw.y + nudge.dy}px) rotate(${draw.rot + nudge.tilt}deg) scale(${depth})`
+    const nudge = held || item.disposed === 'locker' ? { dx: 0, dy: 0, tilt: 0, sx: 1 } : jitter(item.name)
+    el.style.transform = `translate(${draw.x + nudge.dx}px, ${draw.y + nudge.dy}px) rotate(${draw.rot + nudge.tilt}deg) scale(${depth * nudge.sx}, ${depth})`
     el.style.setProperty('--inv', String(1 / depth))
     const you = being(world, 'you')
     el.style.zIndex = world.carrying === item.id ? String(Math.round(you.y) + 2) : world.toss?.itemId === item.id ? '900' : String(Math.round(draw.y) + (nearId === item.id ? 400 : 0))
@@ -633,13 +633,13 @@ function sync(now: number) {
   } else splash.hidden = true
   if (world.toss && world.toss.itemId !== prevToss) {
     const youEl = beings.get('you')
-    if (youEl) pulse(youEl, 'is-throw', 460)
+    if (youEl) pulse(youEl, 'is-throw', 820)
   }
   prevToss = world.toss?.itemId ?? null
   // Celebrate a finished throw: a rising size number and a burst of confetti where it landed.
   if (world.rehearsedTenths > prevRehearsed) {
     const at = world.splash ?? { x: 1180, y: 392 }
-    celebrate(at.x, at.y - 30, `+${gbWord(world.rehearsedTenths - prevRehearsed)}`, 'practice')
+    celebrate(at.x - 150, at.y - 70, `+${gbWord(world.rehearsedTenths - prevRehearsed)}`, 'practice')
   }
   prevRehearsed = world.rehearsedTenths
   if (world.lockerTenths > prevLocker && world.room === 'hold') celebrate(248, 360, `+${gbWord(world.lockerTenths - prevLocker)}`, 'kept')

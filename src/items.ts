@@ -197,7 +197,7 @@ export function itemSvg(item: Pick<Item, 'form' | 'name' | 'tenths'>): string {
 }
 
 /** A small, stable tilt and nudge per item, so the floor looks set down by hand. */
-export function jitter(name: string): { dx: number; dy: number; tilt: number } {
+export function jitter(name: string): { dx: number; dy: number; tilt: number; sx: number } {
   const h = hash(name + '#')
-  return { dx: ((h % 21) - 10) * 1.2, dy: (((h >> 5) % 13) - 6), tilt: (((h >> 9) % 11) - 5) * 0.9 }
+  return { dx: ((h % 21) - 10) * 1.2, dy: (((h >> 5) % 13) - 6), tilt: (((h >> 9) % 11) - 5) * 0.9, sx: 0.88 + ((h >> 13) % 9) * 0.03 }
 }

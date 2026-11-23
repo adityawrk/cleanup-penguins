@@ -776,7 +776,7 @@ export function propDraw(world: World, item: Item, now: number): Draw {
   if (world.toss?.itemId === item.id) {
     const toss = world.toss
     // A wind-up first (the sack swings back over the shoulder), then a spinning arc into the water.
-    const windup = 160
+    const windup = 200
     const t = now - toss.started
     if (t < windup) {
       const w = Math.sin((t / windup) * Math.PI * 0.5)
@@ -790,8 +790,8 @@ export function propDraw(world: World, item: Item, now: number): Draw {
     return {
       x: startX + (toss.toX - startX) * ease,
       y: startY + (toss.toY - startY) * u - Math.sin(u * Math.PI) * 170,
-      rot: (-30 + u * 390) * toss.facing,
-      scale: 0.7 + Math.sin(u * Math.PI) * 0.25 - u * 0.2,
+      rot: (-30 + u * 720) * toss.facing,
+      scale: 0.72 + Math.sin(u * Math.PI) * 0.2 - u * 0.3,
       hide: false,
     }
   }
@@ -1195,7 +1195,7 @@ function beginToss(world: World, itemId: string, now: number) {
     toX: SPOTS.chute.x,
     toY: SPOTS.chute.y,
     started: now,
-    until: now + 620,
+    until: now + 760,
     facing: you.facing,
   }
   world.carrying = null
@@ -1760,8 +1760,9 @@ function follow(world: World) {
     const want = Math.min(band.x1, Math.max(band.x0, you.x - gap * you.facing))
     const side = Math.sign(b.x - you.x) || -you.facing
     const crossing = side !== -you.facing && Math.abs(b.x - you.x) < gap + 20
-    const tx = crossing ? you.x : want
-    const ty = Math.max(band.y0, you.y - (crossing ? 46 : 8))
+    // Crossing over: head straight for the new side along a lane behind the player, never through them.
+    const tx = want
+    const ty = crossing ? Math.max(band.y0, you.y - 60) : Math.min(band.y1, you.y + 6)
     // Hysteresis: only re-aim when the spot has really moved.
     if (Math.hypot(tx - b.tx, ty - b.ty) > 14) {
       b.tx = tx
@@ -1786,10 +1787,14 @@ export function step(world: World, now: number, dt: number) {
     if (dist < 76) {
       const band = BANDS[world.room]
       if (b.mode === 'follow') {
-        let side = dx === 0 ? -you.facing : Math.sign(dx)
-        // Against a wall there's no room on that side: go to the other one.
-        if (you.x + side * 76 < band.x0 || you.x + side * 76 > band.x1) side = -side
-        b.x = Math.min(band.x1, Math.max(band.x0, you.x + side * 76))
+        // Push out along the player-to-scout line (an ellipse, wider than deep); at a wall, go round.
+        const ux = dist > 0.5 ? dx / dist : -you.facing
+        const uy = dist > 0.5 ? dy / dist : -0.4
+        let nx = you.x + ux * 76
+        const ny = you.y + (uy * 76) / 1.4
+        if (nx < band.x0 || nx > band.x1) nx = you.x - ux * 76
+        b.x = Math.min(band.x1, Math.max(band.x0, nx))
+        b.y = Math.min(band.y1, Math.max(band.y0, ny))
       } else {
         // On an errand: step around behind the player (or in front, at the back wall) and keep going.
         const behind = you.y - 56 >= band.y0

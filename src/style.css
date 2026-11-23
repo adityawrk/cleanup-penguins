@@ -631,10 +631,10 @@ button { appearance: none; background: none; border: 0; padding: 0; }
 .being.is-heave .sprite { animation: heave2 340ms ease-out; }
 @keyframes heave2 { 0% { transform: scale(1, 1); } 35% { transform: scale(1.12, .82) translateY(4px); } 70% { transform: scale(.95, 1.08) translateY(-8px); } 100% { transform: none; } }
 /* Throw: lean back with the flipper cocked, then fling forward. */
-.being.is-throw .sprite { animation: throw 440ms cubic-bezier(.3, 0, .2, 1); }
-.being.is-throw .flipper.r { transform-box: fill-box; transform-origin: center top; animation: throw-arm 440ms cubic-bezier(.3, 0, .2, 1); }
-@keyframes throw { 0% { transform: none; } 35% { transform: rotate(-11deg) translateX(-6px) scale(1.02, .97); } 60% { transform: rotate(13deg) translateX(8px) scale(.97, 1.04); } 100% { transform: none; } }
-@keyframes throw-arm { 0% { transform: none; } 35% { transform: rotate(70deg); } 60% { transform: rotate(-60deg); } 100% { transform: none; } }
+.being.is-throw .sprite { animation: throw 800ms cubic-bezier(.3, 0, .2, 1); }
+.being.is-throw .flipper.r { transform-box: fill-box; transform-origin: center top; animation: throw-arm 800ms cubic-bezier(.3, 0, .2, 1); }
+@keyframes throw { 0% { transform: none; } 22% { transform: rotate(-12deg) translateX(-8px) scale(1.03, .95); } 34% { transform: rotate(14deg) translateX(10px) scale(.96, 1.05); } 70% { transform: rotate(8deg) translateX(6px) scale(1, 1.01); } 100% { transform: none; } }
+@keyframes throw-arm { 0% { transform: none; } 22% { transform: rotate(80deg); } 34% { transform: rotate(-70deg); } 70% { transform: rotate(-55deg); } 100% { transform: none; } }
 /* Splash droplets are water: pale blue, no ink, so they never read as holes. */
 #splash b { border: 0; background: #d8f1ff; width: 10px; height: 12px; }
 #splash b:nth-of-type(2n) { background: #9fd3f5; }
@@ -740,17 +740,20 @@ svg > g.back { display: none; }
 .celebrate b { display: block; font-size: 30px; font-weight: 700; color: #ffd23f; -webkit-text-stroke: 6px var(--ink); paint-order: stroke fill; text-shadow: 0 4px 0 var(--ink); }
 .celebrate small { display: block; margin-top: 2px; font-size: 13px; font-weight: 700; color: #fff; -webkit-text-stroke: 4px var(--ink); paint-order: stroke fill; }
 .celebrate-kept b { color: #8fd2f6; }
-@keyframes celebrate-up { 0% { opacity: 0; transform: translateY(14px) scale(.5); } 15% { opacity: 1; transform: translateY(0) scale(1.15); } 25% { transform: scale(1); } 80% { opacity: 1; } 100% { opacity: 0; transform: translateY(-70px); } }
+@keyframes celebrate-up { 0% { opacity: 0; transform: translateY(14px) scale(.5) rotate(-6deg); } 14% { opacity: 1; transform: translateY(0) scale(1.12) rotate(3deg); } 24% { transform: scale(1) rotate(-2deg); } 70% { opacity: 1; transform: translateY(-24px) rotate(-2deg); } 100% { opacity: 0; transform: translateY(-40px) rotate(-2deg); } }
 .confetti { position: absolute; z-index: 9; width: 9px; height: 13px; margin: -6px 0 0 -4px; border: 2px solid var(--ink); border-radius: 2px; pointer-events: none; animation: confetti 1.25s cubic-bezier(.15, .7, .4, 1) forwards; }
 @keyframes confetti { 0% { transform: translate(0, 0) rotate(0) scale(.4); opacity: 1; } 55% { transform: translate(var(--cx), var(--cy)) rotate(var(--cr)) scale(1); opacity: 1; } 100% { transform: translate(var(--cx), calc(var(--cy) + 70px)) rotate(var(--cr)); opacity: 0; } }
 
 /* The splash crown: a white column of water with an ink outline, rising and falling at the landing point. */
-#splash .crown { position: absolute; left: -60px; top: -70px; width: 120px; height: 80px; overflow: visible; transform-origin: 50% 90%; animation: crown 700ms cubic-bezier(.2, .9, .3, 1) forwards; }
+#splash .crown { position: absolute; left: -72px; top: -84px; width: 144px; height: 96px; overflow: visible; transform-origin: 50% 90%; animation: crown 900ms cubic-bezier(.2, .9, .3, 1) forwards; }
 @keyframes crown { 0% { transform: scale(.3, .1); opacity: 1; } 35% { transform: scale(1.1, 1.15); opacity: 1; } 70% { transform: scale(1, .7); opacity: 1; } 100% { transform: scale(.9, .2); opacity: 0; } }
 /* The scout's name steps aside when it stands right by you (the dock already shows who it is). */
 .being.is-near-you .name { opacity: 0; }
 /* The +GB number has a backing plate so it reads over any background from its first frame. */
-.celebrate { background: rgba(26, 35, 50, .55); border-radius: 16px; padding: 4px 12px 6px; }
+.celebrate { background: var(--cream); border: 4px solid var(--ink); border-radius: 12px; padding: 4px 14px 6px; box-shadow: inset 0 -5px 0 #e3bd80, 0 4px 0 rgba(26, 35, 50, .3); }
+.celebrate b { color: #e24b3f !important; -webkit-text-stroke: 0 !important; text-shadow: none !important; font-size: 28px !important; line-height: 1.05; }
+.celebrate-kept b { color: #2f6fb8 !important; }
+.celebrate small { color: #6b4a22 !important; -webkit-text-stroke: 0 !important; }
 
 /* Folk bubbles: a picture of what they're about, popping up for a moment every ten seconds or so. */
 .npc-badge { padding: 4px 6px; animation: picto 10s ease-in-out infinite; opacity: 0; }

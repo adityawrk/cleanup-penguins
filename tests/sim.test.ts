@@ -82,7 +82,7 @@ describe('harbor rules', () => {
     expect(world.freeTenths).toBe(438)
     answer(world, true, 2600)
     expect(world.toss).not.toBeNull()
-    step(world, 3300, 0.016)
+    step(world, 3400, 0.016)
     expect(world.rehearsal).toBe(true)
     expect(world.freeTenths).toBe(438)
     expect(poleFree(world)).toBe('43.8')
@@ -465,5 +465,22 @@ describe('harbor rules', () => {
     useRealRepos(world, [{ label: 'harbor', path: '~/projects/harbor' }, { label: 'notes', path: '~/code/notes' }])
     expect(world.repos.map((repo) => repo.label)).toEqual(['harbor', 'notes', 'side-project'])
     expect(world.items.some((item) => item.scopeId === 'penguins' || item.scopeId === 'lighthouse')).toBe(false)
+  })
+
+  it('keeps the scout out of the player while walking right, turning, and walking left', () => {
+    const world = createWorld('ada')
+    const you = being(world, 'you')
+    const scout = being(world, 'claude')
+    let now = settle(world, 1500, 0)
+    let closest = Infinity
+    for (const x of [1000, 250, 900, 300]) {
+      walkTo(world, x, 640, null, now)
+      for (let i = 0; i < 260; i += 1) {
+        now += 16
+        step(world, now, 0.016)
+        closest = Math.min(closest, Math.hypot(scout.x - you.x, (scout.y - you.y) * 1.4))
+      }
+    }
+    expect(closest).toBeGreaterThanOrEqual(70)
   })
 })
