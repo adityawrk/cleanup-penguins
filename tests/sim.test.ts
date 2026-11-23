@@ -24,6 +24,7 @@ import {
   step,
   takeRope,
   walkTo,
+  SPOTS,
   type World,
 } from '../src/sim'
 
@@ -46,13 +47,13 @@ describe('harbor rules', () => {
     expect(world.freeTenths + 4682).toBe(world.capacityTenths)
   })
 
-  it('throws a cache in the sea only after both faces, then moves the pole', () => {
+  it('throws a cache in the sea only after both faces, and leaves the pole alone in practice', () => {
     const world = createWorld('ada')
     world.room = 'hold'
     world.hold = 'caches'
     const you = being(world, 'you')
-    you.x = you.tx = 980
-    you.y = you.ty = 630
+    you.x = you.tx = SPOTS.seaStand.x
+    you.y = you.ty = SPOTS.seaStand.y
     lift(world, 'codex', 1000)
     expect(world.carrying).toBe('codex')
     expect(world.scout).toBe('claude')
@@ -73,8 +74,11 @@ describe('harbor rules', () => {
     answer(world, true, 2600)
     expect(world.toss).not.toBeNull()
     step(world, 3200, 0.016)
-    expect(world.freeTenths).toBe(459)
-    expect(poleFree(world)).toBe('45.9')
+    expect(world.rehearsal).toBe(true)
+    expect(world.freeTenths).toBe(438)
+    expect(poleFree(world)).toBe('43.8')
+    expect(world.rehearsedTenths).toBe(21)
+    expect(being(world, 'claude').bubble).toMatch(/still on your disk/)
     expect(world.items.find((item) => item.id === 'codex')?.disposed).toBe('sea')
   })
 
@@ -83,8 +87,8 @@ describe('harbor rules', () => {
     world.room = 'hold'
     world.hold = 'apps'
     const you = being(world, 'you')
-    you.x = you.tx = 980
-    you.y = you.ty = 630
+    you.x = you.tx = SPOTS.seaStand.x
+    you.y = you.ty = SPOTS.seaStand.y
     lift(world, 'wow', 1000)
     goToHole(world, 'sea', 1000)
     step(world, 2000, 0.016)

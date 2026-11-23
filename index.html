@@ -29,25 +29,8 @@
             </section>
 
             <section class="room" id="room-hold" aria-label="The hold">
-              <div class="hold-wall"></div>
-              <div class="porthole"></div>
-              <div class="hold-floor"></div>
+              <div class="paint" data-art="hold"></div>
               <div class="path-sign" id="path-sign"></div>
-              <button type="button" class="hit plank" data-act="enter" data-room="quay">Quay</button>
-              <div class="spot" id="spot-bin">
-                <button type="button" class="hole bin" data-act="hole" data-hole="bin" aria-label="The Locker bin">
-                  <span class="mouth"></span>
-                  <span class="hole-name">Locker</span>
-                  <span class="hole-note">comes back</span>
-                </button>
-              </div>
-              <div class="spot" id="spot-chute">
-                <button type="button" class="hole sea" data-act="hole" data-hole="sea" aria-label="The sea chute">
-                  <span class="mouth"></span>
-                  <span class="hole-name">Sea</span>
-                  <span class="hole-note">gone for good</span>
-                </button>
-              </div>
               <aside id="sheet" hidden>
                 <h3 id="sheet-title"></h3>
                 <p id="sheet-path"></p>
@@ -85,6 +68,7 @@
             </section>
           </div>
           <div id="splash" hidden><i></i><i></i><i></i></div>
+          <div id="wipe"></div>
           <div id="marker" hidden></div>
           <aside id="mini">
             <span class="kicker">Free</span>
@@ -606,8 +590,8 @@
     </template>
     <template id="tpl-prop">
       <div class="prop" data-act="lift">
-        <div class="tag"><b class="t-size"></b><span class="t-name"></span><em class="t-phrase"></em></div>
         <div class="art"></div>
+        <div class="tag"><b class="t-name"></b><span class="t-size"></span><em class="t-phrase"></em></div>
       </div>
     </template>
     <script type="module" src="/src/main.ts"></script>

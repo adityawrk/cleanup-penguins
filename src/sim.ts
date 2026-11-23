@@ -67,16 +67,16 @@ export interface Point {
 }
 
 export const SPOTS = {
-  seaStand: { x: 980, y: 630 },
-  binStand: { x: 280, y: 630 },
-  chute: { x: 1136, y: 455 },
-  bin: { x: 150, y: 500 },
+  seaStand: { x: 1040, y: 560 },
+  binStand: { x: 300, y: 548 },
+  chute: { x: 1180, y: 392 },
+  bin: { x: 248, y: 404 },
   bead: { x: 290, y: 600 },
   entrance: {
     quay: { x: 640, y: 600 },
-    hold: { x: 230, y: 640 },
-    locker: { x: 280, y: 640 },
-    glasshouse: { x: 320, y: 640 },
+    hold: { x: 170, y: 560 },
+    locker: { x: 200, y: 560 },
+    glasshouse: { x: 1080, y: 620 },
   } satisfies Record<Room, Point>,
   board: {
     caches: { x: 424, y: 496 },
@@ -87,9 +87,10 @@ export const SPOTS = {
     locker: { x: 150, y: 496 },
     glasshouse: { x: 1150, y: 496 },
   },
-  gang: { x: 230, y: 650 },
-  tip: { x: 980, y: 630 },
-  plank: { x: 190, y: 640 },
+  gang: { x: 160, y: 540 },
+  tip: { x: 1010, y: 600 },
+  /** Where the player walks to leave each room for the quay. */
+  exit: { quay: { x: 640, y: 600 }, hold: { x: 150, y: 530 }, locker: { x: 160, y: 540 }, glasshouse: { x: 1100, y: 600 } } satisfies Record<Room, Point>,
 }
 
 export const NEST = { x: 990, y: 640 }
@@ -134,8 +135,8 @@ interface Band {
 
 const BANDS: Record<Room, Band> = {
   quay: { x0: 140, x1: 1150, y0: 490, y1: 690 },
-  hold: { x0: 130, x1: 1150, y0: 530, y1: 670 },
-  locker: { x0: 150, x1: 1130, y0: 545, y1: 675 },
+  hold: { x0: 150, x1: 1130, y0: 500, y1: 690 },
+  locker: { x0: 150, x1: 1130, y0: 490, y1: 690 },
   glasshouse: { x0: 170, x1: 1110, y0: 560, y1: 675, wall: 560 },
 }
 
@@ -242,6 +243,13 @@ export interface World {
   customName: string
   model: string
   effort: EffortId
+  /**
+   * True while the harbor has no delete route. A throw is then a practice throw: the item leaves the hold,
+   * nothing on disk changes, and the pole stays where it is. Only a real delete that finished may move the pole.
+   */
+  rehearsal: boolean
+  /** What practice throws would have freed, in tenths. Never added to the pole. */
+  rehearsedTenths: number
 }
 
 export interface CardView {
@@ -373,8 +381,8 @@ export function createWorld(name: string, scout: BirdId | null = 'claude'): Worl
       path: '~/Library/Caches/com.openai.codex',
       tenths: 21,
       phrase: 'not touched in 6 months',
-      x: 680,
-      y: 655,
+      x: 670,
+      y: 650,
       seaLine: 'Cache. I rebuild it.',
       binLine: 'The index is in the sack. Rebuilding costs the 2.1.',
       rebuild: 'Codex rebuilds it next run.',
@@ -388,7 +396,7 @@ export function createWorld(name: string, scout: BirdId | null = 'claude'): Worl
       path: '~/Library/Caches/Google/Chrome',
       tenths: 14,
       phrase: 'not touched in 2 weeks',
-      x: 400,
+      x: 500,
       y: 650,
       rebuild: 'Chrome rebuilds it as you browse.',
       sheet: 'Browser cache. The sea is permanent. Chrome fills it again as you browse.',
@@ -400,8 +408,8 @@ export function createWorld(name: string, scout: BirdId | null = 'claude'): Worl
       path: '~/.bun/install/cache',
       tenths: 11,
       phrase: 'not touched in 9 days',
-      x: 1080,
-      y: 640,
+      x: 910,
+      y: 560,
       rebuild: 'Bun downloads it again when it needs it.',
       sheet: 'Package cache. The sea is permanent. The next install fetches what it needs.',
     }),
@@ -412,7 +420,7 @@ export function createWorld(name: string, scout: BirdId | null = 'claude'): Worl
       path: '~/.npm',
       tenths: 8,
       phrase: 'not touched in 3 weeks',
-      x: 470,
+      x: 400,
       y: 560,
       rebuild: 'npm fills it again on the next install.',
       sheet: 'Package cache. The sea is permanent. npm rebuilds it.',
@@ -424,7 +432,7 @@ export function createWorld(name: string, scout: BirdId | null = 'claude'): Worl
       path: '~/Library/Caches/ms-playwright',
       tenths: 5,
       phrase: 'not touched in 5 weeks',
-      x: 900,
+      x: 740,
       y: 560,
       rebuild: 'Playwright downloads browsers again when tests run.',
       sheet: 'Browser binaries for tests. The sea is permanent. The next run can download them.',
@@ -437,8 +445,8 @@ export function createWorld(name: string, scout: BirdId | null = 'claude'): Worl
       path: '~/Library/Caches',
       tenths: 11,
       phrase: 'safe to clear',
-      x: 680,
-      y: 490,
+      x: 570,
+      y: 560,
       seaLine: 'All of these rebuild.',
       binLine: 'Or keep them in the Locker.',
       rebuild: 'These caches rebuild themselves.',
@@ -454,8 +462,8 @@ export function createWorld(name: string, scout: BirdId | null = 'claude'): Worl
       phrase: 'last opened 11 months ago',
       sea: false,
       stale: true,
-      x: 660,
-      y: 630,
+      x: 640,
+      y: 610,
       disposed: 'none',
       scopeId: 'mac',
       seaBird: null,
@@ -475,8 +483,8 @@ export function createWorld(name: string, scout: BirdId | null = 'claude'): Worl
       phrase: 'last opened 3 weeks ago',
       sea: false,
       stale: false,
-      x: 560,
-      y: 620,
+      x: 520,
+      y: 610,
       disposed: 'none',
       scopeId: 'mac',
       seaBird: null,
@@ -496,8 +504,8 @@ export function createWorld(name: string, scout: BirdId | null = 'claude'): Worl
       phrase: 'downloaded 4 months ago',
       sea: false,
       stale: true,
-      x: 800,
-      y: 590,
+      x: 780,
+      y: 610,
       disposed: 'none',
       scopeId: 'mac',
       seaBird: null,
@@ -517,8 +525,8 @@ export function createWorld(name: string, scout: BirdId | null = 'claude'): Worl
       phrase: 'rebuilt by npm install',
       sea: false,
       stale: true,
-      x: 620,
-      y: 630,
+      x: 540,
+      y: 610,
       disposed: 'none',
       scopeId: 'penguins',
       seaBird: null,
@@ -538,8 +546,8 @@ export function createWorld(name: string, scout: BirdId | null = 'claude'): Worl
       phrase: 'build output',
       sea: true,
       stale: true,
-      x: 860,
-      y: 590,
+      x: 780,
+      y: 610,
       disposed: 'none',
       scopeId: 'penguins',
       seaBird: 'claude',
@@ -560,7 +568,7 @@ export function createWorld(name: string, scout: BirdId | null = 'claude'): Worl
       sea: true,
       stale: true,
       x: 640,
-      y: 620,
+      y: 610,
       disposed: 'none',
       scopeId: 'lighthouse',
       seaBird: 'claude',
@@ -620,6 +628,8 @@ export function createWorld(name: string, scout: BirdId | null = 'claude'): Worl
     customName: 'Scout',
     model: 'opus',
     effort: 'high',
+    rehearsal: true,
+    rehearsedTenths: 0,
   }
 }
 
@@ -749,23 +759,23 @@ export function propDraw(world: World, item: Item, now: number): Draw {
       x: toss.fromX + (toss.toX - toss.fromX) * u,
       y: toss.fromY + (toss.toY - toss.fromY) * u - Math.sin(u * Math.PI) * 120,
       rot: u * 180 * toss.facing,
-      scale: 1,
+      scale: 0.7 - u * 0.3,
       hide: false,
     }
   }
   if (world.carrying === item.id) {
     const you = being(world, 'you')
     return {
-      x: you.x + 18 * you.facing,
-      y: you.y - 34,
-      rot: -8 * you.facing,
-      scale: 1.02,
+      x: you.x + 14 * you.facing,
+      y: you.y - 2,
+      rot: -5 * you.facing,
+      scale: 0.7,
       hide: false,
     }
   }
   if (item.disposed === 'locker') {
     const index = Math.max(0, lockerIndex(world, item.id))
-    return { x: 280 + (index % 5) * 170, y: 630, rot: 0, scale: 1, hide: false }
+    return { x: 280 + (index % 5) * 170, y: 630 - Math.floor(index / 5) * 70, rot: 0, scale: 1, hide: false }
   }
   return { x: item.x, y: item.y, rot: item.form === 'packed' ? -2 : 0, scale: 1, hide: false }
 }
@@ -913,7 +923,7 @@ export function requestBoard(world: World, hold: Hold, now: number) {
 
 export function requestEnter(world: World, room: Room, now: number) {
   if (world.card || world.toss || room === world.room) return
-  let spot = SPOTS.plank
+  let spot = SPOTS.exit[world.room]
   if (world.room === 'quay' && room === 'locker') spot = SPOTS.door.locker
   if (world.room === 'quay' && room === 'glasshouse') spot = SPOTS.door.glasshouse
   walkTo(world, spot.x, spot.y, { type: 'enter', room }, now)
@@ -1103,8 +1113,8 @@ function beginToss(world: World, itemId: string, now: number) {
   if (!item) return
   world.toss = {
     itemId,
-    fromX: you.x + 18 * you.facing,
-    fromY: you.y - 34,
+    fromX: you.x + 14 * you.facing,
+    fromY: you.y - 2,
     toX: SPOTS.chute.x,
     toY: SPOTS.chute.y,
     started: now,
@@ -1124,9 +1134,11 @@ function finishToss(world: World, now: number) {
   if (!item || item.disposed === 'sea') return
   if (item.disposed === 'locker') world.lockerTenths = Math.max(0, world.lockerTenths - item.tenths)
   item.disposed = 'sea'
-  world.freeTenths += item.tenths
   world.splash = { until: now + 700, x: SPOTS.chute.x, y: SPOTS.chute.y }
-  punchline(world, "It's gone.", now)
+  if (world.rehearsal) {
+    world.rehearsedTenths += item.tenths
+    punchline(world, "Splash! Practice throw. It's still on your disk.", now)
+  } else punchline(world, "It's gone.", now)
 }
 
 function finishEmpty(world: World, now: number) {
@@ -1137,10 +1149,12 @@ function finishEmpty(world: World, now: number) {
     const item = itemById(world, id)
     if (item && item.disposed === 'locker') item.disposed = 'sea'
   }
-  world.freeTenths += job.tenths
   world.lockerTenths = 0
-  world.splash = { until: now + 800, x: 640, y: 520 }
-  punchline(world, "It's gone.", now)
+  world.splash = { until: now + 800, x: 1150, y: 430 }
+  if (world.rehearsal) {
+    world.rehearsedTenths += job.tenths
+    punchline(world, "Splash! Practice run. They're still on your disk.", now)
+  } else punchline(world, "It's gone.", now)
 }
 
 export function answer(world: World, yes: boolean, now: number) {
@@ -1259,8 +1273,8 @@ export function cardModel(world: World, now: number): CardView | null {
       }
     }
     return {
-      title: "It's gone if you do this.",
-      meta: `${gbWord(world.lockerTenths)} freed on the pole, if macOS gives it back.`,
+      title: world.rehearsal ? 'This would be for good.' : "It's gone if you do this.",
+      meta: world.rehearsal ? `Practice run. Nothing on your disk changes, and the pole stays put.` : `${gbWord(world.lockerTenths)} freed on the pole, if macOS gives it back.`,
       path: '',
       note: 'The Locker cannot give these back.',
       yes: 'Throw them',
@@ -1275,8 +1289,8 @@ export function cardModel(world: World, now: number): CardView | null {
   if (!item) return null
   if (card.kind === 'sea' && card.face === 2) {
     return {
-      title: "It's gone if you do this.",
-      meta: `${gbWord(item.tenths)} freed on the pole, if macOS gives it back.`,
+      title: world.rehearsal ? 'This would be for good.' : "It's gone if you do this.",
+      meta: world.rehearsal ? `Practice throw. Nothing on your disk changes, and the pole stays put.` : `${gbWord(item.tenths)} freed on the pole, if macOS gives it back.`,
       path: item.path,
       note: `${item.rebuild} No Locker.`.trim(),
       yes: 'Throw it',
@@ -1634,15 +1648,16 @@ export function step(world: World, now: number, dt: number) {
   }
 }
 
+/** Floor spots for live caches, biggest first: the front row's middle, then outward and back. */
 const LIVE_SPOTS: Point[] = [
-  { x: 680, y: 655 },
-  { x: 400, y: 650 },
-  { x: 980, y: 640 },
-  { x: 520, y: 560 },
-  { x: 860, y: 560 },
-  { x: 300, y: 560 },
-  { x: 1100, y: 620 },
-  { x: 680, y: 490 },
+  { x: 670, y: 650 },
+  { x: 500, y: 650 },
+  { x: 840, y: 650 },
+  { x: 570, y: 556 },
+  { x: 740, y: 556 },
+  { x: 400, y: 556 },
+  { x: 910, y: 556 },
+  { x: 340, y: 650 },
 ]
 
 export function useRealDisk(world: World, freeTenths: number, capacityTenths: number) {

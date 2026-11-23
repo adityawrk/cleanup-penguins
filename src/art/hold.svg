@@ -1,0 +1,206 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 708" class="paint-svg" aria-hidden="true">
+  <!-- HULL WALL: warm planks bowing with the hull, with a darker band where the ceiling meets it -->
+  <rect width="1280" height="450" fill="#9a643a"/>
+  <path d="M0 70Q640 96 1280 70V0H0Z" fill="#7d4c29"/>
+  <g stroke="none" fill="#8d5a32">
+    <path d="M0 150Q640 176 1280 150V190Q640 216 0 190Z"/>
+    <path d="M0 270Q640 296 1280 270V310Q640 336 0 310Z"/>
+    <path d="M0 390Q640 416 1280 390V430Q640 456 0 430Z"/>
+  </g>
+  <path d="M0 70Q640 96 1280 70M0 110Q640 136 1280 110M0 150Q640 176 1280 150M0 190Q640 216 1280 190M0 230Q640 256 1280 230M0 270Q640 296 1280 270M0 310Q640 336 1280 310M0 350Q640 376 1280 350M0 390Q640 416 1280 390M0 430Q640 456 1280 430" stroke="#6e4322" stroke-width="3" fill="none"/>
+
+  <g fill="#6e4322">
+    <circle cx="70" cy="90" r="2.4"/><circle cx="330" cy="102" r="2.4"/><circle cx="590" cy="106" r="2.4"/><circle cx="950" cy="100" r="2.4"/><circle cx="1210" cy="90" r="2.4"/>
+    <circle cx="200" cy="216" r="2.4"/><circle cx="700" cy="226" r="2.4"/><circle cx="1010" cy="220" r="2.4"/>
+    <circle cx="120" cy="334" r="2.4"/><circle cx="560" cy="346" r="2.4"/><circle cx="880" cy="342" r="2.4"/>
+  </g>
+
+  <!-- RIBS: curved frames of the hull -->
+  <g stroke="#1a2332" stroke-width="4" stroke-linejoin="round">
+    <path d="M196 0C176 120 170 300 180 452H214C204 300 210 120 230 0Z" fill="#7a4a27"/>
+    <path d="M216 0C200 120 196 300 204 452H214C206 300 210 120 230 0Z" fill="#5f391d" stroke="none"/>
+    <path d="M196 0C176 120 170 300 180 452H214C204 300 210 120 230 0Z" fill="none"/>
+    <path d="M1084 0C1104 120 1110 300 1100 452H1066C1076 300 1070 120 1050 0Z" fill="#7a4a27"/>
+    <path d="M1084 0C1100 120 1104 300 1096 452H1086C1094 300 1090 120 1072 0Z" fill="#5f391d" stroke="none"/>
+    <path d="M1084 0C1104 120 1110 300 1100 452H1066C1076 300 1070 120 1050 0Z" fill="none"/>
+    <path d="M628 0V452H660V0Z" fill="#7a4a27"/>
+    <path d="M648 0V452H660V0Z" fill="#5f391d" stroke="none"/>
+    <path d="M628 0V452H660V0Z" fill="none"/>
+  </g>
+  <!-- ceiling beam -->
+  <g stroke="#1a2332" stroke-width="4" stroke-linejoin="round">
+    <path d="M-4 -4H1284V40Q640 60 -4 40Z" fill="#6e4322"/>
+    <path d="M-4 30Q640 50 1284 30V40Q640 60 -4 40Z" fill="#553219" stroke="none"/>
+    <path d="M-4 40Q640 60 1284 40" fill="none"/>
+  </g>
+  <text x="644" y="34" text-anchor="middle" class="tag-word strong" fill="#e8c48a" stroke="none">CARGO HOLD</text>
+
+  <!-- PORTHOLES with the sea outside; a fish swims past one of them -->
+  <g stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round">
+    <defs>
+      <clipPath id="h-port-a"><circle cx="440" cy="190" r="34"/></clipPath>
+      <clipPath id="h-port-b"><circle cx="850" cy="190" r="34"/></clipPath>
+    </defs>
+    <g clip-path="url(#h-port-a)" stroke="none">
+      <rect x="400" y="150" width="80" height="80" fill="#2a87d6"/>
+      <rect x="400" y="150" width="80" height="30" fill="#8fd2f6"/>
+      <rect x="400" y="180" width="80" height="8" fill="#62b8ee"/>
+      <path d="M404 200q6-4 12 0t12 0M444 214q6-4 12 0t12 0" fill="none" stroke="#c9ecff" stroke-width="2.6"/>
+    </g>
+    <g clip-path="url(#h-port-b)" stroke="none">
+      <rect x="810" y="150" width="80" height="80" fill="#2a87d6"/>
+      <rect x="810" y="150" width="80" height="30" fill="#8fd2f6"/>
+      <rect x="810" y="180" width="80" height="8" fill="#62b8ee"/>
+      <path d="M836 176L852 160L862 170L876 158L894 180Z" fill="#f4faff" stroke="#1a2332" stroke-width="2"/>
+      <g class="h-fish"><path d="M800 208c6-8 18-8 24 0c-6 8-18 8-24 0z" fill="#f27d32" stroke="#1a2332" stroke-width="2"/><path d="M800 208l-8-6v12z" fill="#f27d32" stroke="#1a2332" stroke-width="2"/><circle cx="818" cy="206" r="1.6" fill="#1a2332"/></g>
+    </g>
+    <circle cx="440" cy="190" r="34" fill="none" stroke="#f2c14e" stroke-width="12"/>
+    <circle cx="850" cy="190" r="34" fill="none" stroke="#f2c14e" stroke-width="12"/>
+    <path d="M466 160a40 40 0 0 1 8 52M876 160a40 40 0 0 1 8 52" fill="none" stroke="#d39a2b" stroke-width="6"/>
+    <circle cx="440" cy="190" r="41" fill="none" stroke-width="3.4"/><circle cx="440" cy="190" r="28" fill="none" stroke-width="3"/>
+    <circle cx="850" cy="190" r="41" fill="none" stroke-width="3.4"/><circle cx="850" cy="190" r="28" fill="none" stroke-width="3"/>
+    <g fill="#d39a2b" stroke-width="1.6">
+      <circle cx="440" cy="153" r="3"/><circle cx="477" cy="190" r="3"/><circle cx="440" cy="227" r="3"/><circle cx="403" cy="190" r="3"/>
+      <circle cx="850" cy="153" r="3"/><circle cx="887" cy="190" r="3"/><circle cx="850" cy="227" r="3"/><circle cx="813" cy="190" r="3"/>
+    </g>
+    <path d="M422 172l10-8M832 172l10-8" stroke="#fff" stroke-width="4" opacity=".85"/>
+  </g>
+
+  <!-- LANTERNS hanging from the beam -->
+  <g stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round">
+    <g class="h-lantern h-lantern-a">
+      <path d="M330 48V82" stroke-width="3"/>
+      <path d="M316 84h28l-4 10h-20z" fill="#3d4d63" stroke-width="3"/>
+      <rect x="318" y="94" width="24" height="32" rx="5" fill="#ffe27a" stroke-width="3.4"/>
+      <path d="M330 96v28M320 110h20" stroke="#3d4d63" stroke-width="2.4"/>
+      <path d="M316 126h28l-3 8h-22z" fill="#3d4d63" stroke-width="3"/>
+    </g>
+    <g class="h-lantern h-lantern-b">
+      <path d="M960 50V84" stroke-width="3"/>
+      <path d="M946 86h28l-4 10h-20z" fill="#3d4d63" stroke-width="3"/>
+      <rect x="948" y="96" width="24" height="32" rx="5" fill="#ffe27a" stroke-width="3.4"/>
+      <path d="M960 98v28M950 112h20" stroke="#3d4d63" stroke-width="2.4"/>
+      <path d="M946 128h28l-3 8h-22z" fill="#3d4d63" stroke-width="3"/>
+    </g>
+  </g>
+
+  <!-- CARGO NET slung between the ribs with floats in it -->
+  <g stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M700 60Q760 170 820 60" fill="none" stroke="#c9a46a" stroke-width="4"/>
+    <path d="M712 84l94 0M722 108l74 0M736 132l46 0M716 70l34 70M748 64l10 90M784 66l-10 86M804 70l-30 70" fill="none" stroke="#c9a46a" stroke-width="2.4"/>
+    <circle cx="742" cy="116" r="12" fill="#e24b3f" stroke-width="3"/>
+    <circle cx="772" cy="122" r="10" fill="#ffd23f" stroke-width="3"/>
+    <path d="M736 110a8 8 0 0 1 10-4" stroke="#fff" stroke-width="3" fill="none"/>
+  </g>
+
+  <!-- WALL DETAIL: a sea chart, a rope on a peg, a life ring, a tally board -->
+  <g stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M928 252l96-6l4 70l-96 6z" fill="#f3e3bf" stroke-width="3.6"/>
+    <path d="M940 270c14-8 22 6 34-2s20 4 30-2M944 296c10 4 20-6 30 0s22-4 34 2" fill="none" stroke="#7fb2d4" stroke-width="3"/>
+    <path d="M956 282l6 6m0-6l-6 6" stroke="#e24b3f" stroke-width="2.6"/>
+    <path d="M990 262c6 8 4 20-4 26" fill="none" stroke="#8d5a32" stroke-width="2" stroke-dasharray="3 4"/>
+    <circle cx="976" cy="250" r="4" fill="#e24b3f" stroke-width="2"/>
+    <path d="M296 232v-12" stroke-width="5"/>
+    <path d="M296 226c-26 0-34 18-30 34c4 18 26 22 34 10c10-14-2-30-16-26" fill="none" stroke="#c9a46a" stroke-width="7"/>
+    <path d="M296 226c-26 0-34 18-30 34c4 18 26 22 34 10c10-14-2-30-16-26" fill="none" stroke-width="1.8" opacity=".6"/>
+    <path d="M300 272c2 14-2 26-6 34" fill="none" stroke="#c9a46a" stroke-width="5"/>
+    <rect x="712" y="250" width="84" height="64" rx="6" fill="#2d3d34" stroke-width="3.6"/>
+    <rect x="712" y="250" width="84" height="64" rx="6" fill="none" stroke="#9a6236" stroke-width="6"/>
+    <rect x="706" y="244" width="96" height="76" rx="9" fill="none" stroke-width="3"/>
+    <path d="M726 268v18M734 268v18M742 268v18M750 268v18M722 284l32-14M770 268v18M778 268v18" stroke="#eef3f7" stroke-width="2.6"/>
+    <path d="M726 300h44" stroke="#eef3f7" stroke-width="2.6" opacity=".6"/>
+  </g>
+
+  <!-- back-wall cargo: barrels and crates against the hull -->
+  <g stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M520 448V384c0-8 52-8 52 0v64z" fill="#b07a3c" stroke-width="4"/>
+    <path d="M520 400c0 6 52 6 52 0M520 432c0 6 52 6 52 0" fill="none" stroke="#5f391d" stroke-width="4"/>
+    <path d="M556 386v60" stroke="#8d5a32" stroke-width="6"/>
+    <path d="M520 448V384c0-8 52-8 52 0v64z" fill="none" stroke-width="4"/>
+    <ellipse cx="546" cy="384" rx="26" ry="5" fill="#c48945" stroke-width="3"/>
+    <rect x="732" y="398" width="62" height="50" rx="3" fill="#e0b56a" stroke-width="4"/>
+    <path d="M734 414h58M734 430h58" stroke="#b07a3c" stroke-width="3"/>
+    <rect x="770" y="398" width="24" height="50" fill="#c9974f" stroke="none"/>
+    <rect x="732" y="398" width="62" height="50" rx="3" fill="none" stroke-width="4"/>
+    <rect x="744" y="360" width="40" height="38" rx="3" fill="#e0b56a" stroke-width="4"/>
+    <path d="M746 374h36" stroke="#b07a3c" stroke-width="3"/>
+    <text x="764" y="392" text-anchor="middle" font-size="11" font-weight="700" fill="#8d5a32" stroke="none" font-family="Fredoka">FRAGILE</text>
+  </g>
+
+  <!-- FLOOR: planks toward the viewer -->
+  <g stroke="none"><path d="M-37.3 446L40.6 446L-68 708L-160 708Z" fill="#cc955a"/><path d="M40.6 446L118.5 446L24 708L-68 708Z" fill="#c48a4e"/><path d="M118.5 446L196.4 446L116 708L24 708Z" fill="#cc955a"/><path d="M196.4 446L274.3 446L208 708L116 708Z" fill="#c48a4e"/><path d="M274.3 446L352.2 446L300 708L208 708Z" fill="#cc955a"/><path d="M352.2 446L430.0 446L392 708L300 708Z" fill="#c48a4e"/><path d="M430.0 446L507.9 446L484 708L392 708Z" fill="#cc955a"/><path d="M507.9 446L585.8 446L576 708L484 708Z" fill="#c48a4e"/><path d="M585.8 446L663.7 446L668 708L576 708Z" fill="#cc955a"/><path d="M663.7 446L741.6 446L760 708L668 708Z" fill="#c48a4e"/><path d="M741.6 446L819.5 446L852 708L760 708Z" fill="#cc955a"/><path d="M819.5 446L897.4 446L944 708L852 708Z" fill="#c48a4e"/><path d="M897.4 446L975.3 446L1036 708L944 708Z" fill="#cc955a"/><path d="M975.3 446L1053.1 446L1128 708L1036 708Z" fill="#c48a4e"/><path d="M1053.1 446L1131.0 446L1220 708L1128 708Z" fill="#cc955a"/><path d="M1131.0 446L1208.9 446L1312 708L1220 708Z" fill="#c48a4e"/><path d="M1208.9 446L1286.8 446L1404 708L1312 708Z" fill="#cc955a"/><path d="M1286.8 446L1364.7 446L1496 708L1404 708Z" fill="#c48a4e"/></g>
+  <path d="M-37.3 446L-160 708M40.6 446L-68 708M118.5 446L24 708M196.4 446L116 708M274.3 446L208 708M352.2 446L300 708M430.0 446L392 708M507.9 446L484 708M585.8 446L576 708M663.7 446L668 708M741.6 446L760 708M819.5 446L852 708M897.4 446L944 708M975.3 446L1036 708M1053.1 446L1128 708M1131.0 446L1220 708M1208.9 446L1312 708M1286.8 446L1404 708" stroke="#8d5a32" stroke-width="3" fill="none"/>
+  <path d="M-57.9 490L22.4 490M-6.7 560L77.4 560M52.1 630L139.9 630M173.7 520L255.6 520M235.3 600L321.5 600M305.6 680L396.1 680M416.4 540L499.3 540M503.9 490L584.2 490M581.5 560L665.6 560M666.7 630L754.5 630M746.8 520L828.7 520M838.6 600L924.8 600M939.0 680L1029.5 680M997.0 540L1080.0 540M1065.7 490L1146.0 490M1169.7 560L1253.8 560M1281.3 630L1369.1 630M1319.9 520L1401.8 520" stroke="#8d5a32" stroke-width="3" fill="none"/>
+
+  <path d="M0 446H1280V462Q640 470 0 462Z" fill="#a8713c"/>
+  <path d="M-4 446H1284" stroke="#1a2332" stroke-width="4"/>
+  <!-- warm lantern light pooled on the floor -->
+  <ellipse cx="330" cy="566" rx="150" ry="30" fill="#dcab6c"/>
+  <ellipse cx="960" cy="566" rx="150" ry="30" fill="#dcab6c"/>
+
+  <!-- LADDER up to the hatch: the way back to the quay -->
+  <g class="hot h-exit" data-act="enter" data-room="quay" stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round">
+    <title>Up to the quay</title>
+    <path d="M30 0H150V44Q90 52 30 44Z" fill="#8fd2f6" stroke-width="4"/>
+    <path d="M36 0H144V20Q90 26 36 20Z" fill="#c4ebfb" stroke="none"/>
+    <path d="M44 44L22 470H160L136 44Z" fill="#fff6c8" opacity=".28" stroke="none"/>
+    <rect x="58" y="40" width="12" height="474" rx="4" fill="#9a6236" stroke-width="3.6"/>
+    <rect x="112" y="40" width="12" height="474" rx="4" fill="#9a6236" stroke-width="3.6"/>
+    <path d="M70 80h42M70 130h42M70 180h42M70 230h42M70 280h42M70 330h42M70 380h42M70 430h42M70 480h42" stroke="#c48945" stroke-width="9"/>
+    <path d="M70 80h42M70 130h42M70 180h42M70 230h42M70 280h42M70 330h42M70 380h42M70 430h42M70 480h42" stroke="#1a2332" stroke-width="2" opacity=".5" transform="translate(0 4)"/>
+    <rect x="46" y="250" width="92" height="30" rx="8" fill="#f3d7a1" stroke-width="3.4"/>
+    <text x="92" y="271" text-anchor="middle" class="tag-word strong" fill="#1a2332" stroke="none">QUAY &#8593;</text>
+  </g>
+
+  <!-- THE LOCKER BIN: a steel footlocker with its lid up. It keeps things and gives them back. -->
+  <g class="hot h-bin" data-act="hole" data-hole="bin" stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round">
+    <title>The Locker bin. It comes back.</title>
+    <ellipse cx="248" cy="512" rx="98" ry="12" fill="#8d5a32" opacity=".55" stroke="none"/>
+    <path d="M168 400L182 330H318L328 400Z" fill="#6d859b" stroke-width="4.4"/>
+    <path d="M182 330H318L322 352H178Z" fill="#7d95ab" stroke="none"/>
+    <path d="M190 344h120M188 360h126M186 376h130" stroke="#5c7388" stroke-width="3"/>
+    <path d="M168 400L182 330H318L328 400Z" fill="none" stroke-width="4.4"/>
+    <rect x="160" y="400" width="176" height="18" rx="3" fill="#243044" stroke-width="4"/>
+    <rect x="156" y="410" width="184" height="98" rx="8" fill="#5c7388" stroke-width="4.6"/>
+    <rect x="294" y="414" width="42" height="90" fill="#4b6075" stroke="none"/>
+    <path d="M160 436h176" stroke="#45596c" stroke-width="3"/>
+    <rect x="156" y="410" width="184" height="98" rx="8" fill="none" stroke-width="4.6"/>
+    <path d="M156 424v-12a6 6 0 0 1 6-6h14v18zM340 424v-12a6 6 0 0 0-6-6h-14v18zM156 494v12a6 6 0 0 0 6 6h14v-18zM340 494v12a6 6 0 0 1-6 6h-14v-18z" fill="#f2c14e" stroke-width="2.6"/>
+    <text x="248" y="470" text-anchor="middle" class="sign-word" fill="#e6f4ff" stroke="none">LOCKER</text>
+    <rect x="200" y="478" width="96" height="22" rx="6" fill="#fff6e4" stroke-width="2.6"/>
+    <text x="248" y="494" text-anchor="middle" class="tag-word" font-size="12" fill="#1a2332" stroke="none">comes back</text>
+    <rect x="236" y="410" width="24" height="18" rx="3" fill="#f2c14e" stroke-width="2.6"/>
+  </g>
+
+  <!-- THE SEA DOOR: a cargo door open in the hull, with a slide down to the water. It is permanent. -->
+  <g class="hot h-sea" data-act="hole" data-hole="sea" stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round">
+    <title>The sea. Gone for good.</title>
+    <defs><clipPath id="h-door"><path d="M1110 450V286Q1110 250 1146 250H1216Q1252 250 1252 286V450Z"/></clipPath></defs>
+    <g clip-path="url(#h-door)" stroke="none">
+      <rect x="1100" y="240" width="160" height="220" fill="#2a87d6"/>
+      <rect x="1100" y="240" width="160" height="96" fill="#8fd2f6"/>
+      <rect x="1100" y="320" width="160" height="16" fill="#62b8ee"/>
+      <path d="M1130 336L1154 304L1170 316L1186 296L1212 336Z" fill="#f4faff" stroke="#1a2332" stroke-width="2.4"/>
+      <g class="h-swell" fill="none" stroke="#c9ecff" stroke-width="3" stroke-linecap="round">
+        <path d="M1116 372q8-6 16 0t16 0"/><path d="M1180 392q8-6 16 0t16 0"/><path d="M1130 420q8-6 16 0t16 0"/><path d="M1206 352q6-5 12 0t12 0"/>
+      </g>
+    </g>
+    <path d="M1100 456V284Q1100 240 1144 240H1218Q1262 240 1262 284V456" fill="none" stroke="#7a4a27" stroke-width="20"/>
+    <path d="M1100 456V284Q1100 240 1144 240H1218Q1262 240 1262 284V456" fill="none" stroke="#e24b3f" stroke-width="10" stroke-dasharray="14 14" stroke-linecap="butt"/>
+    <path d="M1088 456V284Q1088 228 1144 228H1218Q1274 228 1274 284V456" fill="none" stroke-width="4"/>
+    <path d="M1112 456V286Q1112 252 1146 252H1216Q1250 252 1250 286V456" fill="none" stroke-width="4"/>
+    <!-- the slide from the floor to the sill -->
+    <path d="M1040 540L1112 456H1250L1196 540Z" fill="#c48945" stroke-width="4"/>
+    <path d="M1060 530L1118 464H1132L1076 530Z" fill="#e0b56a" stroke="none"/>
+    <path d="M1048 530L1112 456M1190 540L1246 458" stroke="#8d5a32" stroke-width="3"/>
+    <path d="M1040 540L1112 456H1250L1196 540Z" fill="none" stroke-width="4"/>
+    <!-- sign -->
+    <rect x="1098" y="160" width="166" height="56" rx="10" fill="#2f6fb8" stroke-width="4"/>
+    <rect x="1104" y="166" width="154" height="10" rx="4" fill="#5aa0e6" stroke="none"/>
+    <text x="1166" y="196" text-anchor="middle" class="sign-word" fill="#fff6e4" stroke="none">SEA</text>
+    <path d="M1206 186q6-6 12 0t12 0t12 0" fill="none" stroke="#c9ecff" stroke-width="3"/>
+    <rect x="1112" y="206" width="138" height="20" rx="6" fill="#fff6e4" stroke-width="2.6"/>
+    <text x="1181" y="221" text-anchor="middle" class="tag-word" font-size="12" fill="#b03329" stroke="none" font-weight="700">gone for good</text>
+    <path d="M1150 160V140M1214 160V140" stroke-width="3"/>
+  </g>
+</svg>

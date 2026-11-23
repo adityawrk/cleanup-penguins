@@ -33,7 +33,7 @@ button { appearance: none; background: none; border: 0; padding: 0; }
   user-select: none;
 }
 #stage { position: absolute; left: 0; right: 0; top: 0; height: 708px; overflow: hidden; isolation: isolate; z-index: 1; }
-#track { display: flex; width: 5120px; height: 100%; transition: transform 600ms cubic-bezier(.22, .8, .2, 1); }
+#track { display: flex; width: 5120px; height: 100%; }
 #track[data-room="hold"] { transform: translateX(-1280px); }
 #track[data-room="locker"] { transform: translateX(-2560px); }
 #track[data-room="glasshouse"] { transform: translateX(-3840px); }
@@ -45,22 +45,11 @@ button { appearance: none; background: none; border: 0; padding: 0; }
 .objects { position: absolute; inset: 0; z-index: 4; pointer-events: none; }
 .objects .prop, .objects .being { pointer-events: auto; }
 
-.hold-wall { position: absolute; inset: 0 0 46% 0; background: linear-gradient(#4a3424, #3a2416); }
-.porthole { position: absolute; right: 78px; top: 54px; width: 110px; height: 110px; border-radius: 50%; background: linear-gradient(#8fd4f2, #1f78b6); border: 10px solid #d7d2c8; box-shadow: 0 0 0 4px var(--ink), inset 0 0 0 4px var(--ink); }
-.hold-floor { position: absolute; left: 0; right: 0; bottom: 0; height: 58%; background: repeating-linear-gradient(#e0b56a, #e0b56a 24px, #c48945 24px 28px); border-top: 4px solid var(--ink); }
-.path-sign { position: absolute; left: 50%; top: 28px; transform: translateX(-50%); max-width: 760px; background: #f3d7a1; border: 3px solid var(--ink); border-radius: 12px; padding: 8px 14px; font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 14px; font-weight: 500; letter-spacing: -0.01em; z-index: 3; }
-.plank { left: 28px; top: 560px; background: var(--wood); border: 3px solid var(--ink); border-radius: 12px; padding: 8px 14px; font-weight: 700; z-index: 5; }
-.plank.light { background: #efe6d6; }
-.spot { position: absolute; z-index: 3; transform: translate(-50%, -50%); }
-.hole { width: 148px; border: 4px solid var(--ink); border-radius: 22px; padding: 12px 8px 10px; text-align: center; }
-.hole.sea { background: #c9854a; }
-.hole.bin { background: #efe6d6; }
-.hole .mouth { display: block; margin: 0 auto 8px; border: 4px solid var(--ink); }
-.hole.sea .mouth { width: 78px; height: 64px; border-radius: 40px; background: radial-gradient(circle at 50% 30%, #b7e6fb, #0e4f86 72%); }
-.hole.bin .mouth { width: 86px; height: 48px; border-radius: 8px 8px 16px 16px; background: #243044; }
-.hole-name { display: block; font-weight: 700; }
-.hole-note { display: block; font-size: 12px; font-weight: 600; }
-#sheet { position: absolute; left: 390px; top: 78px; width: 460px; background: var(--cream); border: 3px solid var(--ink); border-radius: 8px; padding: 14px 16px; z-index: 6; box-shadow: 4px 4px 0 rgba(26, 35, 50, .12); }
+.path-sign { position: absolute; left: 50%; top: 58px; translate: -50% 0; max-width: 560px; background: #f3d7a1; border: 3px solid var(--ink); border-radius: 10px; padding: 6px 14px; font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 13px; font-weight: 500; letter-spacing: -0.01em; z-index: 3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; box-shadow: inset 0 -5px 0 #e3bd80, 0 3px 0 rgba(26, 35, 50, .2); pointer-events: none; }
+.path-sign:empty { display: none; }
+.path-sign::before, .path-sign::after { content: ""; position: absolute; top: -18px; width: 3px; height: 16px; background: var(--ink); }
+.path-sign::before { left: 22px; } .path-sign::after { right: 22px; }
+#sheet { position: absolute; left: 50%; top: 104px; translate: -50% 0; width: 470px; background: var(--cream); border: 3px solid var(--ink); border-radius: 8px; padding: 14px 16px; z-index: 6; box-shadow: 4px 4px 0 rgba(26, 35, 50, .12); }
 #sheet h3 { margin: 0 0 6px; font-size: 22px; }
 #sheet p { margin: 0 0 8px; font-weight: 600; }
 #sheet-path, #sheet-brief { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 13px; font-weight: 500; letter-spacing: -0.01em; }
@@ -123,40 +112,6 @@ button { appearance: none; background: none; border: 0; padding: 0; }
 .bubble:after { content: ""; position: absolute; left: 50%; bottom: -8px; width: 12px; height: 12px; background: #fff; border-right: 3px solid var(--ink); border-bottom: 3px solid var(--ink); transform: translateX(-50%) rotate(45deg); }
 .bubble.pop { animation: pop 160ms ease; }
 
-.prop { width: 150px; height: 168px; margin: -168px 0 0 -75px; cursor: pointer; }
-.tag { position: absolute; top: 0; left: 8px; right: 8px; background: var(--cream); border: 3px solid var(--ink); border-radius: 4px 4px 12px 12px; padding: 6px 6px 8px; text-align: center; }
-.tag:before { content: ""; position: absolute; top: -14px; left: 50%; width: 2px; height: 14px; background: var(--ink); }
-.tag b { display: block; font-size: 16px; }
-.tag span { display: block; font-size: 13px; font-weight: 650; }
-.tag em { display: block; font-style: normal; font-size: 12px; font-weight: 500; color: #5c4a32; }
-.art { position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); }
-/* A tied cloth sack: a bottom-heavy body with one darker fold, a gathered neck of cloth above, and a rope tie. */
-.art.sack, .art.packed {
-  width: 86px;
-  height: 68px;
-  background: #d9b47c;
-  border: 4px solid var(--ink);
-  border-radius: 42% 42% 46% 46% / 40% 40% 60% 60%;
-  box-shadow: inset -14px -9px 0 #b98b51;
-}
-.art.packed { width: 104px; height: 74px; background: #cfa66c; box-shadow: inset -16px -10px 0 #a87a45; }
-.art.sack::before, .art.packed::before {
-  content: ""; position: absolute; left: 50%; top: -20px; width: 38px; height: 26px; margin-left: -19px;
-  background: #d9b47c; border: 4px solid var(--ink);
-  border-radius: 50% 50% 30% 30% / 64% 64% 36% 36%;
-  box-shadow: inset -7px -3px 0 #b98b51;
-}
-.art.packed::before { background: #cfa66c; box-shadow: inset -7px -3px 0 #a87a45; }
-.art.sack::after, .art.packed::after {
-  content: ""; position: absolute; left: 50%; top: -7px; width: 34px; height: 13px; margin-left: -17px;
-  background: #8d5a32; border: 3px solid var(--ink); border-radius: 7px;
-}
-.art.crate { width: 92px; height: 72px; background: repeating-linear-gradient(#e0b56a 0 14px, #c48945 14px 18px); border: 4px solid var(--ink); border-radius: 4px; box-shadow: inset 9px 0 0 #b07a3c, inset -9px 0 0 #b07a3c; }
-.art.trunk { width: 100px; height: 64px; background: #8d4f3a; border: 4px solid var(--ink); border-radius: 10px 10px 6px 6px; box-shadow: inset 0 -14px 0 #6f3a2a; }
-.art.trunk::before { content: ""; position: absolute; left: 50%; top: 16px; width: 18px; height: 14px; margin-left: -9px; background: #f0d78c; border: 3px solid var(--ink); border-radius: 3px; z-index: 1; }
-.art.trunk::after { content: ""; position: absolute; top: 0; bottom: 0; left: 16px; right: 16px; border-left: 7px solid #c99a4a; border-right: 7px solid #c99a4a; }
-.art.disk { width: 74px; height: 74px; border-radius: 50%; background: radial-gradient(circle, #eef4f8 0 7px, var(--ink) 7px 10px, #b9c9d6 10px 16px, #d7e4ee 16px); border: 4px solid var(--ink); box-shadow: inset -9px -8px 0 #a9bccb; }
-
 /* The floor's front edge runs under the dock in every room, so the dock sits on the picture. */
 #fit::before {
   content: ""; position: absolute; left: 0; right: 0; top: 708px; bottom: 0; z-index: 0;
@@ -191,7 +146,7 @@ button { appearance: none; background: none; border: 0; padding: 0; }
 /* The big portrait: a round window with a pale sky, a flat floor band, and the item standing on it. */
 .card-portrait {
   grid-area: art; width: 148px; height: 148px; border-radius: 50%;
-  display: grid; place-items: end center; padding-bottom: 22px;
+  display: grid; place-items: end center; padding-bottom: 14px;
   background: #cdeeff; border: 5px solid var(--ink);
   box-shadow: inset 0 -30px 0 #9fd3f5, 0 0 0 5px #a8d8ff, 0 7px 0 5px #1b5fae;
 }
@@ -212,9 +167,8 @@ button { appearance: none; background: none; border: 0; padding: 0; }
 .card-actions button:focus-visible, .who-grid button:focus-visible { outline: 4px solid #fff; outline-offset: 3px; }
 .card-actions button.locked { filter: saturate(.4); }
 .card-icon { width: 54px; height: 36px; margin: 0 auto 8px; }
-.card-icon.art { position: relative; left: auto; bottom: auto; transform: none; }
-.card-portrait .card-icon.art { margin: 0; transform: scale(1.25); transform-origin: 50% 100%; }
-.card-portrait .card-icon.art.packed { transform: scale(1.1); }
+.card-icon.art { width: 124px; height: 104px; margin: 0; }
+.card-icon.art .item-art { display: block; width: 100%; height: 100%; }
 #card.face-2 .card-actions { flex-direction: row-reverse; }
 #card.face-2 #card-yes.locked {
   background-color: #eef8ff;
@@ -434,6 +388,42 @@ button { appearance: none; background: none; border: 0; padding: 0; }
 .flap-cell.dot:after { display: none; }
 .flap-cell.tick { animation: tick 280ms ease; }
 .sub { font-size: 13px; font-weight: 650; }
-#mini { position: absolute; top: 16px; left: 16px; z-index: 6; background: #f3d7a1; border: 3px solid var(--ink); border-radius: 14px; padding: 6px 8px 8px; text-align: center; box-shadow: 0 4px 0 rgba(26, 35, 50, .25); }
+#mini { position: absolute; top: 14px; right: 16px; z-index: 6; background: #f3d7a1; border: 3px solid var(--ink); border-radius: 14px; padding: 6px 8px 8px; text-align: center; box-shadow: 0 4px 0 rgba(26, 35, 50, .25); }
 #mini .flap-cell { width: 22px; height: 30px; font-size: 18px; }
 #fit[data-room="quay"] #mini { visibility: hidden; }
+
+/* ───────────── Items ─────────────
+   A drawn object standing on the floor, its size stamped on it, and a small name plate in front.
+   The plate shows the phrase only for the nearest item. Held items hide the plate. */
+.prop { position: absolute; left: 0; top: 0; width: 120px; height: 100px; margin: -100px 0 0 -60px; transform-origin: 50% 100%; cursor: pointer; }
+.prop .art { position: absolute; inset: 0; }
+.prop .item-art { display: block; width: 120px; height: 100px; overflow: visible; }
+.prop:hover .art { animation: wobble 420ms ease; }
+.item-art .stamp { font: 700 19px Fredoka, sans-serif; letter-spacing: -.02em; }
+.item-art .stamp.small { font-size: 14px; }
+.item-art .stamp.tiny { font-size: 11px; }
+.prop .tag {
+  position: absolute; left: 50%; top: calc(100% + 4px); translate: -50% 0; scale: var(--inv, 1); transform-origin: 50% 0;
+  width: max-content; max-width: 150px; text-align: center; pointer-events: none;
+  background: var(--cream); border: 2.5px solid var(--ink); border-radius: 8px; padding: 2px 8px 3px;
+  box-shadow: 0 2px 0 rgba(26, 35, 50, .2);
+}
+.prop .tag b { display: block; font-size: 12px; line-height: 1.15; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.prop .tag span { display: none; }
+.prop .tag em { display: none; font-style: normal; font-size: 11px; font-weight: 500; color: #5c4a32; line-height: 1.2; }
+.prop.is-near .tag, .prop:hover .tag { background: #fff; z-index: 2; }
+.prop.is-near .tag em, .prop:hover .tag em { display: block; }
+.prop.is-held .tag { display: none; }
+.prop.is-heave .art { animation: heave-art 280ms ease-out; }
+#room-locker .prop .tag { background: #e6f4ff; }
+@keyframes wobble { 30% { transform: rotate(-4deg); } 60% { transform: rotate(3deg); } }
+@keyframes heave-art { 0% { transform: scale(1.08, .88); } 60% { transform: scale(.96, 1.06) translateY(-6px); } 100% { transform: none; } }
+
+/* Room change: the new room opens out of a ring of ink, centered on the player. */
+#wipe { position: absolute; left: var(--wx, 640px); top: var(--wy, 600px); width: 0; height: 0; z-index: 8; pointer-events: none; border-radius: 50%; translate: -50% -50%; box-shadow: 0 0 0 3000px #0f2c4c; opacity: 0; }
+#wipe.run { animation: iris 640ms cubic-bezier(.55, 0, .25, 1); }
+@keyframes iris {
+  0% { opacity: 1; width: 0; height: 0; }
+  18% { opacity: 1; width: 40px; height: 40px; }
+  100% { opacity: 1; width: 2800px; height: 2800px; }
+}

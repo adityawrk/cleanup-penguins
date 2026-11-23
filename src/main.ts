@@ -7,6 +7,8 @@ import './style.css'
 import { HarborAudio } from './audio'
 import quayArt from './art/quay.svg?raw'
 import quayFore from './art/quay-fore.svg?raw'
+import holdArt from './art/hold.svg?raw'
+import { itemSvg, sizeScale } from './items'
 import {
   SPOTS,
   answer,
@@ -66,7 +68,7 @@ import {
   type World,
 } from './sim'
 
-const ART: Record<string, string> = { quay: quayArt, 'quay-fore': quayFore }
+const ART: Record<string, string> = { quay: quayArt, 'quay-fore': quayFore, hold: holdArt }
 for (const host of document.querySelectorAll<HTMLElement>('.paint[data-art]')) {
   host.innerHTML = ART[host.dataset.art ?? ''] ?? ''
 }
@@ -111,8 +113,6 @@ for (const id of ['you', 'claude', 'codex', 'cursor', 'custom'] as const) {
 for (const item of world.items) ensureProp(item)
 void loadThisMac()
 
-placeSpot(must('#spot-bin'), SPOTS.bin)
-placeSpot(must('#spot-chute'), SPOTS.chute)
 
 must('#hello-line').textContent = `${being(world, 'you').name} and ${being(world, 'claude').name}`
 must('#hello-go').addEventListener('click', (event) => {
@@ -283,6 +283,7 @@ function sync(now: number) {
   for (const actor of world.beings) if (actor.bubble) spoken = `${actor.name}: ${actor.bubble}`
   if (live.textContent !== spoken) live.textContent = spoken
 
+  const nearId = world.room === 'hold' || world.room === 'locker' ? nearestLiftable(world)?.id ?? null : null
   for (const item of world.items) {
     const el = ensureProp(item)
     const draw = propDraw(world, item, now)
@@ -291,13 +292,17 @@ function sync(now: number) {
     if (!visible) continue
     const parent = world.carrying === item.id ? roomObjects(world.room) : item.disposed === 'locker' ? roomObjects('locker') : roomObjects('hold')
     if (el.parentElement !== parent) parent.appendChild(el)
-    const depth = draw.scale * (0.9 + Math.min(1, Math.max(0, (draw.y - 470) / 220)) * 0.16)
+    const held = world.carrying === item.id || world.toss?.itemId === item.id
+    const depth = draw.scale * sizeScale(item.tenths) * (0.9 + Math.min(1, Math.max(0, (draw.y - 470) / 220)) * 0.16)
     el.style.transform = `translate(${draw.x}px, ${draw.y}px) rotate(${draw.rot}deg) scale(${depth})`
+    el.style.setProperty('--inv', String(1 / depth))
     const you = being(world, 'you')
     el.style.zIndex = world.carrying === item.id ? String(Math.round(you.y) + 2) : world.toss?.itemId === item.id ? '900' : String(Math.round(draw.y))
-    el.querySelector('.t-size')!.textContent = gbWord(item.tenths)
-    el.querySelector('.t-name')!.textContent = item.name
-    el.querySelector('.t-phrase')!.textContent = item.phrase
+    el.classList.toggle('is-held', held)
+    el.classList.toggle('is-near', !held && nearId === item.id)
+    setNodeText(el.querySelector('.t-size')!, gbWord(item.tenths))
+    setNodeText(el.querySelector('.t-name')!, item.name)
+    setNodeText(el.querySelector('.t-phrase')!, item.phrase)
   }
 
   if (world.splash) {
@@ -486,8 +491,14 @@ function syncCard(now: number) {
   no.classList.toggle('is-focus', model.focus === 'no')
   yes.classList.toggle('locked', model.locked)
   card.classList.toggle('face-2', model.yes === 'Throw it' || model.yes === 'Throw them')
-  const icon = must('#card-icon')
-  icon.className = model.icon ? `card-icon art ${model.icon}` : 'card-icon'
+  const icon = must<HTMLElement>('#card-icon')
+  const cardItem = world.card && 'itemId' in world.card ? world.items.find((entry) => entry.id === (world.card as { itemId: string }).itemId) : undefined
+  const iconKey = model.icon ? `${model.icon}|${cardItem?.name ?? 'locker'}|${cardItem?.tenths ?? world.lockerTenths}` : ''
+  if (icon.dataset.key !== iconKey) {
+    icon.dataset.key = iconKey
+    icon.className = model.icon ? 'card-icon art' : 'card-icon'
+    icon.innerHTML = model.icon ? itemSvg({ form: model.icon, name: cardItem?.name ?? 'The Locker', tenths: cardItem?.tenths ?? world.lockerTenths }) : ''
+  }
   const key = `${model.title}|${model.yes}|${model.focus}`
   if (key !== shownCard) {
     shownCard = key
@@ -519,6 +530,12 @@ function sound(now: number) {
   if (world.room !== prevRoom) {
     prevRoom = world.room
     audio.creak()
+    const wipe = must<HTMLElement>('#wipe')
+    wipe.style.setProperty('--wx', `${you.x}px`)
+    wipe.style.setProperty('--wy', `${you.y - 50}px`)
+    wipe.classList.remove('run')
+    void wipe.offsetWidth
+    wipe.classList.add('run')
   }
   if (world.freeTenths !== prevFree) {
     prevFree = world.freeTenths
@@ -738,17 +755,13 @@ function renderFlap(el: HTMLElement, text: string) {
   while (el.childElementCount > text.length) el.lastElementChild?.remove()
 }
 
-function placeSpot(el: HTMLElement, point: { x: number; y: number }) {
-  el.style.left = `${point.x}px`
-  el.style.top = `${point.y}px`
-}
-
 function ensureProp(item: Item): HTMLElement {
   const existing = props.get(item.id)
   if (existing) return existing
   const node = clone('tpl-prop')
   node.dataset.id = item.id
-  node.querySelector('.art')!.classList.add(item.form)
+  node.querySelector('.art')!.innerHTML = itemSvg(item)
+  node.dataset.form = item.form
   props.set(item.id, node)
   return node
 }
@@ -794,4 +807,8 @@ catcher.addEventListener('click', () => {
 function setText(selector: string, text: string) {
   const node = document.querySelector(selector)
   if (node && node.textContent !== text) node.textContent = text
+}
+
+function setNodeText(node: Element, text: string) {
+  if (node.textContent !== text) node.textContent = text
 }
