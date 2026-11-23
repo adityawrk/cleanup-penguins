@@ -434,7 +434,8 @@
     <path d="M1150 160V140M1214 160V140" stroke-width="3"/>
   </g>
   <!-- the ship's cat, asleep on the barrel pyramid: tail flicks, z's drift -->
-  <g class="h-cat" stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round">
+  <g class="h-cat hot" data-act="toy" data-toy="cat" stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round">
+    <title>The ship's cat</title>
     <path d="M888 380C888 364 902 356 918 356C936 356 946 366 946 378C946 384 940 386 916 386C896 386 888 386 888 380Z" fill="#f08a2c" stroke-width="3.6"/>
     <path d="M930 360C940 364 946 372 946 378C946 384 940 386 922 386C934 380 936 370 930 360Z" fill="#c4661a" stroke="none"/>
     <path d="M898 366c4-3 8-4 12-3M904 374c4-2 8-2 12-1M924 364l4 6" fill="none" stroke="#c4661a" stroke-width="2.4"/>

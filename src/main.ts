@@ -1477,6 +1477,31 @@ function playToy(toy: string, now: number) {
     audio.horn()
     window.setTimeout(() => beam?.classList.remove('flash'), 2400)
   }
+  if (toy === 'cat') {
+    const cat = document.querySelector<SVGElement>('.h-cat')
+    cat?.classList.remove('awake')
+    void cat?.getBoundingClientRect()
+    cat?.classList.add('awake')
+    audio.meow()
+    window.setTimeout(() => cat?.classList.remove('awake'), 2600)
+    if (world.scout && Math.random() < 0.5) window.setTimeout(() => scoutSay(world, 'The cat is on watch. Mostly napping.', performance.now(), 2800), 600)
+  }
+  if (toy === 'clock') {
+    const hands = document.querySelector<SVGElement>('.l-hands')
+    hands?.classList.remove('spin')
+    void hands?.getBoundingClientRect()
+    hands?.classList.add('spin')
+    audio.chime()
+    window.setTimeout(() => hands?.classList.remove('spin'), 1300)
+  }
+  if (toy === 'basket') {
+    const basket = document.querySelector<SVGElement>('.g-sway')
+    basket?.classList.remove('rustle')
+    void basket?.getBoundingClientRect()
+    basket?.classList.add('rustle')
+    audio.rustle()
+    window.setTimeout(() => basket?.classList.remove('rustle'), 900)
+  }
   if (toy === 'fish') {
     emote = { id: 'fish', until: now + 2600 }
     audio.chomp()

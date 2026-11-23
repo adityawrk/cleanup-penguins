@@ -87,7 +87,7 @@
 
   <!-- HANGING BASKETS from the purlin -->
   <g stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round">
-    <g class="g-sway">
+    <g class="g-sway hot" data-act="toy" data-toy="basket"><title>A hanging basket</title>
       <path d="M470 44V118M470 118L444 150M470 118L496 150" fill="none" stroke-width="2.4"/>
       <circle cx="470" cy="118" r="4" fill="#f2c14e" stroke-width="2.4"/>
       <path d="M452 176c-4 18 2 34-4 52M462 180c2 14-2 26 2 40M488 176c4 16-2 30 4 46" fill="none" stroke-width="7"/>

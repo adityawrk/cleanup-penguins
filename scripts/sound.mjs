@@ -25,7 +25,7 @@ const report = await page.evaluate(async () => {
   await new Promise((resolve) => setTimeout(resolve, 900))
   const bed = await sample(800)
   const out = { bed: +bed.toFixed(3), effects: {} }
-  for (const name of ['pop', 'card', 'tide', 'heave', 'setDown', 'chirp', 'flap', 'oof', 'snore', 'splash', 'creak', 'bell', 'gullCall', 'horn', 'chomp']) {
+  for (const name of ['pop', 'card', 'tide', 'heave', 'setDown', 'chirp', 'flap', 'oof', 'snore', 'splash', 'creak', 'bell', 'gullCall', 'horn', 'chomp', 'meow', 'chime', 'rustle']) {
     a[name]()
     out.effects[name] = +(await sample(name === 'bell' || name === 'horn' ? 1400 : 700)).toFixed(3)
     await new Promise((resolve) => setTimeout(resolve, 250))

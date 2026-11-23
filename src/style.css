@@ -791,3 +791,13 @@ svg > g.back { display: none; }
 /* Shadow breathes with the stride: tighter as the body lifts, wider on each plant. */
 .being.is-walking .shadow { animation: stride-shadow 210ms ease-in-out infinite alternate; }
 @keyframes stride-shadow { from { transform: scaleX(calc(var(--heft, 1) * 1.08)); opacity: 1; } to { transform: scaleX(calc(var(--heft, 1) * .86)); opacity: .7; } }
+
+/* Toys in every room: the hold's cat wakes and stretches, the Locker clock spins and chimes, a Glasshouse basket rustles. */
+.h-cat.awake { transform-box: fill-box; transform-origin: 50% 100%; animation: cat-wake 2.6s ease-in-out; }
+.h-cat.awake .h-zzz { display: none; }
+@keyframes cat-wake { 0% { transform: none; } 12% { transform: translateY(-10px) scale(1.06, .92); } 30% { transform: translateY(-4px) scale(.96, 1.1); } 60% { transform: scale(1.1, .9); } 100% { transform: none; } }
+.l-hands { transform-box: view-box; transform-origin: 560px 226px; }
+.l-hands.spin { animation: hands-spin 1.2s cubic-bezier(.3, .1, .2, 1); }
+@keyframes hands-spin { to { transform: rotate(720deg); } }
+.paint .g-sway.rustle { animation: g-rustle 900ms ease-in-out; }
+@keyframes g-rustle { 0%, 100% { transform: rotate(0); } 20% { transform: rotate(9deg); } 45% { transform: rotate(-8deg); } 70% { transform: rotate(5deg); } }

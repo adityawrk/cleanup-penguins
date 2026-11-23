@@ -329,11 +329,12 @@
   </g>
 
   <g stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round">
-    <!-- wall clock -->
+    <!-- wall clock (a toy: click it and it chimes and spins its hands) -->
+    <g class="hot l-clock" data-act="toy" data-toy="clock"><title>The wall clock</title>
     <circle cx="560" cy="226" r="30" fill="#d9493e" stroke-width="4.2"/>
     <circle cx="560" cy="226" r="22" fill="#fff6e4" stroke-width="2.6"/>
     <path d="M560 208v4M560 240v4M542 226h4M574 226h4" stroke-width="2.4"/>
-    <path d="M560 226V213M560 226l9 5" stroke-width="3.2"/>
+    <g class="l-hands"><path d="M560 226V213M560 226l9 5" stroke-width="3.2"/></g></g>
     <circle cx="560" cy="226" r="2.6" fill="#1a2332" stroke="none"/>
     <path d="M538 210c3-5 8-9 14-11" stroke="#f08a76" stroke-width="3"/>
     <!-- claim-tag board -->

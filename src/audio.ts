@@ -298,6 +298,22 @@ export class HarborAudio {
     this.later(950, () => this.tone(98, 0.08, 'sawtooth', 1.1, 0.97))
   }
 
+  /** A sleepy cat's meow: a rising then falling sweep through a soft filter. */
+  meow() {
+    this.sweep(520, 880, 0.18, 'triangle', 0.05)
+    this.later(170, () => this.sweep(880, 560, 0.28, 'triangle', 0.045))
+  }
+
+  /** The Locker clock's chime: three bright notes down a little scale. */
+  chime() {
+    ;[1046, 880, 784].forEach((freq, i) => this.later(i * 180, () => this.tone(freq, 0.06, 'sine', 0.7, 1)))
+  }
+
+  /** Leaves rustling. */
+  rustle() {
+    for (let i = 0; i < 5; i += 1) this.later(i * 60, () => this.burst(0.07, 3000 + i * 300, 1.5, 0.08, 'bandpass'))
+  }
+
   /** A happy gulp. */
   chomp() {
     this.sweep(300, 180, 0.07, 'square', 0.03)
