@@ -7,75 +7,120 @@ Where an issue or an older note disagrees with the source, trust the source and 
 
 ```sh
 npm install
-npm test           # vitest, tests/**/*.test.ts
-npm run dev        # http://localhost:5173 (the only mode with the live disk, scan and scout)
+npm test           # vitest: 29 tests in tests/*.test.ts
+npm run dev        # http://localhost:5173, the only mode with the live disk, scans and scout
 ```
 
-Dismiss the title card (`#hello`) with a click, Enter or Escape. The live pole, the live cache sacks and the live scout exist only under `npm run dev`.
+Dismiss the title card (`#hello`) with a click, Enter or Escape.
 
-**Where things stand.** All four rooms are painted scenes (`src/art/*.svg`). Items are drawn objects. When the scout is Claude and `claude` is on the PATH, a free-text line goes to a real Claude Code call with no tools. Throws are an honest practice run: nothing is deleted, the pole does not move, and the game says so.
+**Where things stand.** All four rooms are painted (`src/art/*.svg`), and the cargo is drawn objects. Under `npm run dev`, the pole, the caches, the Applications boat and folder looks are real, read-only measurements. The scout is live only when it is Claude and `claude` is on the PATH: one tool-less Claude Code call per line. Every throw is a practice throw. Nothing is deleted, the pole doesn't move, and the game says so.
 
-**Next, in order:**
+**Next:**
 
-1. **A real delete, safely (issue 7).** Only from the player's final sea confirm, only for `sea: true` items, only inside the scanned cache roots. After the delete finishes, re-read `/api/disk` and move the pole from that reading, never from `item.tenths`. `world.rehearsal` is one flag for the whole harbor, so a real delete needs a per-throw result before any throw stops saying "practice". Never delete from the scout or chat path.
-2. **More live scouts (issue 6).** Claude is wired (`src/engine/scout.ts`). Cursor (`cursor-agent`) and Codex are detected but never called. They need the same contract: no tools, one line in, a JSON reply. Until then the scout card says "Scripted · not connected yet". A scripted scout must never claim to be connected.
-3. **Deeper looks.** Sheds, caches and Applications are live. "Your stuff" starts empty on purpose (see Privacy below) and fills only through "look in ~/Downloads". Next: real ages for caches, and grouping small caches into one bundle.
-4. **The Mac app (issue 5).** Leave it until step 1 is done.
+1. **A real delete is NOT built, and it waits on the user's decision.** Don't start it unasked. The safe design:
+   - It is off by default.
+   - It runs only from the player's final sea confirm (face 2), and never from the scout, the chat bar or the model path.
+   - It deletes only a cache: a `sea: true` item whose exact path `/api/scan` returned this session. Folder-look rows don't qualify, because `folderKind` judges them by name alone.
+   - Afterwards it re-reads `/api/disk` and moves the pole from that reading, never from `item.tenths`.
+   - `world.rehearsal` is one flag for the whole harbor. A throw needs its own result before it can stop saying "practice".
+   - Open questions for the user: the Locker empty sends everything in it to the sea, apps and your own files included (see Known traps). And should build output from a folder look ever be deletable?
+2. **More live scouts (issue 6).** Only Claude is wired (`src/engine/scout.ts`). `/api/agents` detects `cursor-agent` and `codex` but nothing calls them. They need the same contract: no tools, one line in, a JSON reply. Until then their card says "Scripted · not connected yet".
+3. **Your stuff stays the player's to open.** It is empty under the live API, and nothing should list it on its own (see Privacy). Today "look in ~/Downloads" makes a new shed, not a fill of the Your stuff boat (`useRealHold(world, 'stuff', …)` is only ever called with `[]`). That look lists subfolders only, because `du -d 1` skips loose files, so a `.dmg` or `.mov` never shows. The hold's empty note already points players at that look.
+4. **The Mac app (issue 5).** Leave it until the delete question is settled.
 
 ## What this is
 
-A Mac disk cleanup tool that plays like a late-2000s kids' MMO. You are a penguin on a snowy harbor. A scout bird follows you and gives advice, and you carry junk to the sea or the Locker.
+A Mac disk cleanup tool that plays like a late-2000s kids' MMO. You are a penguin on a snowy harbor. A scout bird follows you and gives advice, and you carry junk to the sea (permanent) or the Locker (it gives things back).
 
-- **Quay** (`quay.svg`). Three moored boats are the holds: Caches (red trawler), Applications (blue tug) and Your stuff (green sailboat). The Locker warehouse is on the left and the Glasshouse on the right. The tide board (`.pole`, HTML flap cells over the painted board) shows free space. The bell (`data-act="rope"`, `takeRope`) sets the scope to This Mac. It rescans this Mac (a `lookRequest` for `mac`), the scout calls out the biggest cache, and you walk to the Caches hold. The nest opens the scout card. Sheds are repos, drawn by `syncSheds` in `main.ts` at `shedSlot()`.
-- **Hold** (`hold.svg`). A ship's belly with the cargo on the floor. The steel footlocker on the left is the Locker bin ("It comes back."). The cargo door on the right is the sea ("Gone for good."). The ladder goes up to the quay. The hold has no foreground file.
-- **Locker** (`locker.svg`). The inside of the warehouse. Kept things stand in five numbered bays, then a staggered second row (`lockerSlot`). The tip hopper (`data-act="empty"`) empties everything into the sea after two confirms. The roll door goes back out.
+- **Quay** (`quay.svg`). Three boats are the holds: Caches (red trawler), Applications (blue tug) and Your stuff (green sailboat). They moor at three depths along the arched deck edge. The Locker warehouse stands on the left and the Glasshouse on the right. The tide board (`.pole`, HTML flap cells over the painted board) shows free space. The nest (`data-act="who"`) opens the scout card.
+- **The bell** (`data-act="rope"`, `takeRope`, F on the quay) sets the scope to This Mac and requests a rescan (`lookRequest` for `mac`), unless a look is already running. The scout calls out the biggest cache, and you walk to the Caches hold.
+- **Sheds** are repos and looked-in folders, drawn as HTML buttons by `syncSheds` (`main.ts`) at `shedSlot(i)`. The first two stand on the back edge. The rest stand on the deck in front, at 0.82 scale. The starter sheds are `cleanup-penguins` and `lighthouse`.
+- **Hold** (`hold.svg`). A ship's belly with the cargo on the floor. The steel footlocker on the left is the Locker bin ("It comes back."). The cargo door on the right is the sea ("Gone for good."). The ladder goes up to the quay.
+- **Locker** (`locker.svg`). Kept things stand in five numbered bays, then a staggered second row (`lockerSlot`). The tip hopper (`data-act="empty"`) empties everything into the sea after two confirms. The roll door goes back out.
 - **Glasshouse** (`glasshouse.svg`). Look but don't touch. macOS, the Docker disk and Photos are exhibits behind a rope. The floor stops at y 560 ("Oof."). Each exhibit says one fixed line (`bumpBuoy`).
-- **Scout.** One at a time. Most people pay for one agent, so don't design for several at once. The scout card (`#who`, from the dock button or the nest) picks the scout, the model and the effort. Each scout offers its three largest models, biggest first. Claude offers Fable, Opus and Sonnet. Codex offers Astra, Sol and Terra. Cursor offers Grok 4.7, 4.6 and 4.5. Antigravity (a custom scout named "Antigravity", from its button or typed under "Someone else") offers Neon, Carbon and Argon. OpenCode and other custom names offer Default. A fresh harbor starts on Claude · Opus · High. Switching scouts keeps the effort. It keeps the model only if the new scout offers it, and otherwise picks the first. The new scout repeats your last note.
-- **Effort.** Shown as fish. Low, Medium, High and Extra high scale the scout 0.72, 1, 1.28 and 1.58 (`effortScale`). High and Extra high pin the info sheet (`#sheet`) when you lift something.
-- **Steering.** While the scout is on a look (`world.tool`), every new line queues in `world.steering` (at most 6). It shows as "After {look} · {line}". `finishTool` writes the non-question lines to the brief and acts on the newest line. "stop", "wait", "come back" or "come home" bring the scout back. "look in …" starts that look. "caches" or "the big one" sends the scout to the bell. "throw it" gets "You'll have to throw it.". Anything else gets "Got it. I'll use that on the next one." Every look ends when its scan returns, not when the scout arrives. Lines typed before then wait for it. A queued question gets "Ask me that again now that I am back.", and lines queued during a live answer go on the brief without talking over the answer.
-- **Applications** come from `GET /api/apps` (`scanApps`: `du -d 1 /Applications`, the six largest `.app` bundles over 200 MB, and Spotlight's `kMDItemLastUsedDate` via `mdls`). `useRealHold` turns them into crates that can only go to the Locker, with honest "last opened N months ago" or "no last-opened date on record".
-- **Privacy: never list Downloads, Desktop or Documents on your own.** macOS guards them, and a Node process reading them pops a system permission prompt. "Your stuff" therefore starts empty under the live API, with a note telling the player to ask. Only a player's own "look in ~/Downloads" may read them (the prompt is then expected).
-- **Looks.** The sim never reads the disk. `lookIn`, `takeRope` and "look in mac" set `world.lookRequest`; `serveLook()` in `main.ts` runs it: `mac` calls `loadThisMac(false)` (disk plus `/api/scan`), anything else calls `/api/look?path=` (read-only `du -d 1` of a folder inside your home, never home itself), then `useFolder` turns the result into cargo. Build output (`dist`, `.next`, `target`, `build` and the like) becomes sea-safe sacks; dependencies (`node_modules`, `.venv`, `Pods`…) become crates for the Locker; anything else becomes a trunk the chute refuses. A rescan replaces only what's still lying in the hold: thrown, kept and carried items stay. `syncPropNodes()` removes nodes for items a rescan dropped.
-- **Brief.** It holds the last 6 lines you typed. Typed normally, questions, commands and places stay off it. From the steering queue, every non-question line goes on, "throw it" and "look in …" included. `advice()` checks it newest first. It matches words from an item's name (`distinctive()`) and then looks for keep/leave words or throw/clear words. A note changes advice only for the item it names, and for nothing else.
-- **Idle.** You can waddle during a look. A scout in `mode: 'go'` isn't pulled along. Standing still, the penguin waves, hops and wiggles, then sits after about 8 seconds. After 45 seconds idle on the quay, the scout goes home to sleep in the nest. Click it to wake it.
-- **Flourish.** The dock has emotes, and D dances (the scout joins in when it is within 220px). Clicking your penguin, when you're not carrying anything, opens your card (`#me`). Walking away from the camera shows the penguin's back (`.is-back` hides `.face` and `.belly`). On the quay, the gull, the lighthouse and the fish crate are toys (`data-act="toy"`, `playToy`). They change no rule. Snow falls on the quay.
-- **Map.** The dock's map button (or M) opens a drawn harbor map (`src/art/map.svg`, places are `.map-place[data-go]`, built into the page by `main.ts`). `travel()` jumps straight to a room or a boat's hold, but not while carrying ("Put it down first.").
-- **First run.** The scout guides one loop with bouncing arrows: board the red boat, pick something up, then the sea or the Locker. The guide remembers that it finished in `localStorage` under `harbor-guide-v1`. Clear that key to see it again.
-- **Sound.** Each room has an original synthesized music loop (`TUNES` in `src/audio.ts`). The dock's note button toggles it and remembers the choice (`harbor-music`). The speaker button mutes everything. Audio unlocks on the first click and pauses while the tab is hidden.
+- **Map** (dock button or M). It shows `src/art/map.svg`, built into the page by `main.ts` with one button per `.map-place[data-go]`. `travel()` jumps straight to a room or a boat's hold. It refuses while you carry something ("Put it down first.").
+- **Scout.** One at a time. Most people pay for one agent, so don't design for several.
+  - The scout card (`#who`, from the dock or the nest) picks the scout, the model and the effort.
+  - Each scout offers its three largest models, biggest first. Claude: Fable, Opus, Sonnet. Codex: Astra, Sol, Terra. Cursor: Grok 4.7, 4.6, 4.5. Antigravity (the custom scout named "Antigravity"): Neon, Carbon, Argon. OpenCode and other custom names: Default.
+  - A fresh harbor starts on Claude · Opus · High.
+  - Switching scouts keeps the effort. It keeps the model only if the new scout offers it, and otherwise takes the first. The new scout repeats your last note.
+- **Effort** (fish). Low, Medium, High and Extra high scale the scout by 0.72, 1, 1.28 and 1.58 (`effortScale`). High and Extra high pin the info sheet (`#sheet`) when you lift something.
+- **Looks.** The sim never reads the disk. `takeRope`, `lookIn` and "look in mac" set `world.lookRequest`, and `serveLook()` in `main.ts` runs it.
+  - `mac` runs `loadThisMac(false)`: the disk, then `/api/scan`, then `/api/apps`.
+  - Any other look runs `lookInFolder` → `/api/look` → `useFolder`.
+  - Build output (`dist`, `.next`, `target`, `build`…, see `folderKind`) becomes sea-safe sacks. Dependencies (`node_modules`, `.venv`, `Pods`…) become Locker-only crates. Anything else becomes a trunk the chute refuses.
+  - A rescan replaces only what is still lying in the hold. Thrown, kept and carried items stay.
+- **Steering.** While a look runs (`world.tool`), each new line queues in `world.steering` (at most 6) and shows as "After {look} · {line}".
+  - `finishTool` puts every queued non-question on the brief, then acts on the newest line.
+  - "stop", "wait", "come back" or "come home" brings the scout back. "look in …" starts that look. "caches" or "the big one" sends it to the bell. "throw it" gets "You'll have to throw it.". A question gets "Ask me that again now that I am back.". Anything else gets "Got it. I'll use that on the next one."
+  - Scan looks (This Mac, a folder, "Thinking") end when their answer returns. The walk to the bell after "the big one" ends when the scout arrives.
+- **Brief.** It keeps the last 6 lines. Typed directly, questions, commands and places stay off it. `advice()` checks it newest first. It matches words from the item's name (`distinctive()`), then looks for keep/leave words or throw/clear words. A note changes advice only for the item it names.
+- **Idle.** You can waddle during a look. A scout in `mode: 'go'` isn't pulled along. Standing still, the penguin waves, hops and wiggles, then sits after about 8 seconds. After 45 seconds idle on the quay, the scout goes home to the nest. Click it to wake it.
+- **Flourish.** These change no rule.
+  - Dock emotes, and D to dance (the scout joins within 220px).
+  - Clicking your penguin, while not carrying, opens the player card (`#me`). It has a "Still harbor" toggle (`harbor-still`), on by default under reduced motion.
+  - Walking away from the camera shows the back (`.is-back` hides `.face` and `.belly`).
+  - Quay toys (`data-act="toy"`, `playToy`): the gull, the lighthouse and the fish crate. Snow falls on the quay.
+- **Harbor folk** (`src/npcs.ts`). Four penguins potter about: Captain Gil and Mo on the quay, Bolt in the Locker, Fern in the Glasshouse. Each is a recolored copy of `tpl-you` with a hat. Click one (`data-act="npc"`, `talkTo`) and it says its next tip. They live outside the sim. They are presentation only: they carry nothing, change no rule, and never speak for the scout. Their tips must stay true.
+- **First run.** The scout guides one loop with arrows: board the red boat, lift something, then the sea or the Locker. It is done once a practice throw or a Locker keep happens, and it is remembered in `localStorage` (`harbor-guide-v1`).
+- **Sound.** Each room has an original synthesized loop (`TUNES` in `src/audio.ts`). The dock's note button toggles music (`harbor-music`). The speaker button mutes everything. Audio unlocks on the first click and pauses while the tab is hidden.
+- **Privacy.**
+  - Never list Downloads, Desktop or Documents on your own. macOS guards them, and a Node process that reads them pops a permission prompt.
+  - Under the live API, Your stuff starts empty, with a note telling the player to ask.
+  - Only a look the player typed may read those folders.
 
 ## Rules that must not be broken
 
-1. **The agent never deletes.** The scout only advises. The live scout runs with `--tools ""`, so it can't list, run, move or delete anything. `clean()` checks its reply. Unknown item ids are dropped. A sea pointer for a `sea: false` item becomes the Locker. A first-person claim of having deleted, thrown or moved something is replaced with "I can't throw things. You'll have to carry it." (a narrow check, see "Known traps"). The chat bar can't throw: "throw it" always gets "You'll have to throw it.". A future delete route must accept only the player's final sea confirm.
-2. **The sea takes two confirms.** Face 1 asks. Face 2 is titled "This would be for good." in practice, or "It's gone if you do this." once deletes are real. Face 2 gets focus on No, stays locked for 800ms (`lockedUntil`), and reverses its buttons (`#card.face-2 .card-actions`), so "Throw it" is not under the first Yes. Y and Enter ignore held-key repeats. Emptying the Locker uses the same two faces.
-3. **Only sea-safe things reach the sea.** `sea: false` items (apps, your stuff, `node_modules`) are redirected to a Locker card that says "The chute won't take this."
-4. **The Locker gives things back.** Carrying a Locker item out through the roll door (or pressing Q) asks "Put X back?". Yes puts it back on its boat. Locker moves never move the pole.
-5. **The pole is honest.** It shows real free space (`statfs`). While `world.rehearsal` is true (it always is today), throws add to `world.rehearsedTenths` and never to `freeTenths`. Face 2, the scout's splash line and the player card all say it's practice.
-6. **The scout's words are true.** It never claims to be connected, to have scanned or to have deleted unless that happened. The scout card shows "Live · Claude Code on this Mac" only when the scout is Claude and `/api/agents` found `claude`. For the live scout, a "scanned" claim is blocked only by its prompt. `clean()` catches delete, throw and move claims only.
-7. **Original art and sound.** Use no other game's assets, names, characters, rooms, maps or sounds, and don't trace them, or the reference video. Match the craft (see [docs/art.md](docs/art.md)): flat fills, one heavy ink outline, three-quarter characters (a classic but original cartoon penguin, and saturated round scout birds), three-toed feet, a blue ring under the player, and props that read as objects. Every visual is vector. That means the SVG in `src/art/`, the templates in `index.html`, the SVG strings in `items.ts`, `emotes.ts` and `main.ts`, or CSS. Every sound is synthesized in `src/audio.ts`. Fonts are Fredoka and IBM Plex Mono, self-hosted from `@fontsource` (latin only). Never load them from Google. No raster images.
+1. **The agent never deletes.** The scout only advises.
+   - The live scout runs with `--tools ""`, so it can't list, run, move or delete anything.
+   - `clean()` checks every reply. Unknown item ids are dropped. A sea pointer for a `sea: false` item becomes the Locker. A claim of having deleted, thrown or moved something becomes "I can't throw things. You'll have to carry it." (a net, not a guarantee; see Known traps).
+   - The chat bar can't throw: "throw it" always gets "You'll have to throw it.".
+   - A future delete route must accept only the player's final sea confirm.
+2. **The sea takes two confirms.** Face 1 asks. Face 2 is titled "This would be for good." in practice, and "It's gone if you do this." once deletes are real.
+   - Face 2 puts focus on No and stays locked for 800ms (`lockedUntil`).
+   - Face 2 reverses its buttons (`#card.face-2 .card-actions`), so "Throw it" never sits under the first Yes.
+   - Y and Enter ignore held-key repeats.
+   - Emptying the Locker uses the same two faces.
+3. **Only sea-safe things reach the sea.** Carrying a `sea: false` item (an app, your stuff, dependencies) to the sea opens a Locker card that says "The chute won't take this." The Locker empty breaks this today (see Known traps).
+4. **The Locker gives things back.** Carrying a Locker item out through the roll door (or pressing Q) asks "Put X back?". Yes puts it back in its hold. Locker moves never move the pole.
+5. **The pole is honest.** It shows real free space (`statfs`). While `world.rehearsal` is true (it always is today), throws add to `world.rehearsedTenths` and never to `freeTenths`. Face 2, the splash line, the player card and the title card all say it's practice.
+6. **The scout's words are true.** It never claims to be connected, to have scanned or to have deleted unless that happened.
+   - The card shows "Live · Claude Code on this Mac" only when the scout is Claude and `/api/agents` found `claude`.
+   - For the live scout, only its prompt blocks a false "scanned" claim. `clean()` catches delete, throw and move claims only.
+7. **Original art and sound.**
+   - The player is an original classic cartoon penguin of the genre, and the scouts are original birds. Never trace or replicate another game's avatars, pets, rooms or maps, and never use another game's assets, names or sounds. Don't trace the reference video either.
+   - Match the craft in [docs/art.md](docs/art.md): flat fills, one heavy ink outline, three-quarter view, three-toed feet, a blue ring under the player, and props that read as objects.
+   - Every visual is vector: `src/art/*.svg`, the `index.html` templates, the SVG strings in `items.ts`, `emotes.ts`, `npcs.ts` and `main.ts`, or CSS. No raster images.
+   - Every sound is synthesized in `src/audio.ts`.
+   - Fonts are Fredoka and IBM Plex Mono, self-hosted from `@fontsource` (latin only). Never load them from Google.
 
 ## Quality bar
 
-The bar is a polished kids' MMO: dense rooms of recognizable objects, small characters in a big place, glossy chunky UI, and constant small life (bobbing boats, puffing smoke, a swinging bell, gulls, a fish swimming past a porthole). A change isn't done just because it works. Screenshot it and compare it with `quay.svg`.
+The bar is a polished kids' MMO: dense rooms of recognizable objects, small characters in a big place, glossy chunky UI, and constant small life (harbor folk, bobbing boats and buoys, puffing smoke, a swinging bell, a pecking gull, lanterns, a fish past the hold's porthole, a mouse on the hold's baseboard). A change isn't done just because it works. Screenshot it and compare it with `quay.svg`.
 
 ## Run, test, look
 
 ```sh
 npm run build                                          # tsc --noEmit && vite build -> dist/
 node scripts/svgview.mjs src/art/hold.svg /tmp/h.png   # render one art file with the game fonts
-node scripts/shot.mjs http://localhost:5173/ /tmp/run steps.json   # drive the game headless, writes /tmp/run-<shot>.png
+node scripts/shot.mjs http://localhost:5173/ /tmp/run steps.json   # drive the game headless; writes /tmp/run-<shot>.png
 node scripts/sheet.mjs out.png 6 a.png b.png …         # tile frames into one contact sheet
-node scripts/peak.mjs                                  # master-bus peak level (expects dev on :5174, edit the URL)
+node scripts/peak.mjs                                  # master-bus peak (hard-coded to :5174; edit the URL)
 ```
 
-- **`shot.mjs` steps.** The steps are `{wait: ms}`, `{key}`, `{click: [x, y]}`, `{type}`, `{eval}` (its result is logged), `{shot: name}` and `{burst: name, n, every, clip}`, at 1280 by 800. Without a steps file, it shoots the title card and then the quay. Every browser script (`svgview`, `shot`, `sheet`, `peak` and `hello/measure`) uses `puppeteer-core` against `/Applications/Google Chrome.app`. The page exposes `window.harborAudio` for `peak.mjs`.
-- **Blind art test.** Before a shot, `eval` this: `document.querySelectorAll('svg text, .tag, .name, .bubble, .shed-sign, .bell-tag, .pole, #mini, .path-sign, #console, .item-art .stamp').forEach(e => e.style.visibility = 'hidden')`. Then ask a fresh agent to name every object.
-- **Title art.** `scripts/hello/gen.mjs` rebuilds `src/art/hello.svg` from `tpl-you`, `tpl-claude`, `rest.svgpart` and the quay trawler. It finds the trawler by the `<!-- BOAT 1` comment in `quay.svg`, so keep that comment. Rerunning it overwrites hand edits to `hello.svg`. `measure.mjs` prints glyph positions in the wordmark.
+- **`shot.mjs` steps.** The steps are `{wait: ms}`, `{key}`, `{click: [x, y]}`, `{type}`, `{eval}` (its result is logged), `{shot: name}` and `{burst: name, n, every, clip}`, at 1280 by 800. With no steps file, it shoots the title card and the quay. Every browser script uses `puppeteer-core` with `/Applications/Google Chrome.app`. `peak.mjs` reads `window.harborAudio`.
+- **Blind art test.** Before a shot, `eval` this: `document.querySelectorAll('svg text, .tag, .name, .bubble, .shed-sign, .bell-tag, .pole, #mini, .path-sign, #console, .item-art .stamp').forEach(e => e.style.visibility = 'hidden')`. Then ask a fresh agent to name every object. Re-run it after art changes.
+- **Title art.** `scripts/hello/gen.mjs` rebuilds `src/art/hello.svg` from `tpl-you`, `tpl-claude`, `rest.svgpart` and the trawler that follows `<!-- BOAT 1` in `quay.svg`. Rerunning it overwrites hand edits. `measure.mjs` prints glyph positions in the wordmark.
 
-The tests:
-- `tests/sim.test.ts` drives `World` with explicit time (`settle()` steps every 16ms). It covers the bell and repo scope, both sea faces, practice throws leaving the pole alone, apps redirected to the Locker, refusing a card, the Glasshouse rope, one scout, no throwing from chat, switching scouts, brief matching, walking up before lifting, model lists and default effort, notes handed to the next scout, the steering queue, and waddling while the scout is out. It also covers the live path: `'ask'` only when Claude is found, questions never noted, `liveReply` with queued lines, `liveFailed`, and a practice Locker empty.
-- `tests/scout.test.ts` covers `clean()`: unknown ids dropped, sea pointers for `sea: false` items turned into the Locker, claimed deletes replaced, and the 90-character cap.
-- `tests/scan.test.ts` covers `parseDu`.
-- Nothing tests putting a Locker item back (rule 4), `readDisk`, `scanCaches`, spawning `claude`, the `/api` middleware, `main.ts` or the DOM. Check those in the browser.
+What the tests cover:
+- `tests/sim.test.ts` (21 tests) drives `World` with explicit time (`settle()` steps every 16ms).
+  - The bell and repo scope, both sea faces, practice throws leaving the pole alone, apps redirected to the Locker, refusing a card, and the Glasshouse rope.
+  - One scout, no throwing from chat, switching scouts, brief matching, walking up before lifting, model lists and effort, notes handed to the next scout, the steering queue, and waddling during a look.
+  - The live path: `'ask'` only when Claude is found, questions never noted, `liveReply`, `liveFailed`.
+  - A practice Locker empty, `useFolder` kinds, a rescan keeping thrown, kept or carried items, `travel`, and `useRealHold` for apps and an empty Your stuff.
+- `tests/scout.test.ts` (7 tests) covers `clean()` and `claimsAnAction()`.
+- `tests/scan.test.ts` (1 test) covers `parseDu`.
+- Nothing tests putting a Locker item back (rule 4), `readDisk`, `scanCaches`, `scanFolder`, `scanApps`, spawning `claude`, the `/api` middleware, `main.ts` or the DOM. Check those in the browser.
 
 Keep `src/sim.ts` free of the DOM and of clocks. Time comes in as `now`.
 
@@ -83,70 +128,94 @@ Keep `src/sim.ts` free of the DOM and of clocks. Time comes in as `now`.
 
 | File | What it holds |
 |---|---|
-| `index.html` | The stage and the four rooms on one 5120px `#track` (`#room-quay`, `#room-hold`, `#room-locker`, `#room-glasshouse`). Each room has a `.paint`, a `.ground`, `.objects`, and an optional `.paint.fore`. The quay also holds `.pole`, `.bell-tag`, `#brief` and `#sheds`. The hold holds `#path-sign`, `#sheet` and `#empty-note`. Also here: the dock (`#console`), `#card`, the scout card `#who`, the player card `#me`, the title card `#hello`, and the templates (`tpl-you`, `tpl-claude`, `tpl-codex`, `tpl-cursor`, `tpl-custom`, `tpl-prop`). |
-| `src/art/*.svg` | The painted rooms (1280×708), three foregrounds (`quay-fore`, `locker-fore`, `glasshouse-fore`) and the title art (`hello.svg`, 760×470). Clickable groups are `.hot` with `data-act`. |
-| `src/sim.ts` | Game state and rules: `World`, fixtures, `SPOTS`, `BANDS`, `shedSlot`, `advice`, `say` (returns a `SayKind`), `liveReply`, `liveFailed`, `scoutIsLive`, cards (`cardModel`) and `answer`, `step`, `useRealDisk` and `useRealCaches`. |
-| `src/main.ts` | Injects the art (the `ART` map), copies `World` to the DOM each frame, and handles input, sounds, emotes, toys, the room iris (`#wipe`), the guide, the scout and player cards, `loadThisMac()`, `findAgents()` and `askScout()`. |
-| `src/items.ts` | The drawn item objects (`itemSvg` for sack, packed, crate, trunk and disk), the size stamp (`stampText`), `sizeScale()` and `jitter()`. |
-| `src/emotes.ts` | The emote icons (`EMOTES`, `emoteSvg`). |
-| `src/audio.ts` | `HarborAudio`: the master bus and meter, per-room ambience and music (`TUNES`), footsteps by floor, and effects (bell, splash, flap, tide, heave, chirp, gull, horn and more). |
-| `src/style.css` | All layout, UI and animation. `[hidden]` is forced to `display: none !important`, because several components set `display`. Honors `prefers-reduced-motion`. |
-| `src/engine/scan.ts` | Node only: `readDisk`, `scanCaches`, `parseDu`. |
-| `src/engine/scout.ts` | Node only: `detectAgents`, `askClaude` (the tool-less live scout), the system prompt and `clean()`. |
+| `index.html` | The stage, and the four rooms on one 5120px `#track` (`#room-quay`, `#room-hold`, `#room-locker`, `#room-glasshouse`). Each room has a `.paint`, a `.ground`, `.objects` and a `.paint.fore`. Also the dock (`#console`), `#card`, the scout card `#who`, the player card `#me`, the title card `#hello`, and the templates (`tpl-you`, `tpl-claude`, `tpl-codex`, `tpl-cursor`, `tpl-custom`, `tpl-prop`). |
+| `src/art/*.svg` | The rooms (1280×708), a foreground for each (`quay-fore`, `hold-fore`, `locker-fore`, `glasshouse-fore`), the map (`map.svg`, 640×400) and the title art (`hello.svg`, 760×470). |
+| `src/sim.ts` | Game state and rules: `World`, fixtures, `SPOTS`, `NEST`, `BANDS`, `shedSlot`, `advice`, `say` (returns a `SayKind`), `lookIn`, `takeRope`, `travel`, `finishTool`, `liveReply`, `liveFailed`, `scoutIsLive`, `cardModel` and `answer`, `step`, `useRealDisk`, `useRealCaches`, `useRealHold`, `useFolder`. |
+| `src/main.ts` | Injects the art (the `ART` map). Adds one real `.hotspot` button over each painted `.hot` group. Builds the map. Copies `World` to the DOM each frame. Handles input, sounds, emotes, toys, the room iris (`#wipe`), the guide, and the scout and player cards. Holds `loadThisMac`, `serveLook`, `lookInFolder`, `syncPropNodes`, `syncSheds`, `findAgents` and `askScout`. |
+| `src/items.ts` | Drawn cargo (`itemSvg`: sack, packed, crate, trunk, disk in a 120×100 box), the size stamp (`stampText`), `sizeScale()` and `jitter()`. |
+| `src/emotes.ts` | Emote icons (`EMOTES`, `emoteSvg`). |
+| `src/npcs.ts` | The harbor folk: `createNpcs`, `stepNpcs` (called each frame, frozen by Still harbor), `talkTo`, and the hats. |
+| `src/audio.ts` | `HarborAudio`: the master bus (compressor, limiter, meter), per-room ambience and music (`TUNES`), footsteps by floor, and effects. |
+| `src/style.css` | All layout, UI and animation. `[hidden]` is forced to `display: none !important`. Honors `prefers-reduced-motion`. `#fit.is-still` pauses the painted animation. |
+| `src/engine/scan.ts` | Node only: `readDisk`, `scanCaches`, `scanFolder`, `folderKind`, `scanApps`, `parseDu`. |
+| `src/engine/scout.ts` | Node only: `detectAgents`, `askClaude`, the system prompt, `claimsAnAction`, `clean`. |
 | `vite.config.ts` | The dev-only `harbor-api` middleware (below) and `__USERNAME__` (the macOS username, used as the penguin's name). |
-| `docs/art.md` | The art guide: ink, line weights, cel shading, palette, layers, ids, the anchors the code depends on, and scale. |
-| `scripts/` | `svgview.mjs`, `shot.mjs`, `sheet.mjs`, `peak.mjs`, and `hello/` (the title art generator). |
+| `scripts/` | `svgview.mjs`, `shot.mjs`, `sheet.mjs`, `peak.mjs`, and `hello/` (the title-art generator). |
 
-**Units.** Sizes are tenths of a decimal GB (1 tenth = 1e8 bytes). `gb()` and `gbWord()` format them. The stage is 1280×708. `#fit` is 1280×800 and uses CSS `zoom` to fit the window. Sprites are drawn large and shown at `YOU_SIZE` 0.56 and `SCOUT_SIZE` 0.46. That is multiplied by a depth factor of 0.88 to 1.04 and, for the scout, by effort. Names, bubbles and tags are counter-scaled with `--inv`, so text stays one size.
+**Units.** Sizes are tenths of a decimal GB (1 tenth = 1e8 bytes), formatted by `gb()` and `gbWord()`. The stage is 1280×708. `#fit` is 1280×800 and uses CSS `zoom` to fit the window.
 
-**Keys.** E lifts the nearest item in the hold or the Locker, walking to it first. F does the same outside the quay. On the quay, F rings the bell. X goes to the sea and B goes to the Locker bin, both from the hold only. With nothing carried they say "Pick something up first.", and outside the hold "Not from here.". Y or N answers a card. Enter presses the highlighted button. Esc closes a card (it means No), closes the scout or player card, or drops what you carry. On the quay, 1 to 3 board a boat and G opens the Glasshouse. 4 opens the Locker from any other room. Q goes back to the quay (through the roll door in the Locker). In the Locker, T walks to the hopper, and the two empty confirms follow. D dances. The painted rooms sit in `aria-hidden` SVG, so these keys are the keyboard path to every exit and machine.
+**Scale (in `main.ts`).** Sprites are drawn large and shown small:
+- The player and the harbor folk are shown at `YOU_SIZE` 0.48, and the scout at `SCOUT_SIZE` 0.38 times its effort. All are multiplied by a depth factor of 0.88 to 1.04 (from y 480).
+- Items are shown at `ITEM_SIZE` 0.8 × `sizeScale()` × a depth of 0.9 to 1.06 (from y 470).
+- Names, bubbles and tags are counter-scaled with `--inv`, so text stays one size.
 
-## Live disk and live scout
+**Keys.**
+- E lifts the nearest item in the hold or the Locker, walking to it first. F does the same off the quay. On the quay, F rings the bell.
+- X goes to the sea and B to the Locker bin, both from the hold only. With nothing carried they say "Pick something up first.", and outside the hold "Not from here.".
+- Y or N answers a card. Enter presses the highlighted button.
+- Esc says No to a card, closes the scout card, the player card or the map, or drops what you carry.
+- M opens and closes the map.
+- On the quay, 1 to 3 board a boat and G opens the Glasshouse. 4 opens the Locker from any other room. Q goes back to the quay (through the roll door in the Locker). In the Locker, T walks to the hopper.
+- D dances.
+- Painted hotspots also have real focusable buttons (`.hotspot`), and rooms off screen are `inert`.
 
-All of this lives in the `harbor-api` middleware (`configureServer` in `vite.config.ts`). It exists only under `npm run dev`. Every `/api/*` request must carry a local `Host` header (localhost, 127.0.0.1, [::1] or `*.localhost`). Anything else gets a 403, which guards against DNS rebinding.
+## Live API (dev only)
 
-- `GET /api/disk`. `statfs('/')` returns `{ freeTenths, capacityTenths }` from `bavail` and `blocks` times `bsize`.
-- `GET /api/scan`. Runs `du -k -d 1` over `~/Library/Caches`, `~/.npm`, `~/.bun/install/cache`, `~/.cache` and `~/Library/Developer/Xcode/DerivedData`, one root after another, with a 20s timeout each. Missing roots and `du` errors are skipped. It drops hidden names and folders under 50,000 KB, and returns the top 8 as `{ name, path, bytes }` with `~` paths. `useRealCaches` removes every Mac-scope caches item, including "14 small caches". In their place it adds `live-0`..`live-7` sacks that are `sea: true`, carry the phrase "measured on this Mac", and share one generic line. If the scan is empty, the fixtures stay.
-- `GET /api/agents`. Runs `command -v` in a login shell for `claude`, `cursor-agent` and `codex`, and caches the result for 60s. That proves the binary is on the PATH, not that you are signed in.
-- `POST /api/scout`. It accepts same-origin `application/json` only (403 otherwise) and one call at a time (429). Bad JSON gets a 400 and a failed call a 502. It runs `claude -p --tools "" --strict-mcp-config --no-session-persistence --output-format json --model <id> --effort <level> --system-prompt …` in the OS temp dir. The facts go in on stdin, with a 90s timeout. Model ids are `fable` → `claude-fable-5-2`, `opus` → `claude-opus-5-5`, and `sonnet` → `claude-sonnet-5-5` (an unknown id falls back to Opus). `askScout` sends the items in reach (at most 14, capped by the client), the room, what's carried and the brief. The reply is `{say, item, hole}`. An earlier note put Opus at high effort at about 5 seconds per answer. This audit did not re-measure it.
-- **When a line goes live.** `say()` handles places, "throw it", "the big one" and naming another scout itself. Everything else returns `'ask'` when `scoutIsLive()`. The scout shows "…" (a `Thinking` tool), and lines typed meanwhile queue as steering.
-- **Questions.** A line ending in "?" is asked, not noted. It doesn't go on the brief, typed or queued. The scripted scout answers it without claiming to keep it, and a queued question gets "Ask me that again now that I am back."
-- **Failure.** On a failed call, the scout says "I couldn't reach Claude Code just now." The page then treats Claude as not found, so the card says Scripted, and it calls `findAgents()` again after 2 minutes.
-- The scout card tells the player that each live line asks Claude once, on their own plan.
+Everything here is the `harbor-api` middleware (`configureServer` in `vite.config.ts`), so it exists only under `npm run dev`. Every `/api/*` request needs a local `Host` header (localhost, 127.0.0.1, [::1] or `*.localhost`). Anything else gets a 403, which guards against DNS rebinding. Every route reads only. There is no write or delete route anywhere.
+
+- `GET /api/disk`. `statfs('/')` returns `{ freeTenths, capacityTenths }` (`bavail` and `blocks` × `bsize`).
+- `GET /api/scan`. Runs `du -k -d 1` over `~/Library/Caches`, `~/.npm`, `~/.bun/install/cache`, `~/.cache` and `~/Library/Developer/Xcode/DerivedData`, one root after another, with a 20s timeout each.
+  - Missing roots and `du` errors are skipped. Hidden names and folders under 50,000 KB are dropped.
+  - Returns the top 8 as `{ name, path, bytes, days }`, where `days` is the folder's mtime age.
+  - `useRealCaches` swaps the Mac caches still in the hold (including "14 small caches") for `live-*` sacks: `sea: true`, phrase "last changed N ago" (or "measured on this Mac" with no `days`), and one shared line. An empty scan keeps the fixtures.
+- `GET /api/apps`. `scanApps` runs `du -d 1 /Applications` (40s timeout) and takes the six largest `.app` bundles of at least 200,000 KB. It reads `kMDItemLastUsedDate` with `mdls`. `useRealHold` turns them into Locker-only crates that say "last opened N ago" or "no last-opened date on record". It is fetched after the caches and isn't part of the look.
+- `GET /api/look?path=`. `scanFolder` resolves the `realpath`, refuses anything outside home or home itself, then runs `du -k -d 1` (hidden folders included). It returns folders of at least 1,000 KB, top 8, each with a `folderKind`. Errors return a 404, and the scout says "I couldn't look in {path}. Is it a folder in your home?".
+- `GET /api/agents`. Runs `command -v` in a login shell for `claude`, `cursor-agent` and `codex`, and caches the result for 60s. That proves the binary is on the PATH, not that anyone is signed in.
+- `POST /api/scout`.
+  - It takes same-origin `application/json` only (403 otherwise), one call at a time (429), and a body of up to 200 KB. Bad JSON gets a 400, and a failed call a 502.
+  - It runs `claude -p --tools "" --strict-mcp-config --no-session-persistence --output-format json --model <id> --effort <level> --system-prompt …` in the OS temp dir. The facts go in on stdin, with a 90s timeout. Closing the page kills the call.
+  - Model ids: `fable` → `claude-fable-5-2`, `opus` → `claude-opus-5-5`, `sonnet` → `claude-sonnet-5-5`. Anything unknown falls back to Opus.
+  - `askScout` sends the room, what's carried, the brief, and at most 14 items in reach. The reply is `{say, item, hole}`.
+- **When a line goes live.** `say()` handles places, "throw it", "the big one" and naming another scout itself. Everything else returns `'ask'` when `scoutIsLive()`. The scout shows "…" (a `Thinking` look), and lines typed meanwhile queue as steering.
+- **Questions.** A line ending in "?" is asked, never noted. The scripted scout answers "Pick it up and I'll tell you what I know."
+- **Failure.** The scout says "I couldn't reach Claude Code just now." The page then treats Claude as not found (the card says Scripted) and calls `findAgents()` again after 2 minutes.
 
 ## What is still fixture
 
-- Apps (World of Warcraft, 49 GB), Your stuff (a screen recording, 8.4 GB, and an installer disk, 2.6 GB), and the starter sheds (`cleanup-penguins` with `node_modules` and `dist`, and `lighthouse` with `.next`).
-- The fixture pole, 43.8 GB free of 512, shows until `/api/disk` answers. If that fails, it stays for good.
-- Ages like "not touched in 6 months" exist only on fixtures. Live rows have none.
+- Without the API (under `vite preview` or `dist/`), the page stays on fixture data and a scripted scout:
+  - World of Warcraft (49 GB), Your stuff (a screen recording and an installer disk), and the caches.
+  - The pole, 43.8 GB free of 512. It shows until `/api/disk` answers, and stays if that fails.
+- The starter sheds' cargo (`node_modules` and `dist` in `cleanup-penguins`, `.next` in `lighthouse`) stays fixture until the player types `look in <shed>`. Walking into the shed doesn't measure it.
+- Folder looks have no ages.
 - The Glasshouse exhibits and "The panes are clear." are fixed. `world.fda` is always true and nothing reads it.
 - Codex, Cursor and custom scouts are scripted. Every scripted line is a hardcoded string in `sim.ts` or `main.ts`.
 - `Item.seaBird`, `Item.binBird` and `waterPx()` are leftovers that nothing reads.
 
 ## Known traps
 
+- **The Locker empty breaks rule 3.** `finishEmpty` sends every Locker item to the sea, `sea: false` ones included. The sim test "empties the Locker into the sea as practice" empties World of Warcraft. It is harmless while throws are practice, but it must be settled before any real delete.
+- **Folder kinds go by name alone.** `folderKind` marks any folder called `build`, `out`, `dist`, `.cache`… as sea-safe, wherever it sits, even under `~/Documents`.
+- **Entering an empty shed promises a look that never happens.** The scout says "Nothing mapped yet. I'll look through this folder." and the empty note says it will look, but walking in (`requestScope`) sets no `lookRequest`. Only a typed `look in <shed>` measures it.
 - **Brief matching uses words from item names.** Live caches are named after their top folder, so Chrome's cache is `Google`. "leave the chrome cache alone" matches the fixture "Chrome cache" but not the live row (#10).
-- **Places.** `say()` treats input as a place only for `look in|scan|repo <x>`, where `<x>` is `~`, a path starting with `~` or `/`, mac/home/everything, or a known shed. Everything else goes on the brief.
-- **Lines queued during a live answer** go on the brief (questions excepted) but are not sent to Claude, and get no spoken reply of their own: `liveReply` calls `finishTool(world, now, true)` and then speaks Claude's answer. The reply's `hole` is not used yet.
-- **The scan failure line barely shows.** `loadThisMac()`'s catch sets `scout.bubble` directly, without `sayLine`. The line lives only until the 4s timer set for "Counting the quay." runs out.
-- **The pole sound.** `sound()` plays `flap()` and `splash()` whenever `freeTenths` changes. The first disk reading resets `prevFree` so it stays silent. When a real delete moves the pole, that sound will stack with the throw's own splash.
-- **`claimsAnAction()` is a net, not a guarantee.** It catches first-person and bare claims ("I've just deleted it", "Deleted it for you", "It's gone") and has tests, but a model can always phrase around a regex. The no-tools flag is the real guarantee.
-- **Removing items.** Any code that removes items from `world.items` must call `syncPropNodes()` (or remove the nodes itself), or their DOM nodes linger as ghosts.
+- **Places.** `say()` treats input as a place only for `look in|scan|repo <x>`, where `<x>` is `~`, a path starting with `~` or `/`, mac/home/this mac/everything, or a known shed. Everything else goes on the brief. A `/` path outside home still makes a shed, and then the look fails.
+- **Lines queued during a live answer** go on the brief (questions excepted). They are not sent to Claude and get no spoken reply: `liveReply` calls `finishTool(world, now, true)` and then speaks Claude's answer. The reply's `hole` is unused.
+- **The pole sound.** `sound()` plays `flap()` and `splash()` whenever `freeTenths` changes. Only the first disk reading resets `prevFree`. A bell rescan that reads a different free space therefore flaps and splashes with no bytes returned, and a real delete would stack the sound on the throw's own splash.
+- **`claimsAnAction()` is a net, not a guarantee.** A model can phrase around a regex. The no-tools flag is the real guarantee.
+- **Removing items.** Code that removes items from `world.items` must call `syncPropNodes()`, or their DOM nodes linger as ghosts.
 - **Duplicate ids.** Templates are cloned (the scout card, the dock face), so their clip-path ids (`youClip`, `clClip`, …) repeat. That's harmless only because the shapes are identical. In art files, prefix every id (see [docs/art.md](docs/art.md)).
-- **The API exists only in dev.** Under `vite preview` or `dist/`, the page stays on fixtures and the scout stays scripted.
 
 ## Open issues
 
-https://github.com/adityawrk/cleanup-penguins/issues. All ten are still open on GitHub. "Addressed" below means fixed in the tree and waiting for a check in the browser before anyone proposes closing it. Run `gh issue view <n>` first.
+https://github.com/adityawrk/cleanup-penguins/issues. All ten are open. "Addressed" means fixed in the tree and waiting for a browser check before anyone proposes closing it. Run `gh issue view <n>` first.
 
-1. Rooms are flat boxes. **Addressed:** all four rooms are painted.
-2. Objects are labels. **Addressed:** items and holes are drawn objects with stamped sizes. A blind test named nearly every object and rated the rooms about 7/10 against the bar. It found these weak spots: the hold's sacks still read a little like a grid, the floors are open, the tip machine reads half shredder and half chute without its sign, and the Docker tank mixes a barge with sunken bricks. Re-run that test after art changes.
-3. Penguins barely move. **Mostly addressed:** a waddle, steps, flipper flaps, a three-quarter turn while walking, idle fidgets, sitting, the back view, dancing and emotes.
+1. Rooms are flat boxes. **Addressed:** all four rooms are painted, and the quay and hold were repainted with depth.
+2. Objects are labels. **Addressed:** cargo and holes are drawn objects with stamped sizes. Re-run the blind test.
+3. Penguins barely move. **Mostly addressed:** a waddle, steps, flipper flaps, three-quarter drawings, idle fidgets, sitting, the back view, dancing and emotes.
 4. Clicks feel like a web page. **Addressed:** the click ring lands at the clamped point. Hover brightens painted objects, lifts sheds and wobbles items. Rooms open with an ink iris.
 5. A stranger can't install the harbor. There is no Mac app, README or installer.
 6. Choosing a scout doesn't connect an agent. **Partly addressed:** Claude is live. The others are not.
-7. No real delete, and no enforcement beyond the sim. **Partly addressed:** throws are honest practice.
-8. Two clicks can finish both sea confirms. **Partly addressed:** the 800ms lock, the reversed buttons, focus on No, and no key repeats.
+7. No real delete, and no enforcement beyond the sim. **Partly addressed:** throws are honest practice. A real delete waits on the user (see Next).
+8. Two clicks can finish both sea confirms. **Partly addressed:** the 800ms lock, reversed buttons, focus on No, and no key repeats.
 9. Locker items carried out. **Partly addressed:** a carried item draws in the current room, X outside the hold says "Not from here.", and the roll door asks to put the item back.
 10. Brief matching against live names. Open.
 
@@ -155,8 +224,8 @@ https://github.com/adityawrk/cleanup-penguins/issues. All ten are still open on 
 - **Fable** writes prompts and advises. **Opus** builds and reviews at extra-high effort. Findings a player would notice become GitHub issues.
 - **Issue attribution.** The first line of every issue says who wrote it, with the agent and the model. If you file someone else's findings, name both. Example: `Written by Claude Opus 5.5 (claude-opus-5-5), extra-high effort.`
 - **Honesty about access.** If you can't open a path, for example one outside the repo, say so. Never claim you saw a file you couldn't read.
-- **Art agents** get one file each, the anchors they must respect, [docs/art.md](docs/art.md), and a required render-and-look loop. They touch no other file.
-- **Chrome.** The harbor is a web page, so look at it in Chrome (or the headless scripts above) against `npm run dev`, even from a session that can't drive desktop apps. If two Chromes are connected, never guess which one. Ask, or let the person pick.
+- **Art agents** each get one file, the anchors in [docs/art.md](docs/art.md), and a required render-and-look loop. They touch no other file.
+- **Chrome.** The harbor is a web page, so look at it in Chrome (or with the headless scripts) against `npm run dev`. If two Chromes are connected, never guess which one. Ask, or let the person pick.
 - **Keep this file current.** When a rule, control, model list or trap changes, update `AGENTS.md` (and `docs/art.md` for art) in the same change. `AGENTS.md` is the only top-level markdown. Don't add a README unless asked.
 - **Privacy.** Screenshots show the macOS username and real cache folder names. Crop or describe them in public issues. Never commit scan output.
-- **Commits.** Commit on a branch, push when a milestone lands, and don't commit secrets.
+- **Commits.** Commit on a branch, push when a milestone lands, and never commit secrets.
