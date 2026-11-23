@@ -5,6 +5,8 @@ import '@fontsource/ibm-plex-mono/latin-500.css'
 import '@fontsource/ibm-plex-mono/latin-600.css'
 import './style.css'
 import { HarborAudio } from './audio'
+import quayArt from './art/quay.svg?raw'
+import quayFore from './art/quay-fore.svg?raw'
 import {
   SPOTS,
   answer,
@@ -39,7 +41,8 @@ import {
   scopeTenths,
   setScout,
   setModel,
-  cycleEffort,
+  setEffort,
+  shedSlot,
   effortChoice,
   EFFORTS,
   effortScale,
@@ -54,14 +57,23 @@ import {
   useRealCaches,
   useRealDisk,
   walkTo,
-  waterPx,
   type BeingId,
   type BirdId,
+  type EffortId,
   type Hold,
   type Item,
   type Room,
   type World,
 } from './sim'
+
+const ART: Record<string, string> = { quay: quayArt, 'quay-fore': quayFore }
+for (const host of document.querySelectorAll<HTMLElement>('.paint[data-art]')) {
+  host.innerHTML = ART[host.dataset.art ?? ''] ?? ''
+}
+
+/** Sprites are drawn large and shown small, so the room reads as a big place. */
+const YOU_SIZE = 0.56
+const SCOUT_SIZE = 0.46
 
 const world = createWorld(__USERNAME__ || 'you')
 const audio = new HarborAudio()
@@ -71,7 +83,6 @@ const sayInput = must<HTMLInputElement>('#say')
 const count = must<HTMLElement>('#count')
 const card = must<HTMLElement>('#card')
 const who = must<HTMLElement>('#who')
-const models = must<HTMLElement>('#models')
 const catcher = must<HTMLElement>('#catcher')
 const live = must<HTMLElement>('#live')
 const splash = must<HTMLElement>('#splash')
@@ -102,8 +113,6 @@ void loadThisMac()
 
 placeSpot(must('#spot-bin'), SPOTS.bin)
 placeSpot(must('#spot-chute'), SPOTS.chute)
-must<HTMLElement>('#nest').style.left = '900px'
-must<HTMLElement>('#nest').style.top = '600px'
 
 must('#hello-line').textContent = `${being(world, 'you').name} and ${being(world, 'claude').name}`
 must('#hello-go').addEventListener('click', (event) => {
@@ -140,8 +149,32 @@ must('#sound').addEventListener('click', () => {
   must('#sound').setAttribute('aria-pressed', on ? 'true' : 'false')
   must('#sound').setAttribute('aria-label', on ? 'Sound on' : 'Sound off')
 })
+must('#scout-btn').addEventListener('click', () => {
+  audio.unlock()
+  if (who.hidden) openWho()
+  else closeWho()
+})
+must('#send-btn').addEventListener('click', () => must<HTMLFormElement>('#chat').requestSubmit())
+must('#sc-close').addEventListener('click', () => closeWho())
+for (const mini of document.querySelectorAll<HTMLElement>('#scout-choices .mini')) {
+  mini.appendChild(faceOf(mini.dataset.face as BirdId))
+}
 who.addEventListener('click', (event) => {
-  const button = (event.target as HTMLElement).closest<HTMLElement>('[data-scout]')
+  const target = event.target as HTMLElement
+  const now = performance.now()
+  const modelButton = target.closest<HTMLElement>('[data-model]')
+  if (modelButton?.dataset.model) {
+    setModel(world, modelButton.dataset.model, now)
+    audio.pop()
+    return
+  }
+  const effortButton = target.closest<HTMLElement>('[data-effort]')
+  if (effortButton?.dataset.effort) {
+    setEffort(world, effortButton.dataset.effort as EffortId, now)
+    audio.pop()
+    return
+  }
+  const button = target.closest<HTMLElement>('[data-scout]')
   if (!button) return
   const id = button.dataset.scout as BirdId
   if (id === 'custom' && !button.dataset.name) {
@@ -153,13 +186,7 @@ who.addEventListener('click', (event) => {
     return
   }
   setScout(world, id, performance.now(), button.dataset.name)
-  closeWho()
-})
-models.addEventListener('click', (event) => {
-  const button = (event.target as HTMLElement).closest<HTMLElement>('[data-model]')
-  if (!button?.dataset.model) return
-  setModel(world, button.dataset.model, performance.now())
-  closeModels()
+  audio.pop()
 })
 window.addEventListener('keydown', onKey)
 window.addEventListener('resize', layout)
@@ -181,21 +208,17 @@ function frame(now: number) {
 function sync(now: number) {
   fit.dataset.room = world.room
   track.dataset.room = world.room
-  must<HTMLElement>('#sea').style.height = `${waterPx(world)}px`
   renderFlap(must('#flaps'), poleFree(world))
   renderFlap(must('#mini-flaps'), poleFree(world))
   const sub = `${poleUsed(world)} of ${poleCap(world)}`
   must('#pole-sub').textContent = sub
   must('#mini-sub').textContent = sub
-  must('#label-caches').textContent = `Caches · ${gbWord(skiffTenths(world, 'caches'))}`
-  must('#label-apps').textContent = `Applications · ${gbWord(skiffTenths(world, 'apps'))}`
-  must('#label-stuff').textContent = `Your stuff · ${gbWord(skiffTenths(world, 'stuff'))}`
-  must('#bead').textContent = 'This Mac'
+  setText('#label-caches', gbWord(skiffTenths(world, 'caches')))
+  setText('#label-apps', gbWord(skiffTenths(world, 'apps')))
+  setText('#label-stuff', gbWord(skiffTenths(world, 'stuff')))
   must('#bead-detail').textContent = beadText(world) ?? ''
   must('#path-sign').textContent = world.room === 'hold' ? signPath(world) : ''
   must('#locker-count').textContent = world.lockerTenths > 0 ? gbWord(world.lockerTenths) : 'empty'
-  const scout = world.scout ? being(world, world.scout) : null
-  must('#plaque-name').textContent = scout?.name ?? 'Nobody'
   const steer = must<HTMLElement>('#steer')
   const waiting = world.steering.at(-1)
   steer.hidden = !world.tool || !waiting
@@ -214,8 +237,9 @@ function sync(now: number) {
     const room: Room = id !== 'you' && !actor.awake ? 'quay' : world.room
     const parent = roomObjects(room)
     if (el.parentElement !== parent) parent.appendChild(el)
-    const depth = 0.86 + Math.min(1, Math.max(0, (actor.y - 480) / 220)) * 0.2
+    const depth = (0.88 + Math.min(1, Math.max(0, (actor.y - 480) / 220)) * 0.16) * (id === 'you' ? YOU_SIZE : SCOUT_SIZE)
     el.style.transform = `translate(${actor.x}px, ${actor.y}px) scale(${depth})`
+    el.style.setProperty('--inv', String(1 / depth))
     el.style.zIndex = String(Math.round(actor.y))
     const heft = id === world.scout ? effortScale(world.effort) : 1
     el.style.setProperty('--heft', String(heft))
@@ -293,33 +317,77 @@ function sync(now: number) {
   }
 }
 
+let tuningKey = ''
 function syncTuning() {
-  const charm = must<HTMLButtonElement>('#charm')
-  const kettle = must<HTMLButtonElement>('#kettle')
-  const awake = Boolean(world.scout)
-  charm.hidden = !awake
-  kettle.hidden = !awake
-  if (world.card) models.hidden = true
-  if (!awake) return
-  const look = modelChoice(world)
+  if (world.card && !who.hidden) closeWho()
+  const look = world.scout ? modelChoice(world) : null
   const effort = effortChoice(world)
-  charm.dataset.model = look.id
-  must('#charm-name').textContent = look.label
-  charm.setAttribute('aria-label', `Model, ${look.label}. Click to change it.`)
-  must('#effort-name').textContent = effort.label
-  const level = EFFORTS.findIndex((choice) => choice.id === effort.id) + 1
-  kettle.setAttribute('aria-label', `Effort, ${effort.label}. Click for the next look.`)
-  const pips = must('#pips')
-  if (pips.childElementCount !== EFFORTS.length) {
-    pips.replaceChildren()
-    for (let i = 0; i < EFFORTS.length; i += 1) pips.appendChild(document.createElement('i'))
+  const scout = world.scout ? being(world, world.scout) : null
+  const key = `${world.scout}|${scout?.name}|${look?.id}|${effort.id}`
+  if (key !== tuningKey) {
+    tuningKey = key
+    const face = must('#dock-face')
+    face.replaceChildren(world.scout ? faceOf(world.scout) : document.createTextNode('?'))
+    must('#scout-btn').setAttribute('aria-label', scout ? `Your scout, ${scout.name}` : 'Choose a scout')
+    must('#sc-name').textContent = scout?.name ?? 'No scout'
+    must('#sc-line').textContent = look ? `${look.label} · ${effort.label} effort` : 'Pick one below.'
+    const portrait = must<HTMLElement>('#sc-portrait')
+    portrait.replaceChildren()
+    if (world.scout) {
+      const art = faceOf(world.scout)
+      art.style.setProperty('--heft', String(effortScale(effort.id)))
+      portrait.appendChild(art)
+    }
+    portrait.dataset.effort = effort.id
+    const modelsHost = must('#model-choices')
+    modelsHost.replaceChildren()
+    if (world.scout) {
+      for (const choice of modelsFor(world)) {
+        const button = document.createElement('button')
+        button.type = 'button'
+        button.dataset.model = choice.id
+        button.textContent = choice.label
+        button.classList.toggle('is-on', choice.id === look?.id)
+        button.setAttribute('aria-pressed', String(choice.id === look?.id))
+        modelsHost.appendChild(button)
+      }
+    }
+    const effortHost = must('#effort-choices')
+    effortHost.replaceChildren()
+    const level = EFFORTS.findIndex((choice) => choice.id === effort.id)
+    EFFORTS.forEach((choice, index) => {
+      const button = document.createElement('button')
+      button.type = 'button'
+      button.dataset.effort = choice.id
+      button.setAttribute('aria-label', choice.label)
+      button.setAttribute('aria-pressed', String(choice.id === effort.id))
+      button.classList.toggle('is-on', index <= level)
+      button.classList.toggle('is-current', choice.id === effort.id)
+      button.innerHTML = FISH_SVG + `<span></span>`
+      button.querySelector('span')!.textContent = choice.label
+      effortHost.appendChild(button)
+    })
+    for (const button of document.querySelectorAll<HTMLElement>('#scout-choices [data-scout]')) {
+      const id = button.dataset.scout
+      const name = button.dataset.name
+      const on = id === world.scout && (id !== 'custom' || !name || name === world.customName)
+      button.classList.toggle('is-on', on)
+    }
   }
-  ;[...pips.children].forEach((pip, index) => pip.classList.toggle('on', index < level))
   if (!naming && document.activeElement !== sayInput) {
-    const prompt = `Tell ${look.label} what matters`
+    const prompt = look ? `Tell ${look.label} what matters` : 'Tell your scout what matters'
     if (sayInput.placeholder !== prompt) sayInput.placeholder = prompt
     must('#say-label').textContent = prompt
   }
+}
+
+const FISH_SVG = '<svg viewBox="0 0 48 28" aria-hidden="true"><path d="M6 14C12 4 30 2 38 14C30 26 12 24 6 14Z" class="fish-body"/><path d="M38 14L47 6V22Z" class="fish-body"/><circle cx="15" cy="12" r="2.2" fill="#1a2332"/><path d="M22 9c2 3 2 7 0 10" fill="none" stroke="#1a2332" stroke-width="2" stroke-linecap="round" opacity=".5"/></svg>'
+
+/** A copy of a scout's drawn sprite, for the dock button and the scout card. */
+function faceOf(id: BirdId): SVGElement {
+  const svg = must<HTMLTemplateElement>(`#tpl-${id}`).content.querySelector('svg')!.cloneNode(true) as SVGElement
+  svg.classList.add('face-art')
+  return svg
 }
 
 function promptFor(game: World): string {
@@ -340,27 +408,48 @@ function syncBrief() {
 }
 
 let shedKey = ''
+const SHED_COLORS = ['#e15b4a', '#3aa0f2', '#5bb04b', '#f08a2c', '#9b6bd6', '#f4c534']
 function syncSheds() {
-  const key = world.repos.map((repo) => `${repo.id}:${scopeTenths(world, repo.id)}`).join('|')
+  const key = world.repos.map((repo) => `${repo.id}:${scopeTenths(world, repo.id)}:${world.scope.id === repo.id}`).join('|')
   if (key === shedKey) return
   shedKey = key
   const host = must('#sheds')
   host.replaceChildren()
-  for (const repo of world.repos) {
+  world.repos.forEach((repo, index) => {
+    const slot = shedSlot(index)
     const button = document.createElement('button')
     button.type = 'button'
     button.className = 'hit shed'
     button.dataset.act = 'scope'
     button.dataset.scope = repo.id
-    button.style.left = `${repo.x - 56}px`
-    button.style.top = `${repo.y}px`
-    button.innerHTML = `<span class="shed-name"></span><span class="shed-meta"></span>`
-    button.querySelector('.shed-name')!.textContent = repo.label
+    button.style.left = `${slot.x}px`
+    button.style.top = `${slot.y}px`
+    button.style.setProperty('--wall', SHED_COLORS[index % SHED_COLORS.length])
+    button.classList.toggle('is-scope', world.scope.id === repo.id)
     const tenths = scopeTenths(world, repo.id)
-    button.querySelector('.shed-meta')!.textContent = tenths > 0 ? gbWord(tenths) : repo.path
+    button.setAttribute('aria-label', `${repo.label}, ${tenths > 0 ? gbWord(tenths) : 'not mapped yet'}`)
+    button.innerHTML = `${SHED_SVG}<span class="shed-sign"><span class="shed-name"></span><span class="shed-meta"></span></span>`
+    button.querySelector('.shed-name')!.textContent = repo.label
+    button.querySelector('.shed-meta')!.textContent = tenths > 0 ? gbWord(tenths) : 'not mapped'
     host.appendChild(button)
-  }
+  })
 }
+
+const SHED_SVG = `<svg class="shed-art" viewBox="0 0 64 74" aria-hidden="true">
+  <g stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round">
+    <rect x="8" y="30" width="48" height="42" fill="var(--wall)" stroke-width="3.6"/>
+    <rect x="40" y="32" width="15" height="38" fill="#1a2332" opacity=".16" stroke="none"/>
+    <path d="M14 32v38M22 32v38M30 32v38M38 32v38M46 32v38" stroke="#1a2332" stroke-width="1.4" opacity=".28"/>
+    <rect x="8" y="30" width="48" height="42" fill="none" stroke-width="3.6"/>
+    <path d="M2 34L32 8L62 34Z" fill="#5a4636" stroke-width="3.6"/>
+    <path d="M32 8L62 34H46Z" fill="#45352a" stroke="none"/>
+    <path d="M2 34L32 8L62 34" fill="none" stroke-width="3.6"/>
+    <path d="M6 32C14 24 24 16 32 10C40 16 50 24 58 32C52 29 46 30 42 33C38 28 30 28 26 32C22 28 12 28 6 32Z" fill="#fff" stroke-width="2.6"/>
+    <rect x="24" y="46" width="16" height="26" rx="2" fill="#7a4a27" stroke-width="3"/>
+    <circle cx="36" cy="60" r="1.8" fill="#f4c534" stroke="none"/>
+    <rect x="12" y="38" width="9" height="9" rx="1.5" fill="#ffe27a" stroke-width="2.4"/>
+  </g>
+</svg>`
 
 function syncSheet() {
   const sheet = must<HTMLElement>('#sheet')
@@ -378,7 +467,7 @@ function syncSheet() {
 function syncCard(now: number) {
   const model = cardModel(world, now)
   card.hidden = !model
-  catcher.hidden = !model && who.hidden && models.hidden
+  catcher.hidden = !model && who.hidden
   if (!model) {
     shownCard = ''
     return
@@ -496,7 +585,7 @@ function onClick(event: MouseEvent) {
   if (naming) return
   const now = performance.now()
   audio.unlock()
-  if (world.card || !who.hidden || !models.hidden) return
+  if (world.card || !who.hidden) return
   const hit = target.closest<HTMLElement>('[data-act]')
   if (!hit) return
   const act = hit.dataset.act
@@ -528,8 +617,8 @@ function onClick(event: MouseEvent) {
     requestLift(world, hit.dataset.id, now)
   }
   if (act === 'who') openWho()
-  if (act === 'model') openModels()
-  if (act === 'effort') cycleEffort(world, now)
+  if (act === 'model') openWho()
+  if (act === 'effort') openWho()
   if (act === 'fda') bumpBuoy(world, now)
   if (act === 'buoy') bumpBuoy(world, now)
   if (act === 'bird' && hit.dataset.bird && hit.dataset.bird !== 'you') {
@@ -561,10 +650,6 @@ function onKey(event: KeyboardEvent) {
   const key = event.key.toLowerCase()
   if (!who.hidden) {
     if (key === 'escape') closeWho()
-    return
-  }
-  if (!models.hidden) {
-    if (key === 'escape') closeModels()
     return
   }
   if (world.card) {
@@ -604,34 +689,16 @@ function onKey(event: KeyboardEvent) {
 }
 
 function openWho() {
-  models.hidden = true
+  if (world.card) return
+  tuningKey = ''
   who.hidden = false
   catcher.hidden = false
+  must('#scout-btn').classList.add('is-on')
 }
 function closeWho() {
   who.hidden = true
-  catcher.hidden = !world.card && models.hidden
-}
-function openModels() {
-  if (!world.scout || world.card) return
-  who.hidden = true
-  const host = must('#model-choices')
-  host.replaceChildren()
-  const current = modelChoice(world)
-  for (const choice of modelsFor(world)) {
-    const button = document.createElement('button')
-    button.type = 'button'
-    button.dataset.model = choice.id
-    button.textContent = choice.label
-    button.classList.toggle('is-on', choice.id === current.id)
-    host.appendChild(button)
-  }
-  models.hidden = false
-  catcher.hidden = false
-}
-function closeModels() {
-  models.hidden = true
-  catcher.hidden = !world.card && who.hidden
+  catcher.hidden = !world.card
+  must('#scout-btn').classList.remove('is-on')
 }
 
 function layout() {
@@ -723,3 +790,8 @@ function must<T extends Element>(selector: string): T {
 catcher.addEventListener('click', () => {
   if (!who.hidden) closeWho()
 })
+
+function setText(selector: string, text: string) {
+  const node = document.querySelector(selector)
+  if (node && node.textContent !== text) node.textContent = text
+}

@@ -11,89 +11,13 @@
         <div id="stage">
           <div id="track" data-room="quay">
             <section class="room" id="room-quay" aria-label="The quay">
-              <div class="sky"></div>
-              <div class="sun"></div>
-              <svg class="cloud c1" viewBox="0 0 120 56" aria-hidden="true">
-                <path d="M20 50C6 50 4 34 16 31C13 19 28 12 39 18C43 6 63 2 73 14C82 6 100 10 99 24C113 22 119 42 106 50Z" fill="#fff"/>
-                <path d="M8 42C26 45 94 45 112 39C113 46 110 50 104 50H20C13 50 9 47 8 42Z" fill="#d6ecf9"/>
-                <path d="M20 50C6 50 4 34 16 31C13 19 28 12 39 18C43 6 63 2 73 14C82 6 100 10 99 24C113 22 119 42 106 50Z" fill="none" stroke="#1a2332" stroke-width="4" stroke-linejoin="round"/>
-              </svg>
-              <svg class="cloud c2" viewBox="0 0 120 56" aria-hidden="true">
-                <path d="M20 50C6 50 4 34 16 31C13 19 28 12 39 18C43 6 63 2 73 14C82 6 100 10 99 24C113 22 119 42 106 50Z" fill="#fff"/>
-                <path d="M8 42C26 45 94 45 112 39C113 46 110 50 104 50H20C13 50 9 47 8 42Z" fill="#d6ecf9"/>
-                <path d="M20 50C6 50 4 34 16 31C13 19 28 12 39 18C43 6 63 2 73 14C82 6 100 10 99 24C113 22 119 42 106 50Z" fill="none" stroke="#1a2332" stroke-width="4.6" stroke-linejoin="round"/>
-              </svg>
-              <svg class="cloud c3" viewBox="0 0 120 56" aria-hidden="true">
-                <path d="M20 50C6 50 4 34 16 31C13 19 28 12 39 18C43 6 63 2 73 14C82 6 100 10 99 24C113 22 119 42 106 50Z" fill="#fff"/>
-                <path d="M8 42C26 45 94 45 112 39C113 46 110 50 104 50H20C13 50 9 47 8 42Z" fill="#d6ecf9"/>
-                <path d="M20 50C6 50 4 34 16 31C13 19 28 12 39 18C43 6 63 2 73 14C82 6 100 10 99 24C113 22 119 42 106 50Z" fill="none" stroke="#1a2332" stroke-width="5" stroke-linejoin="round"/>
-              </svg>
-              <svg class="hills" viewBox="0 0 1280 708" aria-hidden="true">
-                <path d="M0 250C160 190 280 230 460 200C640 170 760 230 980 190C1120 168 1200 200 1280 180V470H0Z" fill="#e7f6ff" stroke="#1a2332" stroke-width="3" stroke-linejoin="round" />
-                <path d="M0 290C200 240 340 280 520 250C740 214 900 270 1280 230V470H0Z" fill="#c9e7f8" stroke="#1a2332" stroke-width="3" stroke-linejoin="round" />
-              </svg>
-              <svg class="bergs" viewBox="0 0 1280 708" aria-hidden="true">
-                <path d="M0 230L60 140L110 190L76 470H0Z" fill="#f7fbff" />
-                <path d="M60 140L110 190L76 470L54 300Z" fill="#cfe5f3" />
-                <path d="M0 230L60 140L110 190L76 470H0Z" fill="none" stroke="#1a2332" stroke-width="4" stroke-linejoin="round" />
-                <path d="M1280 200L1180 110L1100 160L1020 80L940 190L990 470H1280Z" fill="#f7fbff" />
-                <path d="M1020 80L1100 160L1080 470L1000 260Z" fill="#cfe5f3" />
-                <path d="M1180 110L1280 200V470L1220 300Z" fill="#cfe5f3" />
-                <path d="M1280 200L1180 110L1100 160L1020 80L940 190L990 470H1280Z" fill="none" stroke="#1a2332" stroke-width="4" stroke-linejoin="round" />
-              </svg>
-              <div class="sea" id="sea">
-                <svg class="wave" viewBox="0 0 1280 36" preserveAspectRatio="none" aria-hidden="true">
-                  <path d="M0 18Q40 0 80 18T160 18T240 18T320 18T400 18T480 18T560 18T640 18T720 18T800 18T880 18T960 18T1040 18T1120 18T1200 18T1280 18V36H0Z" fill="#d9f2ff"/>
-                  <path d="M0 24Q40 10 80 24T160 24T240 24T320 24T400 24T480 24T560 24T640 24T720 24T800 24T880 24T960 24T1040 24T1120 24T1200 24T1280 24V36H0Z" fill="#56b2ec"/>
-                  <path d="M0 18Q40 0 80 18T160 18T240 18T320 18T400 18T480 18T560 18T640 18T720 18T800 18T880 18T960 18T1040 18T1120 18T1200 18T1280 18" fill="none" stroke="#1a2332" stroke-width="3" vector-effect="non-scaling-stroke"/>
-                </svg>
+              <div class="paint" data-art="quay"></div>
+              <div class="pole" aria-label="Free space on this Mac">
+                <div class="kicker">Free</div>
+                <div class="flaps" id="flaps"></div>
+                <div class="sub" id="pole-sub">468.2 of 512</div>
               </div>
-              <div class="pole">
-                <div class="pole-post"></div>
-                <div class="pole-board">
-                  <div class="kicker">Free</div>
-                  <div class="flaps" id="flaps"></div>
-                  <div class="sub" id="pole-sub">468.2 of 512</div>
-                </div>
-              </div>
-              <button type="button" class="hit boat boat-caches" data-act="board" data-hold="caches" aria-label="Caches">
-                <svg class="hull" viewBox="0 0 220 120" aria-hidden="true"><ellipse cx="110" cy="108" rx="70" ry="7" fill="rgba(26,35,50,.18)"/><path d="M30 62c14 30 40 40 80 40s66-10 80-40l-18 0c-10 18-32 26-62 26s-52-8-62-26z" fill="#c4894a" stroke="#1a2332" stroke-width="4" stroke-linejoin="round"/><path d="M52 62c8 14 28 20 58 20s50-6 58-20z" fill="#8d5a32" stroke="#1a2332" stroke-width="3"/><path d="M26 58h168" stroke="#e7c48a" stroke-width="8" stroke-linecap="round"/><path d="M22 58h176" stroke="#1a2332" stroke-width="3" stroke-linecap="round"/><circle cx="78" cy="70" r="5" fill="none" stroke="#f3d7a1" stroke-width="2"/></svg>
-                <span class="stencil" id="label-caches">Caches</span>
-              </button>
-              <button type="button" class="hit boat boat-apps" data-act="board" data-hold="apps" aria-label="Applications">
-                <svg class="hull warm" viewBox="0 0 220 120" aria-hidden="true"><ellipse cx="110" cy="108" rx="70" ry="7" fill="rgba(26,35,50,.18)"/><path d="M30 62c14 30 40 40 80 40s66-10 80-40l-18 0c-10 18-32 26-62 26s-52-8-62-26z" fill="#d7a15a" stroke="#1a2332" stroke-width="4" stroke-linejoin="round"/><path d="M52 62c8 14 28 20 58 20s50-6 58-20z" fill="#8d5a32" stroke="#1a2332" stroke-width="3"/><path d="M26 58h168" stroke="#f0d7a4" stroke-width="8" stroke-linecap="round"/><path d="M22 58h176" stroke="#1a2332" stroke-width="3" stroke-linecap="round"/></svg>
-                <span class="stencil" id="label-apps">Applications</span>
-              </button>
-              <button type="button" class="hit boat boat-stuff" data-act="board" data-hold="stuff" aria-label="Your stuff">
-                <svg class="hull pale" viewBox="0 0 220 120" aria-hidden="true"><ellipse cx="110" cy="108" rx="70" ry="7" fill="rgba(26,35,50,.18)"/><path d="M30 62c14 30 40 40 80 40s66-10 80-40l-18 0c-10 18-32 26-62 26s-52-8-62-26z" fill="#e0b56e" stroke="#1a2332" stroke-width="4" stroke-linejoin="round"/><path d="M52 62c8 14 28 20 58 20s50-6 58-20z" fill="#a8743c" stroke="#1a2332" stroke-width="3"/><path d="M26 58h168" stroke="#f6e2bc" stroke-width="8" stroke-linecap="round"/><path d="M22 58h176" stroke="#1a2332" stroke-width="3" stroke-linecap="round"/></svg>
-                <span class="stencil" id="label-stuff">Your stuff</span>
-              </button>
-              <button type="button" class="hit bead-hit" id="bead-hit" data-act="rope" aria-label="Map the whole Mac">
-                <span class="bead-swing"><span class="rope-bit"></span><span class="bead" id="bead">This Mac</span><span class="bead-detail" id="bead-detail"></span></span>
-              </button>
-              <div class="deck"></div>
-              <div class="place-sign">Harbor</div>
-              <button type="button" class="hit door door-locker" data-act="enter" data-room="locker" aria-label="The Locker">
-                <span class="door-kicker">Locker</span>
-                <span class="door-count" id="locker-count">empty</span>
-              </button>
-              <button type="button" class="hit door door-glass" data-act="enter" data-room="glasshouse" aria-label="The Glasshouse">
-                <span class="door-kicker">Glasshouse</span>
-                <span class="door-count">look</span>
-              </button>
-              <div class="nest" id="nest"></div>
-              <button type="button" class="hit charm" id="charm" data-act="model" aria-label="Change model">
-                <span class="charm-mark" id="charm-mark"></span>
-                <span class="charm-name" id="charm-name">Opus</span>
-              </button>
-              <button type="button" class="hit kettle" id="kettle" data-act="effort" aria-label="Effort, high. Click for the next look.">
-                <span class="fish-stack" id="pips"></span>
-                <span class="kettle-word" id="effort-name">High</span>
-              </button>
-              <button type="button" class="hit plaque" id="plaque" data-act="who" aria-label="Your scout">
-                <span class="plaque-kicker">Your scout</span>
-                <span class="plaque-name" id="plaque-name">Claude</span>
-              </button>
+              <div class="bell-tag" aria-hidden="true"><b>This Mac</b><span class="bead-detail" id="bead-detail"></span></div>
               <div class="brief" id="brief" hidden>
                 <div class="brief-kicker">You said</div>
                 <ul id="brief-list"></ul>
@@ -101,6 +25,7 @@
               <div id="sheds"></div>
               <button type="button" class="ground" data-act="ground" tabindex="-1" aria-label="Walk the quay"></button>
               <div class="objects" data-room="quay"></div>
+              <div class="paint fore" data-art="quay-fore"></div>
             </section>
 
             <section class="room" id="room-hold" aria-label="The hold">
@@ -168,18 +93,27 @@
           </aside>
         </div>
         <footer id="console">
-          <button type="button" id="sound" aria-pressed="true" aria-label="Sound on">
-            <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
-              <path d="M4 10h3l5-4v12l-5-4H4z" fill="currentColor" />
-              <path d="M16 9c1.2 1 1.2 5 0 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          <button type="button" class="dock-btn" id="sound" aria-pressed="true" aria-label="Sound on">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 10h3l5-4v12l-5-4H4z" fill="currentColor" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+              <path d="M16 9c1.4 1.2 1.4 4.8 0 6M18.6 6.6c2.6 2.6 2.6 8.2 0 10.8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             </svg>
+          </button>
+          <button type="button" class="dock-btn" id="scout-btn" aria-label="Your scout">
+            <span class="dock-face" id="dock-face"></span>
           </button>
           <form id="chat">
             <label class="sr" for="say" id="say-label">Tell Opus what matters</label>
             <input id="say" maxlength="80" placeholder="Tell Opus what matters" autocomplete="off" />
+            <span id="count" hidden>0/80</span>
           </form>
+          <button type="button" class="dock-btn" id="send-btn" aria-label="Say it">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 5.5C4 4.7 4.7 4 5.5 4h13c.8 0 1.5.7 1.5 1.5v9c0 .8-.7 1.5-1.5 1.5H10l-4.5 4v-4h0C4.7 16 4 15.3 4 14.5z" fill="#fff" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+              <path d="M8 8.5h8M8 11.8h5.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+          </button>
           <p id="steer" hidden></p>
-          <span id="count" hidden>0/80</span>
         </footer>
         <div id="catcher" hidden></div>
         <div id="card" hidden>
@@ -195,21 +129,29 @@
             <button type="button" id="card-yes">Yes</button>
           </div>
         </div>
-        <div id="models" hidden>
-          <h2 id="models-title">Which look?</h2>
-          <p>This scout's models. One at a time.</p>
-          <div class="who-grid" id="model-choices"></div>
-        </div>
-        <div id="who" hidden>
-          <h2>Who's with you?</h2>
-          <p>One signed-in agent. Your notes stay.</p>
-          <div class="who-grid">
-            <button type="button" data-scout="claude">Claude</button>
-            <button type="button" data-scout="codex">Codex</button>
-            <button type="button" data-scout="cursor">Cursor</button>
-            <button type="button" data-scout="custom" data-name="OpenCode">OpenCode</button>
-            <button type="button" data-scout="custom" data-name="Antigravity">Antigravity</button>
-            <button type="button" data-scout="custom">Someone else</button>
+        <div id="who" hidden role="dialog" aria-modal="true" aria-labelledby="sc-name">
+          <button type="button" class="sc-close" id="sc-close" aria-label="Close">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/></svg>
+          </button>
+          <div class="sc-left">
+            <h2 id="sc-name">Claude</h2>
+            <div class="sc-portrait" id="sc-portrait"></div>
+            <p class="sc-line" id="sc-line">Opus · High</p>
+          </div>
+          <div class="sc-right">
+            <h3>Model</h3>
+            <div class="sc-row" id="model-choices"></div>
+            <h3>Effort <span class="sc-hint" id="effort-hint">bigger looks harder</span></h3>
+            <div class="sc-row sc-fish" id="effort-choices"></div>
+            <h3>Scout <span class="sc-hint">one at a time</span></h3>
+            <div class="sc-grid" id="scout-choices">
+              <button type="button" data-scout="claude"><i class="mini" data-face="claude"></i>Claude</button>
+              <button type="button" data-scout="codex"><i class="mini" data-face="codex"></i>Codex</button>
+              <button type="button" data-scout="cursor"><i class="mini" data-face="cursor"></i>Cursor</button>
+              <button type="button" data-scout="custom" data-name="OpenCode"><i class="mini" data-face="custom"></i>OpenCode</button>
+              <button type="button" data-scout="custom" data-name="Antigravity"><i class="mini" data-face="custom"></i>Antigravity</button>
+              <button type="button" data-scout="custom"><i class="mini" data-face="custom"></i>Someone else</button>
+            </div>
           </div>
         </div>
         <div id="live" class="sr" aria-live="polite"></div>

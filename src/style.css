@@ -40,129 +40,6 @@ button { appearance: none; background: none; border: 0; padding: 0; }
 .room { width: 1280px; height: 708px; position: relative; flex: none; overflow: hidden; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 
-.sky { position: absolute; inset: 0 0 280px 0; background: #7ec8f0; }
-.sun { position: absolute; right: 90px; top: 36px; width: 72px; height: 72px; border-radius: 50%; background: #ffe066; border: 4px solid var(--ink); box-shadow: inset -10px -9px 0 #f6c445; }
-.cloud { position: absolute; display: block; height: auto; pointer-events: none; }
-.cloud.c1 { width: 120px; top: 58px; left: 170px; animation: drift 42s linear infinite; }
-.cloud.c2 { width: 96px; top: 112px; left: 520px; animation: drift 56s linear infinite reverse; }
-.cloud.c3 { width: 76px; top: 64px; left: 760px; animation: drift 64s linear infinite; }
-.hills, .bergs { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
-.sea { position: absolute; left: 0; right: 0; bottom: 0; height: 290px; background: linear-gradient(#56b2ec 0 14px, #2c88d0 14px); transition: height 700ms ease; }
-
-.pole { position: absolute; left: 168px; top: 86px; width: 168px; z-index: 2; pointer-events: none; }
-.pole-post { position: absolute; left: 76px; top: 104px; width: 16px; height: 300px; background: #8d5a32; border: 3px solid var(--ink); border-radius: 8px; box-shadow: inset -5px 0 0 #643e24; }
-.pole-board { position: relative; background: #f3d7a1; border: 3px solid var(--ink); border-radius: 16px; padding: 8px 8px 10px; text-align: center; box-shadow: 4px 4px 0 rgba(26, 35, 50, .15); }
-.kicker { font-size: 13px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
-.flaps { display: flex; justify-content: center; gap: 4px; margin: 4px 0; }
-.flap-cell { width: 32px; height: 46px; display: grid; place-items: center; background: linear-gradient(#26344a 0 50%, #172030 50%); color: #f4fbff; border-radius: 5px; border: 2px solid #0b1018; font-size: 28px; font-weight: 700; position: relative; }
-.flap-cell.dot { width: 14px; background: transparent; border: 0; color: var(--ink); }
-.flap-cell:after { content: ""; position: absolute; left: 2px; right: 2px; top: 50%; height: 2px; background: rgba(0, 0, 0, .45); }
-.flap-cell.dot:after { display: none; }
-.flap-cell.tick { animation: tick 280ms ease; }
-.sub { font-size: 13px; font-weight: 650; }
-#mini { position: absolute; top: 16px; left: 16px; z-index: 5; background: #f3d7a1; border: 3px solid var(--ink); border-radius: 14px; padding: 6px 8px 8px; text-align: center; }
-#mini .flap-cell { width: 22px; height: 30px; font-size: 18px; }
-#fit[data-room="quay"] #mini { visibility: hidden; }
-
-/* The quay deck: flat planks that widen toward the player, each with a darker lower lip,
-   a hard seam, and staggered butt joints. No texture, no gradient falloff. */
-.deck {
-  position: absolute; left: 0; right: 0; top: 470px; bottom: 0; z-index: 1;
-  border-top: 4px solid var(--ink);
-  background:
-    linear-gradient(90deg, #8d5a32 0 3px, transparent 3px) 60px 12px / 230px 30px repeat-x,
-    linear-gradient(90deg, #8d5a32 0 3px, transparent 3px) 190px 44px / 260px 34px repeat-x,
-    linear-gradient(90deg, #8d5a32 0 3px, transparent 3px) 20px 80px / 290px 39px repeat-x,
-    linear-gradient(90deg, #8d5a32 0 3px, transparent 3px) 240px 121px / 320px 43px repeat-x,
-    linear-gradient(90deg, #8d5a32 0 3px, transparent 3px) 110px 166px / 350px 47px repeat-x,
-    linear-gradient(90deg, #8d5a32 0 3px, transparent 3px) 300px 215px / 380px 30px repeat-x,
-    linear-gradient(
-      #c48945 0 10px, #8d5a32 10px 12px,
-      #e7b974 12px 38px, #cf9a55 38px 42px, #8d5a32 42px 44px,
-      #e2b36c 44px 74px, #cf9a55 74px 78px, #8d5a32 78px 80px,
-      #e7b974 80px 114px, #cf9a55 114px 119px, #8d5a32 119px 121px,
-      #e2b36c 121px 159px, #cf9a55 159px 164px, #8d5a32 164px 166px,
-      #e7b974 166px 208px, #cf9a55 208px 213px, #8d5a32 213px 215px,
-      #e2b36c 215px
-    );
-}
-.place-sign { position: absolute; left: 50%; top: 168px; transform: translateX(-50%); background: #f3d7a1; border: 3px solid var(--ink); border-radius: 12px; padding: 4px 16px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; z-index: 2; }
-
-.hit { cursor: pointer; position: absolute; z-index: 3; }
-.hit:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
-.hit:hover { transform: translateY(-3px); }
-.hit:active { transform: translateY(1px); }
-.boat { width: 220px; overflow: visible; }
-.boat svg { display: block; width: 220px; height: 112px; }
-.wave { position: absolute; left: 0; right: 0; top: -18px; width: 100%; height: 32px; }
-.boat-caches { left: 250px; top: 390px; }
-.boat-apps { left: 520px; top: 368px; }
-.boat-stuff { left: 790px; top: 392px; }
-.stencil { position: absolute; left: 8px; right: 8px; top: 18px; text-align: center; font-weight: 700; font-size: 14px; line-height: 1.15; color: var(--ink); }
-.bead-hit { left: 300px; top: 455px; width: 180px; z-index: 4; }
-.bead-swing { display: block; transform-origin: top center; animation: sway 3.4s ease-in-out infinite; }
-.rope-bit { display: block; width: 3px; height: 28px; margin: 0 auto; background: var(--ink); }
-.bead { display: block; background: var(--cream); border: 3px solid var(--ink); border-radius: 10px; padding: 6px 8px; font-size: 13px; font-weight: 650; text-align: center; }
-
-.door { width: 118px; height: 132px; border: 4px solid var(--ink); border-radius: 14px 14px 6px 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-weight: 700; }
-.door-locker { left: 28px; top: 520px; background: #607080; color: #f4fbff; box-shadow: inset 0 -18px 0 #4b5866, inset 0 0 0 6px #6f8090; }
-.door-glass { right: 28px; top: 508px; background: #c4ebfb; box-shadow: inset 0 -18px 0 #9bd3ec, inset 0 0 0 6px #d8f3fd; }
-.door::after { content: ""; position: absolute; right: 11px; top: 62%; width: 12px; height: 12px; border-radius: 50%; background: #f0d78c; border: 3px solid var(--ink); }
-.door-kicker { font-size: 16px; }
-.door-count { font-size: 13px; font-weight: 600; }
-.nest { position: absolute; left: 900px; top: 600px; width: 124px; height: 40px; margin: -20px 0 0 -62px; border: 4px solid var(--ink); border-radius: 50%; background: repeating-linear-gradient(90deg, #c9854a 0 7px, #e7c48a 7px 12px); box-shadow: inset 0 -8px 0 #a86a38; z-index: 2; }
-.charm, .kettle { background: var(--cream); border: 3px solid var(--ink); font-weight: 700; }
-.charm { left: 900px; top: 496px; z-index: 4; width: max-content; min-width: 64px; height: 64px; margin-left: -32px; padding: 0 10px; border-radius: 32px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; box-shadow: 0 4px 0 var(--ink); }
-.charm::before { content: ""; position: absolute; left: 50%; top: 100%; width: 4px; height: 52px; margin-left: -2px; background: var(--ink); }
-.charm-mark { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--ink); background: var(--cap, #14324a); }
-.charm-name, .kettle-word { font-size: 12px; line-height: 1; }
-.charm[data-model="sonnet"] { --cap: #7eb6d4; }
-.charm[data-model="opus"] { --cap: #0e2436; }
-.charm[data-model="fable"] { --cap: #f0a202; }
-.charm[data-model="astra"] { --cap: #e8c547; }
-.charm[data-model="sol"] { --cap: #f4a024; }
-.charm[data-model="terra"] { --cap: #6b8f71; }
-.charm[data-model="grok-4.7"] { --cap: #1a2332; }
-.charm[data-model="grok-4.6"] { --cap: #3d4d63; }
-.charm[data-model="grok-4.5"] { --cap: #8b97a6; }
-.charm[data-model="neon"] { --cap: #39e7ff; }
-.charm[data-model="carbon"] { --cap: #2a2a2a; }
-.charm[data-model="argon"] { --cap: #c5d0dc; }
-.charm[data-model="default"] { --cap: #c9854a; }
-.kettle { left: 792px; bottom: 58px; top: auto; z-index: 4; width: 78px; border: 0; background: transparent; padding: 0; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-.charm[hidden], .kettle[hidden] { display: none !important; }
-.fish-stack { display: flex; flex-direction: column-reverse; align-items: center; gap: 4px; min-height: 78px; justify-content: flex-start; }
-.fish-stack i { position: relative; display: block; width: 30px; height: 14px; margin-left: 8px; border-radius: 50%; border: 2px solid var(--ink); background: #e7eef4; }
-.fish-stack i::before { content: ""; position: absolute; left: -9px; top: 0; width: 10px; height: 10px; background: inherit; clip-path: polygon(100% 0, 0 50%, 100% 100%); }
-.fish-stack i.on { background: #f27d32; }
-.kettle-word { background: #fff; border: 2px solid var(--ink); border-radius: 999px; padding: 1px 7px; }
-.being.bird[data-model] { --cap: #14324a; }
-.being.bird[data-model="sonnet"] { --cap: #7eb6d4; }
-.being.bird[data-model="opus"] { --cap: #0e2436; }
-.being.bird[data-model="fable"] { --cap: #f0a202; }
-.being.bird[data-model="astra"] { --cap: #e8c547; }
-.being.bird[data-model="sol"] { --cap: #f4a024; }
-.being.bird[data-model="terra"] { --cap: #6b8f71; }
-.being.bird[data-model="grok-4.7"] { --cap: #1a2332; }
-.being.bird[data-model="grok-4.6"] { --cap: #3d4d63; }
-.being.bird[data-model="grok-4.5"] { --cap: #8b97a6; }
-.being.bird[data-model="neon"] { --cap: #39e7ff; }
-.being.bird[data-model="carbon"] { --cap: #2a2a2a; }
-.being.bird[data-model="argon"] { --cap: #c5d0dc; }
-.being.bird[data-model] .sprite { position: relative; }
-/* The model cap sits tilted on the left of the crown so the scout's own tuft, crest, or sprout still shows. */
-.being.bird[data-model] .sprite::after { content: ""; position: absolute; left: 50%; top: 22px; width: 46px; height: 19px; margin-left: -44px; border-radius: 23px 23px 6px 6px; border: 3px solid var(--ink); background: var(--cap); box-shadow: inset 0 -5px 0 rgba(26, 35, 50, .28); transform: rotate(-16deg); pointer-events: none; z-index: 2; }
-.being[data-effort="xhigh"] .eyes { animation-duration: 2.2s; }
-.plaque { left: 960px; top: 560px; background: #f3d7a1; border: 3px solid var(--ink); border-radius: 12px; padding: 6px 10px; text-align: left; min-width: 120px; }
-.plaque-name { font-size: 18px; font-weight: 700; }
-.brief { position: absolute; left: 28px; top: 390px; width: 190px; background: var(--cream); border: 3px solid var(--ink); border-radius: 12px; padding: 8px 10px; z-index: 4; transform: rotate(-2deg); }
-.brief-kicker { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
-.brief ul { margin: 4px 0 0; padding-left: 16px; font-size: 13px; font-weight: 600; }
-.shed { width: 112px; background: #f7f1e4; border: 3px solid var(--ink); border-radius: 8px 8px 4px 4px; padding: 18px 6px 8px; text-align: center; z-index: 3; }
-.shed:before { content: ""; position: absolute; left: -6px; right: -6px; top: -14px; height: 22px; background: #e15b4a; border: 3px solid var(--ink); clip-path: polygon(0 100%, 50% 0, 100% 100%); }
-.shed-name { display: block; font-weight: 700; font-size: 13px; }
-.shed-meta { display: block; font-size: 12px; font-weight: 600; }
-
 .ground { position: absolute; inset: 0; z-index: 1; cursor: default; }
 .ground:focus { outline: none; }
 .objects { position: absolute; inset: 0; z-index: 4; pointer-events: none; }
@@ -210,8 +87,8 @@ button { appearance: none; background: none; border: 0; padding: 0; }
    so the negative top margin puts the feet exactly on the walk point. */
 .being { width: 176px; height: 204px; margin: -204px 0 0 -88px; cursor: pointer; }
 .being.bird { width: 128px; height: 144px; margin: -144px 0 0 -64px; }
-.being .name { position: absolute; top: calc(100% + 4px); left: 50%; transform: translateX(-50%); white-space: nowrap; font-weight: 700; font-size: 15px; line-height: 1; color: var(--ink); pointer-events: none; }
-.being.you .name { top: calc(100% + 10px); }
+.being .name { position: absolute; top: calc(100% + 8px); left: 50%; translate: -50% 0; scale: var(--inv, 1); transform-origin: 50% 0; white-space: nowrap; font-weight: 600; font-size: 14px; line-height: 1; color: var(--ink); pointer-events: none; }
+.being.you .name { top: calc(100% + 16px); }
 #room-locker .being .name { color: #f4fbff; }
 .shadow { position: absolute; left: 50%; bottom: -5px; width: 104px; height: 18px; margin-left: -52px; background: rgba(26, 35, 50, .2); border-radius: 50%; pointer-events: none; transform: scaleX(var(--heft, 1)); transform-origin: center; }
 .being.bird .shadow { bottom: -4px; width: 80px; height: 14px; margin-left: -40px; }
@@ -242,7 +119,7 @@ button { appearance: none; background: none; border: 0; padding: 0; }
 .zs { display: none; position: absolute; right: -4px; top: calc(100% * (1 - var(--heft, 1)) + 8px); font-weight: 700; }
 .being.is-sleeping .zs { display: block; animation: floatz 1.6s ease-in-out infinite; }
 /* The sprite scales up from the feet with effort (--heft), so the bubble rides on the scaled head, not the unscaled box. */
-.bubble { position: absolute; bottom: calc(100% * var(--heft, 1) - 8px); left: 50%; transform: translateX(-50%); width: max-content; max-width: 220px; background: #fff; border: 3px solid var(--ink); border-radius: 16px; padding: 8px 10px; font-size: 15px; font-weight: 600; text-align: center; z-index: 2; pointer-events: none; }
+.bubble { position: absolute; bottom: calc(100% * var(--heft, 1) + 6px); left: 50%; translate: -50% 0; scale: var(--inv, 1); transform-origin: 50% 100%; width: max-content; max-width: 230px; background: #fff; border: 3px solid var(--ink); border-radius: 16px; padding: 8px 10px; font-size: 15px; font-weight: 600; text-align: center; z-index: 2; pointer-events: none; }
 .bubble:after { content: ""; position: absolute; left: 50%; bottom: -8px; width: 12px; height: 12px; background: #fff; border-right: 3px solid var(--ink); border-bottom: 3px solid var(--ink); transform: translateX(-50%) rotate(45deg); }
 .bubble.pop { animation: pop 160ms ease; }
 
@@ -292,50 +169,17 @@ button { appearance: none; background: none; border: 0; padding: 0; }
 #fit[data-room="locker"]::before { background-color: #3e4852; }
 #fit[data-room="glasshouse"]::before { background-color: #8aa4b2; }
 
-/* The dock: a chunky glossy blue bar. A flat shine band on top and a flat darker band below make it glossy, with no gradient. */
-#console {
-  position: absolute; left: 18px; right: 18px; bottom: 8px; height: 82px; z-index: 3;
-  display: flex; align-items: center; gap: 14px; padding: 0 24px 0 12px;
-  background: #2f8be0;
-  border: 4px solid var(--ink);
-  border-radius: 42px;
-  box-shadow: inset 0 -11px 0 #1f6fc0, 0 5px 0 #0d3f78;
-}
-#console::before { content: ""; position: absolute; left: 34px; right: 34px; top: 4px; height: 10px; border-radius: 6px; background: #6fbdf6; pointer-events: none; }
-#sound, #chat, #count { position: relative; z-index: 1; }
-#sound {
-  width: 58px; height: 58px; flex: none; display: grid; place-items: center; cursor: pointer;
-  border-radius: 50%; border: 4px solid var(--ink); background: #f2f9ff; color: var(--ink);
-  box-shadow: inset 0 -7px 0 #bcdcf5, 0 4px 0 #0d3f78;
-}
-#sound svg { width: 28px; height: 28px; }
-#sound:hover { transform: translateY(-2px); }
-#sound:active { transform: translateY(2px); box-shadow: inset 0 -4px 0 #bcdcf5, 0 1px 0 #0d3f78; }
-#sound:focus-visible { outline: 4px solid #ffe066; outline-offset: 2px; }
-#sound[aria-pressed="false"]::after { content: ""; position: absolute; left: 50%; top: 50%; width: 38px; height: 8px; margin: -4px 0 0 -19px; background: #e15b4a; border: 2px solid var(--ink); border-radius: 4px; transform: rotate(-45deg); }
-#chat { flex: 1; }
-#say {
-  width: 100%; height: 52px; padding: 4px 24px 0;
-  border-radius: 999px; border: 4px solid var(--ink); background: #fff; color: var(--ink);
-  box-shadow: inset 0 6px 0 #d3e6f6;
-  font-size: 20px; font-weight: 600;
-}
-#say::placeholder { color: #6a88a6; opacity: 1; }
-#say:focus { outline: none; box-shadow: inset 0 6px 0 #d3e6f6, 0 0 0 4px #ffe066; }
-#count { color: #fff; font-weight: 700; text-shadow: 0 2px 0 #0d3f78; }
-#steer { position: absolute; left: 78px; bottom: 90px; z-index: 4; max-width: 720px; background: #fff; border: 3px solid var(--ink); border-radius: 999px; padding: 2px 12px; font-size: 14px; font-weight: 700; }
-
 #catcher { position: absolute; inset: 0; z-index: 4; }
 /* Panels: a chunky blue slab, a thick light rim, one ink outline, and a hard drop below. */
-#card, #who, #models {
+#card {
   position: absolute; left: 50%; bottom: 20px; transform: translateX(-50%); width: 560px; z-index: 5;
   background: #2a7fd4; color: #fff;
   border: 8px solid #a8d8ff; border-radius: 38px;
   padding: 20px 22px 22px;
   box-shadow: 0 0 0 5px var(--ink), 0 12px 0 5px #0d3f78;
 }
-#card h2, #who h2, #models h2 { margin: 0 0 8px; text-align: center; font-size: 28px; line-height: 1.1; color: #fff; text-shadow: 0 3px 0 #10427f; }
-#card p, #who p, #models p { margin: 0; text-align: center; font-weight: 600; color: #e2f2ff; }
+#card h2 { margin: 0 0 8px; text-align: center; font-size: 28px; line-height: 1.1; color: #fff; text-shadow: 0 3px 0 #10427f; }
+#card p { margin: 0; text-align: center; font-weight: 600; color: #e2f2ff; }
 #card { width: 640px; display: grid; grid-template-columns: auto 1fr; grid-template-areas: "art text" "act act"; column-gap: 22px; align-items: center; }
 #card[hidden] { display: none; }
 #card .card-text { grid-area: text; min-width: 0; text-align: left; }
@@ -425,7 +269,7 @@ button { appearance: none; background: none; border: 0; padding: 0; }
 @keyframes flap { 50% { transform: rotate(12deg); } }
 @keyframes blink { 0%, 92%, 100% { transform: scaleY(1); } 96% { transform: scaleY(.1); } }
 @keyframes floatz { 50% { transform: translateY(-6px); } }
-@keyframes pop { 0% { transform: translateX(-50%) scale(.8); } 100% { transform: translateX(-50%) scale(1); } }
+@keyframes pop { 0% { transform: scale(.6); } 70% { transform: scale(1.06); } 100% { transform: scale(1); } }
 @keyframes tick { 0% { transform: rotateX(-70deg); } 100% { transform: rotateX(0); } }
 @keyframes sway { 50% { transform: rotate(3deg); } }
 @keyframes drift { from { transform: translateX(0); } to { transform: translateX(80px); } }
@@ -434,3 +278,162 @@ button { appearance: none; background: none; border: 0; padding: 0; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+
+/* ───────────── Painted rooms ─────────────
+   Each room is one illustrated SVG (src/art/<room>.svg) injected into .paint.
+   The painting never takes clicks except on its .hot groups, so the ground button beneath stays walkable. */
+.paint { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+.paint > svg { display: block; width: 100%; height: 100%; shape-rendering: geometricPrecision; }
+.paint .hot { pointer-events: visiblePainted; cursor: pointer; transition: filter 140ms ease; }
+.paint .hot:hover { filter: brightness(1.07) saturate(1.05); }
+.paint.fore { z-index: 5; }
+.paint .hull-name { font: 700 16px Fredoka, sans-serif; letter-spacing: .07em; }
+.paint .hull-size { font: 700 14px Fredoka, sans-serif; font-variant-numeric: tabular-nums; }
+.paint .sign-word { font: 700 19px Fredoka, sans-serif; letter-spacing: .14em; }
+.paint .tag-word { font: 600 14px Fredoka, sans-serif; }
+.paint .tag-word.strong { font-weight: 700; font-size: 12.5px; letter-spacing: .1em; }
+
+/* Life on the quay: boats ride the swell, the bell sways, smoke puffs, gulls bob. */
+.q-boat { animation: ride 4.2s ease-in-out infinite; transform-box: fill-box; transform-origin: 50% 100%; }
+.q-boat[data-hold="apps"] { animation-delay: -1.4s; animation-duration: 4.8s; }
+.q-boat[data-hold="stuff"] { animation-delay: -2.6s; animation-duration: 3.8s; }
+.q-smoke circle { transform-box: fill-box; transform-origin: center; animation: puff 3.6s ease-out infinite; }
+.q-smoke circle:nth-child(2) { animation-delay: -1.2s; }
+.q-smoke circle:nth-child(3) { animation-delay: -2.4s; }
+.q-bell-swing { transform-box: view-box; transform-origin: 290px 514px; animation: bell 3.2s ease-in-out infinite; }
+.q-bell:hover .q-bell-swing { animation-duration: .6s; }
+.q-bob { animation: bob 2.6s ease-in-out infinite; }
+.q-bob-2 { animation-delay: -1.1s; }
+.q-cloud-a { animation: drift 46s ease-in-out infinite alternate; }
+.q-cloud-b { animation: drift 58s ease-in-out infinite alternate-reverse; }
+.q-cloud-c { animation: drift 40s ease-in-out infinite alternate; }
+.q-beam { transform-box: view-box; transform-origin: 720px 132px; animation: beam 5s ease-in-out infinite; }
+.q-waves { animation: lap 3s ease-in-out infinite; }
+.q-gull { animation: peck 7s ease-in-out infinite; transform-box: fill-box; transform-origin: 50% 100%; }
+@keyframes ride { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(3px) rotate(.6deg); } }
+@keyframes puff { 0% { transform: translate(0, 10px) scale(.4); opacity: 0; } 20% { opacity: 1; } 100% { transform: translate(-16px, -24px) scale(1.1); opacity: 0; } }
+@keyframes bell { 0%, 100% { transform: rotate(-4deg); } 50% { transform: rotate(4deg); } }
+@keyframes bob { 50% { transform: translateY(3px); } }
+@keyframes beam { 0%, 100% { opacity: .2; } 50% { opacity: 1; } }
+@keyframes lap { 50% { transform: translateX(6px); } }
+@keyframes peck { 0%, 86%, 100% { transform: rotate(0); } 90% { transform: rotate(14deg); } 94% { transform: rotate(0); } }
+
+/* The tide board's flaps sit in the painted board's window. */
+.pole { position: absolute; left: 224px; top: 94px; width: 118px; height: 88px; z-index: 3; pointer-events: none; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.pole .kicker { font-size: 11px; letter-spacing: .2em; line-height: 1; }
+.pole .flaps { gap: 3px; margin: 4px 0 3px; }
+.pole .flap-cell { width: 23px; height: 34px; font-size: 23px; border-radius: 4px; }
+.pole .flap-cell.dot { width: 8px; }
+.pole .sub { font-size: 11px; line-height: 1; }
+
+.bell-tag { position: absolute; left: 290px; bottom: 218px; translate: -50% 0; z-index: 3; pointer-events: none; text-align: center; white-space: nowrap; background: var(--cream); border: 3px solid var(--ink); border-radius: 10px; padding: 3px 10px 4px; box-shadow: 0 3px 0 rgba(26, 35, 50, .18); }
+.bell-tag b { display: block; font-size: 13px; line-height: 1.1; letter-spacing: .04em; }
+.bell-tag .bead-detail { margin: 0; font-size: 11px; line-height: 1.15; color: #5c4a32; }
+.bell-tag::after { content: ""; position: absolute; left: 50%; bottom: -9px; width: 3px; height: 6px; margin-left: -1.5px; background: var(--ink); }
+
+.brief { position: absolute; right: 20px; top: 18px; width: 200px; background: #fffbe8; border: 3px solid var(--ink); border-radius: 6px; padding: 10px 12px 8px; z-index: 6; transform: rotate(1.5deg); box-shadow: 3px 4px 0 rgba(26, 35, 50, .18); pointer-events: none; }
+.brief::before { content: ""; position: absolute; left: 50%; top: -9px; width: 14px; height: 14px; margin-left: -7px; border-radius: 50%; background: #e24b3f; border: 3px solid var(--ink); }
+.brief-kicker { font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #8a6a3a; }
+.brief ul { margin: 4px 0 0; padding-left: 16px; font-size: 13px; font-weight: 600; }
+
+/* Sheds: one small hut per repo on the quay's back edge, with a sign plate on the deck. */
+#sheds { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+.shed { position: absolute; width: 64px; height: 74px; translate: -50% -100%; pointer-events: auto; transition: transform 140ms ease; }
+.shed:hover { transform: translateY(-3px); }
+.shed .shed-art { display: block; width: 64px; height: 74px; }
+.shed-sign { position: absolute; left: 50%; top: calc(100% + 6px); translate: -50% 0; background: var(--cream); border: 2.5px solid var(--ink); border-radius: 7px; padding: 1px 6px 2px; white-space: nowrap; text-align: center; }
+.shed-name { display: block; font-weight: 700; font-size: 11px; line-height: 1.15; max-width: 92px; overflow: hidden; text-overflow: ellipsis; }
+.shed-meta { display: block; font-size: 10px; font-weight: 600; line-height: 1.1; color: #5c4a32; }
+.shed.is-scope .shed-sign { background: #ffd23f; }
+
+/* ───────────── The dock ─────────────
+   A chunky glossy blue bar: round icon buttons, a deep-blue chat well, flat shine and shade bands. */
+#console {
+  position: absolute; left: 70px; right: 70px; bottom: 10px; height: 76px; z-index: 3;
+  display: flex; align-items: center; gap: 12px; padding: 0 12px;
+  background: #2f8be0;
+  border: 4px solid var(--ink);
+  border-radius: 40px;
+  box-shadow: inset 0 -10px 0 #1f6fc0, inset 0 0 0 4px #5aaef0, 0 5px 0 #0d3f78;
+}
+#console::before { content: ""; position: absolute; left: 40px; right: 40px; top: 6px; height: 7px; border-radius: 6px; background: #8fcbf8; pointer-events: none; }
+.dock-btn {
+  position: relative; z-index: 1; flex: none; width: 54px; height: 54px; display: grid; place-items: center; cursor: pointer;
+  border-radius: 50%; border: 4px solid var(--ink); background: #e6f4ff; color: #14508f;
+  box-shadow: inset 0 -7px 0 #a9d4f6, inset 0 0 0 3px #fff, 0 4px 0 #0d3f78;
+  transition: transform 100ms ease;
+}
+.dock-btn svg { width: 28px; height: 28px; }
+.dock-btn:hover { transform: translateY(-2px); background: #fff; }
+.dock-btn:active, .dock-btn.is-on { transform: translateY(2px); box-shadow: inset 0 -4px 0 #a9d4f6, inset 0 0 0 3px #fff, 0 1px 0 #0d3f78; }
+.dock-btn:focus-visible { outline: 4px solid #ffe066; outline-offset: 2px; }
+#sound[aria-pressed="false"]::after { content: ""; position: absolute; left: 50%; top: 50%; width: 34px; height: 7px; margin: -3.5px 0 0 -17px; background: #e15b4a; border: 2px solid var(--ink); border-radius: 4px; transform: rotate(-45deg); }
+.dock-face { width: 44px; height: 44px; display: grid; place-items: center; overflow: hidden; border-radius: 50%; font-weight: 700; font-size: 22px; }
+.dock-face .face-art { width: 50px; height: auto; margin-top: 6px; }
+#chat { position: relative; z-index: 1; flex: 1; }
+#say {
+  width: 100%; height: 50px; padding: 2px 64px 0 24px;
+  border-radius: 999px; border: 4px solid var(--ink); background: #0f4a8a; color: #fff;
+  box-shadow: inset 0 6px 0 #0a3769, inset 0 -3px 0 #2766a8;
+  font-size: 19px; font-weight: 600;
+}
+#say::placeholder { color: #8fc0ee; opacity: 1; }
+#say:focus { outline: none; box-shadow: inset 0 6px 0 #0a3769, inset 0 -3px 0 #2766a8, 0 0 0 4px #ffe066; }
+#count { position: absolute; right: 22px; top: 50%; translate: 0 -50%; color: #8fc0ee; font-size: 13px; font-weight: 700; }
+#steer { position: absolute; left: 140px; bottom: 84px; z-index: 4; max-width: 760px; background: #fff; border: 3px solid var(--ink); border-radius: 999px; padding: 3px 14px; font-size: 14px; font-weight: 700; margin: 0; box-shadow: 0 3px 0 rgba(26, 35, 50, .2); }
+
+/* ───────────── The scout card ─────────────
+   A blue slab with a thick light rim: portrait on the left, model, effort and scout choices on the right. */
+#who {
+  position: absolute; left: 50%; top: 46px; translate: -50% 0; width: 820px; z-index: 7;
+  display: grid; grid-template-columns: 290px 1fr; gap: 22px;
+  background: #2a7fd4; color: #fff;
+  border: 8px solid #a8d8ff; border-radius: 38px;
+  padding: 22px 24px 24px;
+  box-shadow: 0 0 0 5px var(--ink), 0 12px 0 5px #0d3f78;
+  animation: card-in 220ms cubic-bezier(.2, 1.3, .4, 1);
+}
+#who[hidden] { display: none; }
+.sc-close { position: absolute; right: -18px; top: -18px; width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; cursor: pointer; border: 4px solid var(--ink); background: #e6f4ff; color: #14508f; box-shadow: inset 0 -6px 0 #a9d4f6, 0 4px 0 #0d3f78; }
+.sc-close svg { width: 26px; height: 26px; }
+.sc-close:hover { background: #fff; }
+.sc-left { display: flex; flex-direction: column; align-items: center; }
+.sc-left h2 { margin: 0 0 10px; font-size: 32px; line-height: 1; text-shadow: 0 3px 0 #10427f; }
+.sc-portrait { width: 270px; height: 250px; display: grid; place-items: end center; padding-bottom: 26px; background: #1d66b4; border: 5px solid var(--ink); border-radius: 26px; box-shadow: inset 0 -42px 0 #1a5aa0, inset 0 0 0 5px #3f8fdc; overflow: hidden; }
+.sc-portrait .face-art { width: 150px; height: auto; transform: scale(var(--heft, 1)); transform-origin: 50% 100%; transition: transform 300ms cubic-bezier(.2, 1.4, .4, 1); }
+.sc-line { margin: 12px 0 0; font-size: 17px; font-weight: 700; color: #e2f2ff; }
+.sc-right h3 { margin: 6px 0 8px; font-size: 15px; letter-spacing: .14em; text-transform: uppercase; color: #cfe8ff; text-shadow: 0 2px 0 #10427f; }
+.sc-hint { margin-left: 8px; font-size: 12px; letter-spacing: .04em; text-transform: none; color: #a8d0f5; font-weight: 600; }
+.sc-row { display: flex; gap: 10px; margin-bottom: 14px; }
+.sc-row button, .sc-grid button {
+  flex: 1; height: 48px; cursor: pointer; border-radius: 999px; border: 4px solid var(--ink); background: #eef8ff; color: var(--ink);
+  font-size: 18px; font-weight: 700; box-shadow: inset 0 -6px 0 #bcdcf5, 0 4px 0 var(--ink);
+}
+.sc-row button:hover, .sc-grid button:hover { background: #fff; }
+.sc-row button.is-on, .sc-grid button.is-on { background: #ffd23f; box-shadow: inset 0 -6px 0 #e9a913, 0 4px 0 var(--ink); }
+.sc-row button:active, .sc-grid button:active { transform: translateY(3px); box-shadow: inset 0 -4px 0 #bcdcf5, 0 1px 0 var(--ink); }
+.sc-row button:focus-visible, .sc-grid button:focus-visible { outline: 4px solid #fff; outline-offset: 3px; }
+.sc-fish button { height: 74px; border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: 13px; padding: 4px 0 6px; }
+.sc-fish button svg { width: 46px; height: 27px; }
+.sc-fish .fish-body { fill: #d5e2ec; stroke: var(--ink); stroke-width: 2.6; stroke-linejoin: round; }
+.sc-fish button.is-on .fish-body { fill: #f27d32; }
+.sc-fish button.is-on { background: #eef8ff; box-shadow: inset 0 -6px 0 #bcdcf5, 0 4px 0 var(--ink); }
+.sc-fish button.is-current { background: #ffd23f; box-shadow: inset 0 -6px 0 #e9a913, 0 4px 0 var(--ink); }
+.sc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.sc-grid button { height: 52px; display: flex; align-items: center; gap: 6px; padding: 0 10px 0 6px; font-size: 15px; border-radius: 18px; text-align: left; }
+.sc-grid .mini { width: 34px; height: 34px; flex: none; display: grid; place-items: center; overflow: hidden; border-radius: 50%; background: #cfe8fb; border: 2.5px solid var(--ink); }
+.sc-grid .mini .face-art { width: 44px; height: auto; margin-top: 10px; }
+@keyframes card-in { from { transform: scale(.86) translateY(16px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+/* Split-flap cells, shared by the tide board and the mini board in other rooms. */
+.kicker { font-size: 13px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+.flaps { display: flex; justify-content: center; gap: 4px; margin: 4px 0; perspective: 200px; }
+.flap-cell { width: 32px; height: 46px; display: grid; place-items: center; background: linear-gradient(#26344a 0 50%, #172030 50%); color: #f4fbff; border-radius: 5px; border: 2px solid #0b1018; font-size: 28px; font-weight: 700; position: relative; }
+.flap-cell.dot { width: 14px; background: transparent; border: 0; color: var(--ink); }
+.flap-cell:after { content: ""; position: absolute; left: 2px; right: 2px; top: 50%; height: 2px; background: rgba(0, 0, 0, .45); }
+.flap-cell.dot:after { display: none; }
+.flap-cell.tick { animation: tick 280ms ease; }
+.sub { font-size: 13px; font-weight: 650; }
+#mini { position: absolute; top: 16px; left: 16px; z-index: 6; background: #f3d7a1; border: 3px solid var(--ink); border-radius: 14px; padding: 6px 8px 8px; text-align: center; box-shadow: 0 4px 0 rgba(26, 35, 50, .25); }
+#mini .flap-cell { width: 22px; height: 30px; font-size: 18px; }
+#fit[data-room="quay"] #mini { visibility: hidden; }

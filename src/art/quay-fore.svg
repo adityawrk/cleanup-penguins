@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 708" class="paint-svg" aria-hidden="true">
+  <!-- Foreground: drawn above the penguins so they can walk behind it. -->
+  <g stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round">
+    <!-- snow drift, bottom left -->
+    <path d="M-10 712C-6 672 22 650 58 656C74 630 116 628 132 652C150 646 172 656 176 676C190 680 196 700 190 712Z" fill="#fff" stroke-width="4.4"/>
+    <path d="M10 700C40 690 92 688 132 694C150 696 170 700 186 706L-6 710Z" fill="#d6ecf9" stroke="none"/>
+    <path d="M64 664c8-6 20-8 30-6" fill="none" stroke="#d6ecf9" stroke-width="4"/>
+    <!-- lamp post, front right -->
+    <path d="M1222 704V478" stroke-width="9"/>
+    <path d="M1222 704V478" stroke="#3d4d63" stroke-width="4"/>
+    <path d="M1208 708v-12h28v12" fill="#3d4d63" stroke-width="3.6"/>
+    <path d="M1204 480h36l-7-34h-22z" fill="#ffe27a" stroke-width="4"/>
+    <path d="M1222 446v34" stroke-width="2.6"/>
+    <path d="M1198 448h48l-9-16h-30z" fill="#3d4d63" stroke-width="4"/>
+    <path d="M1198 437c6-12 42-12 48 0c-9 5-39 5-48 0z" fill="#fff" stroke-width="3"/>
+    <path d="M1222 532c-16 0-26 4-26 10c0 6 10 10 26 10" fill="none" stroke="#c9a46a" stroke-width="4"/>
+    <!-- snow drift, bottom right -->
+    <path d="M1130 712C1134 684 1160 668 1188 674C1204 654 1240 654 1256 672C1274 668 1292 680 1292 712Z" fill="#fff" stroke-width="4.4"/>
+    <path d="M1146 704C1180 696 1240 694 1290 700V712H1140Z" fill="#d6ecf9" stroke="none"/>
+  </g>
+</svg>

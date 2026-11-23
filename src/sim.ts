@@ -71,28 +71,28 @@ export const SPOTS = {
   binStand: { x: 280, y: 630 },
   chute: { x: 1136, y: 455 },
   bin: { x: 150, y: 500 },
-  bead: { x: 340, y: 500 },
+  bead: { x: 290, y: 600 },
   entrance: {
-    quay: { x: 640, y: 650 },
+    quay: { x: 640, y: 600 },
     hold: { x: 230, y: 640 },
     locker: { x: 280, y: 640 },
     glasshouse: { x: 320, y: 640 },
   } satisfies Record<Room, Point>,
   board: {
-    caches: { x: 360, y: 640 },
-    apps: { x: 620, y: 640 },
-    stuff: { x: 900, y: 640 },
+    caches: { x: 424, y: 496 },
+    apps: { x: 616, y: 496 },
+    stuff: { x: 804, y: 496 },
   } satisfies Record<Hold, Point>,
   door: {
-    locker: { x: 160, y: 640 },
-    glasshouse: { x: 1040, y: 640 },
+    locker: { x: 150, y: 496 },
+    glasshouse: { x: 1150, y: 496 },
   },
   gang: { x: 230, y: 650 },
   tip: { x: 980, y: 630 },
   plank: { x: 190, y: 640 },
 }
 
-export const NEST = { x: 900, y: 600 }
+export const NEST = { x: 990, y: 640 }
 
 export const HOMES: Record<BirdId, Point> = {
   cursor: NEST,
@@ -110,12 +110,17 @@ export interface Scope {
   y: number
 }
 
-export const MAC_SCOPE: Scope = { id: 'mac', kind: 'mac', label: 'This Mac', path: '~', x: 340, y: 500 }
+export const MAC_SCOPE: Scope = { id: 'mac', kind: 'mac', label: 'This Mac', path: '~', x: 290, y: 600 }
+
+/** Where the nth shed stands on the quay's back edge. Sheds sit between the third boat and the Glasshouse. */
+export function shedSlot(index: number): Point {
+  return { x: 934 + (index % 3) * 62, y: 448 }
+}
 
 export function starterRepos(): Scope[] {
   return [
-    { id: 'penguins', kind: 'repo', label: 'cleanup-penguins', path: '~/projects/cleanup-penguins', x: 1060, y: 300 },
-    { id: 'lighthouse', kind: 'repo', label: 'lighthouse', path: '~/projects/lighthouse', x: 1190, y: 300 },
+    { id: 'penguins', kind: 'repo', label: 'cleanup-penguins', path: '~/projects/cleanup-penguins', ...shedSlot(0) },
+    { id: 'lighthouse', kind: 'repo', label: 'lighthouse', path: '~/projects/lighthouse', ...shedSlot(1) },
   ]
 }
 
@@ -128,7 +133,7 @@ interface Band {
 }
 
 const BANDS: Record<Room, Band> = {
-  quay: { x0: 80, x1: 1200, y0: 590, y1: 680 },
+  quay: { x0: 140, x1: 1150, y0: 490, y1: 690 },
   hold: { x0: 130, x1: 1150, y0: 530, y1: 670 },
   locker: { x0: 150, x1: 1130, y0: 545, y1: 675 },
   glasshouse: { x0: 170, x1: 1110, y0: 560, y1: 675, wall: 560 },
@@ -800,7 +805,7 @@ function arriveParty(world: World, room: Room) {
     if (!b.awake) continue
     slot += 1
     b.mode = 'follow'
-    b.x = b.tx = door.x - 120 * slot
+    b.x = b.tx = door.x - 70 * slot
     b.y = b.ty = door.y
   }
   world.trail = [{ x: door.x, y: door.y }]
@@ -1413,8 +1418,7 @@ export function lookIn(world: World, raw: string, now: number) {
       kind: 'repo',
       label,
       path: path.startsWith('~') || path.startsWith('/') ? path : `~/${path}`,
-      x: 980 + (world.repos.length % 3) * 90,
-      y: 455,
+      ...shedSlot(world.repos.length),
     }
     world.repos.push(scope)
   }
@@ -1423,7 +1427,7 @@ export function lookIn(world: World, raw: string, now: number) {
   if (world.room === 'quay') {
     scout.mode = 'go'
     scout.tx = scope.x
-    scout.ty = 630
+    scout.ty = 500
     beginTool(world, scope.label)
   }
   sayLine(scout, `I'll look in ${scope.label}.`, now, 4000)
@@ -1471,7 +1475,7 @@ export function requestScope(world: World, id: string, now: number) {
   if (world.room !== 'quay' || world.card || world.toss) return
   const scope = id === 'mac' ? MAC_SCOPE : world.repos.find((repo) => repo.id === id)
   if (!scope) return
-  walkTo(world, scope.x, 640, { type: 'scope', id: scope.id }, now)
+  walkTo(world, scope.x, 500, { type: 'scope', id: scope.id }, now)
 }
 
 export function setScout(world: World, id: BirdId, now: number, customName?: string) {
@@ -1516,6 +1520,15 @@ export function setModel(world: World, id: string, now: number) {
   world.model = choice.id
   const scout = being(world, world.scout)
   sayLine(scout, choice.line, now, 2800)
+  touch(world, now)
+}
+
+export function setEffort(world: World, id: EffortId, now: number) {
+  if (world.card || world.toss || !world.scout) return
+  const next = EFFORTS.find((choice) => choice.id === id)
+  if (!next || next.id === world.effort) return
+  world.effort = next.id
+  sayLine(being(world, world.scout), next.line, now, 2800)
   touch(world, now)
 }
 
@@ -1575,7 +1588,7 @@ function follow(world: World) {
       b.tx = back.x
       b.ty = back.y
     } else {
-      b.tx = you.x - 110 * slot
+      b.tx = you.x - 92 * slot
       b.ty = you.y
     }
   }
