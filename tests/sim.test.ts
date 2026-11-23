@@ -25,6 +25,7 @@ import {
   takeRope,
   walkTo,
   SPOTS,
+  travel,
   useRealCaches,
   finishTool,
   useFolder,
@@ -385,5 +386,16 @@ describe('harbor rules', () => {
     useRealCaches(world, [{ name: 'Google', path: '~/Library/Caches/Google', bytes: 1.4e9 }, { name: 'uv', path: '~/Library/Caches/uv', bytes: 9e8 }])
     const caches = world.items.filter((item) => item.scopeId === 'mac' && item.hold === 'caches')
     expect(caches.map((item) => `${item.name}:${item.disposed}`).sort()).toEqual(['Google:locker', 'uv:none'])
+  })
+
+  it('travels by the map, but not while carrying something', () => {
+    const world = createWorld('ada')
+    expect(travel(world, 'apps', 10)).toBe(true)
+    expect(world.room).toBe('hold')
+    expect(world.hold).toBe('apps')
+    lift(world, 'wow', 20)
+    expect(travel(world, 'glasshouse', 30)).toBe(false)
+    expect(world.room).toBe('hold')
+    expect(being(world, 'you').bubble).toBe('Put it down first.')
   })
 })
