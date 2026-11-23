@@ -111,8 +111,25 @@ function clean(src) {
   return src.replace(/<title>.*?<\/title>/g, '').replace(/<text[^>]*>.*?<\/text>/g, '').replace(/ (class|data-act|data-hold|data-room|id)="[^"]*"/g, '')
 }
 let boat = clean(quayGroup('<!-- BOAT 1'))
-// drop the waterline foam squiggle (first path) — we draw our own
-boat = strokeBoost(boat, 1.3)
+// The era-style boat paints with q- gradients defined elsewhere in quay.svg: copy each one it uses, renamed t-q-.
+function gradientsFor(src) {
+  const wanted = new Set([...src.matchAll(/url\(#(q-[\w-]+)\)/g)].map((m) => m[1]))
+  const out = []
+  const seen = new Set()
+  const take = (id) => {
+    if (seen.has(id)) return
+    seen.add(id)
+    const m = quay.match(new RegExp(`<(linearGradient|radialGradient)[^>]*\\bid="${id}"[\\s\\S]*?</\\1>`))
+    if (!m) return
+    out.push(m[0])
+    const href = m[0].match(/href="#(q-[\w-]+)"/)
+    if (href) take(href[1])
+  }
+  for (const id of wanted) take(id)
+  return out.join('\n').replace(/(id="|#)q-/g, '$1t-q-')
+}
+const boatDefs = gradientsFor(boat)
+boat = boat.replace(/url\(#q-/g, 'url(#t-q-')
 let tug = clean(quayGroup('<!-- BOAT 3'))
 tug = strokeBoost(tug, 1.45)
 
@@ -144,7 +161,7 @@ const GULL = `
   <g class="t-gull t-gull-b" stroke="${INK}" stroke-linejoin="round" stroke-linecap="round">
     <path d="M566 186Q573 177 581 184Q589 177 596 186Q588 182 582 188Q576 182 566 186Z" fill="#fff" stroke-width="2.6"/>
   </g>`
-const BOATS = `<g transform="translate(-190 99) scale(.62)">${boat}</g>`
+const BOATS = `<defs>${boatDefs}</defs><g transform="translate(-190 99) scale(.62)">${boat}</g>`
 const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" class="hello-art" role="img" aria-label="Cleanup Harbor">
   <defs>
     <path id="t-arc" d="${arc}"/>
@@ -252,5 +269,20 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" cla
   ${wordmark}
 </svg>
 `
-fs.writeFileSync(root + '/src/art/hello.svg', svg.replace('BOAT_HERE', BOATS).replace('REST_HERE', fs.readFileSync(new URL('./rest.svgpart', import.meta.url), 'utf8').replace('YOU_HERE', you).replace('CL_HERE', cl)))
+// Era finish for the scenery: black ink becomes a soft navy and thins, except the bold wordmark outline
+// (stroke 10+ or paint-order) and the characters, which arrive already in the era style.
+function eraScenery(src) {
+  return src.replace(/<(path|rect|circle|ellipse|g|polygon|line)\b([^>]*)>/g, (tag, name, attrs) => {
+    if (/paint-order/.test(attrs)) return tag
+    const width = attrs.match(/stroke-width="([\d.]+)"/)
+    if (width && +width[1] >= 10) return tag
+    const inked = /stroke="#1a2332"/.test(attrs) || (!/stroke="/.test(attrs) && width)
+    let next = attrs.replace(/stroke="#1a2332"/g, 'stroke="#2b4a6e"')
+    if (inked) next = next.replace(/stroke-width="([\d.]+)"/g, (_, w) => `stroke-width="${(+w >= 2.6 ? +w * 0.6 : +w * 0.8).toFixed(2)}"`)
+    return `<${name}${next}>`
+  })
+}
+const scenery = eraScenery(svg.replace('BOAT_HERE', BOATS))
+const rest = eraScenery(fs.readFileSync(new URL('./rest.svgpart', import.meta.url), 'utf8')).replace('YOU_HERE', you).replace('CL_HERE', cl)
+fs.writeFileSync(root + '/src/art/hello.svg', scenery.replace('REST_HERE', rest))
 console.log('ok')
