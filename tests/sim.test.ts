@@ -483,4 +483,34 @@ describe('harbor rules', () => {
     }
     expect(closest).toBeGreaterThanOrEqual(70)
   })
+
+  it('keeps the scout out of the player while lifting and carrying to either hole', () => {
+    const world = createWorld('ada')
+    world.room = 'hold'
+    world.hold = 'caches'
+    const you = being(world, 'you')
+    const scout = being(world, 'claude')
+    you.x = you.tx = scout.x = scout.tx = 600
+    you.y = you.ty = 600
+    scout.y = scout.ty = 600
+    let now = 100
+    let closest = Infinity
+    const run = (ms: number) => {
+      for (let i = 0; i < ms / 16; i += 1) {
+        now += 16
+        step(world, now, 0.016)
+        if (now > 400) closest = Math.min(closest, Math.hypot(scout.x - you.x, (scout.y - you.y) * 1.4))
+      }
+    }
+    run(600)
+    for (const id of ['codex', 'chrome']) {
+      requestLift(world, id, now)
+      run(3000)
+      goToHole(world, id === 'codex' ? 'sea' : 'bin', now)
+      run(3000)
+      answer(world, false, now)
+      run(800)
+    }
+    expect(closest).toBeGreaterThanOrEqual(66)
+  })
 })

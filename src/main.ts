@@ -639,7 +639,9 @@ function sync(now: number) {
   // Celebrate a finished throw: a rising size number and a burst of confetti where it landed.
   if (world.rehearsedTenths > prevRehearsed) {
     const at = world.splash ?? { x: 1180, y: 392 }
-    celebrate(at.x - 150, at.y - 70, `+${gbWord(world.rehearsedTenths - prevRehearsed)}`, 'practice')
+    // The ticket rises in the clear wall space above the map poster, left of the sea door.
+    void at
+    celebrate(990, 205, `+${gbWord(world.rehearsedTenths - prevRehearsed)}`, 'practice')
   }
   prevRehearsed = world.rehearsedTenths
   if (world.lockerTenths > prevLocker && world.room === 'hold') celebrate(248, 360, `+${gbWord(world.lockerTenths - prevLocker)}`, 'kept')

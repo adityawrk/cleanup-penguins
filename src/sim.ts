@@ -1072,7 +1072,11 @@ function postBird(world: World, id: BirdId, hole: Hole, line: string, now: numbe
   b.awake = true
   b.mode = 'post'
   const spot = hole === 'sea' ? SPOTS.seaPost : SPOTS.binPost
-  b.tx = spot.x
+  const you = being(world, 'you')
+  // If the player stands near the post, take a spot 96px out on the far side instead.
+  const near = Math.hypot(spot.x - you.x, (spot.y - you.y) * 1.4) < 96
+  const away = Math.sign(spot.x - you.x) || 1
+  b.tx = near ? Math.min(BANDS[world.room].x1, Math.max(BANDS[world.room].x0, you.x + away * 96)) : spot.x
   b.ty = spot.y
   sayLine(b, line, now, 5000, true)
 }
@@ -1211,7 +1215,8 @@ function finishToss(world: World, now: number) {
   if (!item || item.disposed === 'sea') return
   if (item.disposed === 'locker') world.lockerTenths = Math.max(0, world.lockerTenths - item.tenths)
   item.disposed = 'sea'
-  world.splash = { until: now + 700, x: SPOTS.chute.x, y: SPOTS.chute.y }
+  // The splash lands in the door's lower water band, in front of the iceberg.
+  world.splash = { until: now + 700, x: SPOTS.chute.x, y: SPOTS.chute.y + 40 }
   if (world.rehearsal) {
     world.rehearsedTenths += item.tenths
     punchline(world, "Splash! Practice throw. It's still on your disk.", now)
@@ -1762,7 +1767,8 @@ function follow(world: World) {
     const crossing = side !== -you.facing && Math.abs(b.x - you.x) < gap + 20
     // Crossing over: head straight for the new side along a lane behind the player, never through them.
     const tx = want
-    const ty = crossing ? Math.max(band.y0, you.y - 60) : Math.min(band.y1, you.y + 6)
+    const front = you.y + 64 <= band.y1
+    const ty = crossing ? (front ? you.y + 64 : Math.max(band.y0, you.y - 64)) : Math.min(band.y1, you.y + 6)
     // Hysteresis: only re-aim when the spot has really moved.
     if (Math.hypot(tx - b.tx, ty - b.ty) > 14) {
       b.tx = tx
@@ -1786,20 +1792,16 @@ export function step(world: World, now: number, dt: number) {
     const dist = Math.hypot(dx, dy)
     if (dist < 76) {
       const band = BANDS[world.room]
-      if (b.mode === 'follow') {
-        // Push out along the player-to-scout line (an ellipse, wider than deep); at a wall, go round.
-        const ux = dist > 0.5 ? dx / dist : -you.facing
-        const uy = dist > 0.5 ? dy / dist : -0.4
-        let nx = you.x + ux * 76
-        const ny = you.y + (uy * 76) / 1.4
-        if (nx < band.x0 || nx > band.x1) nx = you.x - ux * 76
-        b.x = Math.min(band.x1, Math.max(band.x0, nx))
-        b.y = Math.min(band.y1, Math.max(band.y0, ny))
-      } else {
-        // On an errand: step around behind the player (or in front, at the back wall) and keep going.
-        const behind = you.y - 56 >= band.y0
-        b.y = behind ? you.y - 56 : Math.min(band.y1, you.y + 56)
-      }
+      // Push out along the player-to-scout line (an ellipse, wider than deep); at a wall, go round.
+      // On an errand, prefer the front of the player so it never parks behind their head.
+      const ux = dist > 0.5 ? dx / dist : -you.facing
+      let uy = dist > 0.5 ? dy / dist : 0.4
+      if (b.mode !== 'follow' && uy < 0 && you.y + 64 <= band.y1) uy = Math.abs(uy)
+      let nx = you.x + ux * 76
+      const ny = you.y + (uy * 76) / 1.4
+      if (nx < band.x0 || nx > band.x1) nx = you.x - ux * 76
+      b.x = Math.min(band.x1, Math.max(band.x0, nx))
+      b.y = Math.min(band.y1, Math.max(band.y0, ny))
     }
   }
   for (const b of birds(world)) {
