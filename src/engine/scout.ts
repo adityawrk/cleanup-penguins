@@ -86,7 +86,8 @@ function facts(ask: ScoutAsk): string {
   ].join('\n\n')
 }
 
-function clean(raw: string, ask: ScoutAsk): ScoutReply {
+/** Check a raw model reply against the facts it was given. Exported for tests. */
+export function clean(raw: string, ask: ScoutAsk): ScoutReply {
   const match = raw.match(/\{[\s\S]*\}/)
   let parsed: Partial<ScoutReply> = {}
   try {

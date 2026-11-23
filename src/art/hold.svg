@@ -135,8 +135,17 @@
   <path d="M0 446H1280V462Q640 470 0 462Z" fill="#a8713c"/>
   <path d="M-4 446H1284" stroke="#1a2332" stroke-width="4"/>
   <!-- warm lantern light pooled on the floor -->
-  <ellipse cx="330" cy="566" rx="150" ry="30" fill="#dcab6c"/>
-  <ellipse cx="960" cy="566" rx="150" ry="30" fill="#dcab6c"/>
+  <!-- floor detail: a coiled hawser, a dropped float, knots in the planks -->
+  <g stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round">
+    <ellipse cx="1000" cy="676" rx="40" ry="13" fill="#c9a46a" stroke-width="3.4"/>
+    <ellipse cx="1000" cy="671" rx="27" ry="8" fill="#b88d52" stroke-width="2.6"/>
+    <ellipse cx="1000" cy="667" rx="13" ry="4" fill="#a07a42" stroke-width="2.2"/>
+    <path d="M1040 676c14 4 22 12 30 20" fill="none" stroke="#c9a46a" stroke-width="5"/>
+    <circle cx="214" cy="664" r="13" fill="#e24b3f" stroke-width="3"/>
+    <path d="M205 657a9 9 0 0 1 9-4" fill="none" stroke="#fff" stroke-width="3"/>
+    <path d="M201 666h26" stroke="#fff" stroke-width="3"/>
+  </g>
+  <g fill="#8d5a32"><ellipse cx="430" cy="690" rx="7" ry="3"/><ellipse cx="820" cy="520" rx="6" ry="2.4"/><ellipse cx="600" cy="600" rx="6" ry="2.6"/></g>
 
   <!-- LADDER up to the hatch: the way back to the quay -->
   <g class="hot h-exit" data-act="enter" data-room="quay" stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round">

@@ -56,12 +56,14 @@ node scripts/svgview.mjs src/art/hold.svg /tmp/h.png # render one art file with 
 node scripts/shot.mjs http://localhost:5173/ /tmp/run steps.json   # drive the game headless and screenshot
 ```
 
-`scripts/shot.mjs` steps are `{wait}`, `{key}`, `{click:[x,y]}`, `{type}`, `{eval}` and `{shot}`, at 1280 by 800. Both scripts use `puppeteer-core` against `/Applications/Google Chrome.app`.
+`scripts/shot.mjs` steps are `{wait}`, `{key}`, `{click:[x,y]}`, `{type}`, `{eval}` and `{shot}`, at 1280 by 800. Both scripts use `puppeteer-core` against `/Applications/Google Chrome.app`. For a blind art test, `eval` this before a shot: `document.querySelectorAll('svg text, .tag, .name, .bubble, .shed-sign, .bell-tag, .pole, #mini, .path-sign, #console, .item-art .stamp').forEach(e => e.style.visibility = 'hidden')`, then ask a fresh agent to name every object. `scripts/hello/gen.mjs` rebuilds the title art from the character templates and the quay boat. Rerunning it overwrites hand edits to `hello.svg`.
 
 The tests:
 - `tests/sim.test.ts` drives `World` with explicit time (`settle()` steps every 16ms). It covers the bell and repo scope, both sea faces, practice throws leaving the pole alone, apps redirected to the Locker, refusing a card, the Glasshouse rope, one scout, no throwing from chat, switching scouts, brief matching, walking up before lifting, model lists and default effort, notes handed to the next scout, the steering queue, and waddling while the scout is out.
+- `tests/scout.test.ts` covers the live reply check (`clean`): unknown ids dropped, sea pointers for `sea: false` items turned into the Locker, claimed deletes replaced, and the length cap.
 - `tests/scan.test.ts` covers `parseDu`.
-- Nothing tests `readDisk`, `scanCaches`, `scout.ts`, `main.ts` or the DOM. Check those in the browser.
+- The sim tests also cover the live path: `'ask'` only when Claude is found, questions never noted, `liveReply` with queued lines, `liveFailed`, and a practice Locker empty.
+- Nothing tests `readDisk`, `scanCaches`, spawning `claude`, `main.ts` or the DOM. Check those in the browser.
 
 Keep `src/sim.ts` free of the DOM and of clocks. Time comes in as `now`.
 
@@ -85,15 +87,16 @@ Keep `src/sim.ts` free of the DOM and of clocks. Time comes in as `now`.
 
 Units: sizes are tenths of a decimal GB (1 tenth = 1e8 bytes). The stage is 1280×708. `#fit` is 1280×800 and zooms to fit the window. Sprites are drawn large and shown at `YOU_SIZE` 0.56 and `SCOUT_SIZE` 0.46, times a depth factor. Names, bubbles and tags are counter-scaled with `--inv` so text stays a constant size.
 
-Keys: E or F lifts the nearest item, X goes to the sea, B goes to the Locker bin, Y or N answers a card, Enter presses the highlighted button, Esc drops or says No, 1 to 3 board a boat, 4 opens the Locker, F on the quay rings the bell, and D dances.
+Keys: E or F walks to and lifts the nearest item in the room, X goes to the sea, B goes to the Locker bin, Y or N answers a card, Enter presses the highlighted button, and Esc drops, says No or closes a card. On the quay, 1 to 3 board a boat, 4 opens the Locker, G opens the Glasshouse, and F rings the bell. Q goes back to the quay from any room, T tips the Locker into the sea, and D dances. The painted rooms sit in `aria-hidden` SVG, so these keys are the keyboard path to every exit and machine.
 
 ## Live disk and live scout
 
 - `GET /api/disk`: `statfs('/')` returns `{ freeTenths, capacityTenths }`.
 - `GET /api/scan`: `du -k -d 1` over `~/Library/Caches`, `~/.npm`, `~/.bun/install/cache`, `~/.cache` and Xcode DerivedData (20s timeout each). It returns the top 8 folders over 50 MB. `useRealCaches` swaps out the fixture caches for `live-0`..`live-7` sacks.
 - `GET /api/agents`: `command -v` for `claude`, `cursor-agent` and `codex`, cached for 60s.
-- `POST /api/scout`: `claude -p --tools "" --strict-mcp-config --no-session-persistence --output-format json --model <id> --effort <level> --system-prompt …`. The prompt carries only the items in reach (at most 14), the room, what's carried and the brief. It replies `{say, item, hole}`. Opus at high effort answers in about 5 seconds. While it thinks, the scout shows "…", and lines typed meanwhile queue as steering.
-- A line ending in "?" is asked, not noted: it doesn't go on the brief.
+- `POST /api/scout`: same origin and `application/json` only, and one call at a time (403 or 429 otherwise). It runs `claude -p --tools "" --strict-mcp-config --no-session-persistence --output-format json --model <id> --effort <level> --system-prompt …`. The prompt carries only the items in reach (at most 14), the room, what's carried and the brief. It replies `{say, item, hole}`. Opus at high effort answers in about 5 seconds. While it thinks, the scout shows "…", and lines typed meanwhile queue as steering.
+- A line ending in "?" is asked, not noted: it doesn't go on the brief (not even from the steering queue), and the scripted scout answers it without claiming to keep it.
+- The scout card tells the player each live line asks Claude once on their own plan.
 
 ## What is still fixture
 
@@ -115,10 +118,10 @@ Keys: E or F lifts the nearest item, X goes to the sea, B goes to the Locker bin
 
 https://github.com/adityawrk/cleanup-penguins/issues. Run `gh issue view <n>` first.
 
-1. Rooms are flat boxes. **Addressed:** all four rooms are painted. Verify in the browser before closing.
-2. Objects are labels. **Addressed:** items and holes are drawn objects with stamped sizes.
+1. Rooms are flat boxes. **Addressed:** all four rooms are painted.
+2. Objects are labels. **Addressed:** items and holes are drawn objects with stamped sizes. A blind test (screenshots with all text hidden, shown to a fresh agent) named nearly every object and rated the rooms about 7/10 against the bar. Weak spots it found: the hold's sacks still read a little like a grid, floors are open, the tip machine reads half shredder and half chute without its sign, and the Docker tank mixes a barge and sunken bricks. Re-run that test after art changes (see "Run, test, look").
 3. Penguins barely move. **Mostly addressed:** waddle, steps, flipper flaps, idle fidgets, sitting, the back view, dancing and emotes.
-4. Clicks feel like a web page. **Addressed:** the click ring lands at the clamped point, hover lifts objects, and rooms open with an ink iris.
+4. Clicks feel like a web page. **Addressed:** the click ring lands at the clamped point, hover brightens painted objects (and lifts sheds and wobbles items), and rooms open with an ink iris.
 5. A stranger can't install the harbor.
 6. Choosing a scout doesn't connect an agent. **Partly addressed:** Claude is live. The others are not.
 7. No real delete, and no enforcement beyond the sim. **Partly addressed:** throws are honest practice.

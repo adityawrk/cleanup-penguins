@@ -1,0 +1,111 @@
+<!-- SNOW ON THE DECK EDGE -->
+  <g stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M-6 362C10 352 30 354 40 360C52 350 76 352 86 362C92 368 92 374 84 376H-6Z" fill="#fff" stroke-width="3.2"/>
+    <path d="M6 368C26 364 48 364 76 368" fill="none" stroke="#d6ecf9" stroke-width="3"/>
+    <path d="M614 362C626 352 648 352 658 360C670 350 696 350 708 358C720 350 744 352 766 362V376H620C610 374 608 368 614 362Z" fill="#fff" stroke-width="3.2"/>
+    <path d="M626 368C660 364 700 364 752 368" fill="none" stroke="#d6ecf9" stroke-width="3"/>
+  </g>
+
+  <!-- MOORING POSTS -->
+  <g stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M150 360C136 344 126 334 114 330" fill="none" stroke="#c9a46a" stroke-width="4"/>
+    <path d="M150 360C136 344 126 334 114 330" fill="none" stroke="#a8814a" stroke-width="1.6" stroke-dasharray="3 5"/>
+    <ellipse cx="152" cy="392" rx="22" ry="5" fill="#b98447" stroke="none"/>
+    <rect x="140" y="350" width="24" height="42" rx="7" fill="#7a4a27" stroke-width="4"/>
+    <rect x="154" y="354" width="7" height="35" rx="3" fill="#5e3820" stroke="none"/>
+    <rect x="140" y="350" width="24" height="42" rx="7" fill="none" stroke-width="4"/>
+    <path d="M138 355c2-10 26-10 28 0c-4 4-24 4-28 0z" fill="#fff" stroke-width="3"/>
+    <path d="M140 372h24" stroke="#c9a46a" stroke-width="4"/>
+  </g>
+  <g class="t-perch" stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round"><g transform="translate(-370 -55)">
+    <path d="M518 404l-2 6M528 404l2 6" stroke="#f4a024" stroke-width="2.4"/>
+    <path d="M512 404c0-10 6-16 14-16c6 0 10 4 10 10c0 6-8 8-14 8z" fill="#fff" stroke-width="3"/>
+    <path d="M534 396l8 2l-8 3z" fill="#f4a024" stroke-width="2"/>
+    <circle cx="528" cy="394" r="1.8" fill="#1a2332" stroke="none"/>
+    <path d="M512 402c4-6 10-8 16-6c-4 4-10 6-16 6z" fill="#9aa9b8" stroke-width="2.4"/>
+  </g></g>
+
+  <!-- LAMP POST at the deck edge -->
+  <g stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round">
+    <ellipse cx="598" cy="380" rx="18" ry="4" fill="#b98447" stroke="none"/>
+    <rect x="592" y="300" width="12" height="80" rx="4" fill="#3d5670" stroke-width="3.6"/>
+    <rect x="599" y="304" width="3" height="72" fill="#2c4258" stroke="none"/>
+    <rect x="586" y="368" width="24" height="12" rx="4" fill="#4e6b86" stroke-width="3.4"/>
+    <g class="t-lamp">
+      <rect x="584" y="276" width="28" height="26" rx="5" fill="#ffe27a" stroke-width="3.8"/>
+      <rect x="600" y="279" width="9" height="20" fill="#f4c534" stroke="none"/>
+      <rect x="584" y="276" width="28" height="26" rx="5" fill="none" stroke-width="3.8"/>
+      <path d="M598 276v26" stroke-width="2.4"/>
+      <path d="M589 281v8" stroke="#fff" stroke-width="2.6"/>
+    </g>
+    <path d="M580 278L598 262L616 278Z" fill="#3d5670" stroke-width="3.6"/>
+    <path d="M581 276C586 270 592 266 598 263C604 266 610 270 615 276C610 274 604 274 600 277C594 273 586 273 581 276Z" fill="#fff" stroke-width="2.4"/>
+    <circle cx="598" cy="260" r="3" fill="#3d5670" stroke-width="2.4"/>
+  </g>
+
+  <!-- FISH CRATE, right -->
+  <g class="t-crate" stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round">
+    <ellipse cx="692" cy="446" rx="60" ry="8" fill="#b98447" stroke="none"/>
+    <!-- orange fish standing nose-up -->
+    <path d="M700 406C694 392 698 376 708 366C718 376 722 392 716 406Z" fill="#f08a2c" stroke-width="3.4"/>
+    <path d="M710 370C716 380 718 394 714 406H716C722 392 718 376 708 366Z" fill="#c4661a" stroke="none"/>
+    <path d="M700 406C694 392 698 376 708 366C718 376 722 392 716 406Z" fill="none" stroke-width="3.4"/>
+    <circle cx="707" cy="378" r="2.2" fill="#1a2332" stroke="none"/>
+    <path d="M701 388q7 3 14 0" fill="none" stroke-width="2.2"/>
+    <path d="M704 372c1-2 3-3 4-3" fill="none" stroke="#ffc58a" stroke-width="2"/>
+    <path d="M702 394l-8 4M714 394l8 4" stroke-width="2.4"/>
+    <!-- silver fish lying across, tail out to the left -->
+    <g transform="translate(-2 -8) rotate(-6 676 398)">
+    <path d="M654 404C662 390 684 386 698 396C692 406 670 410 654 404Z" fill="#9cc7e3" stroke-width="3.4"/>
+    <path d="M656 402L640 390L642 410Z" fill="#7fb2d4" stroke-width="3"/>
+    <path d="M664 404C676 404 688 402 696 398C690 404 672 410 660 406Z" fill="#7fb2d4" stroke="none"/>
+    <path d="M654 404C662 390 684 386 698 396C692 406 670 410 654 404Z" fill="none" stroke-width="3.4"/>
+    <circle cx="690" cy="395" r="2.2" fill="#1a2332" stroke="none"/>
+    <path d="M682 391q-3 5 0 10" fill="none" stroke-width="2.2"/>
+    <path d="M666 395c4-3 9-4 13-3" fill="none" stroke="#fff" stroke-width="2.2"/>
+    </g>
+    <!-- small silver fish, head up on the right -->
+    <path d="M722 406C720 396 726 386 734 384C740 390 740 400 736 406Z" fill="#b9d7ea" stroke-width="3.2"/>
+    <circle cx="732" cy="391" r="1.9" fill="#1a2332" stroke="none"/>
+    <!-- crate -->
+    <rect x="638" y="402" width="108" height="42" rx="3" fill="#e0b56a" stroke-width="4.4"/>
+    <rect x="720" y="404" width="24" height="38" fill="#c99a52" stroke="none"/>
+    <path d="M640 423h104" stroke="#b07a3c" stroke-width="3"/>
+    <rect x="638" y="402" width="108" height="42" rx="3" fill="none" stroke-width="4.4"/>
+    <g fill="#8d5a32" stroke="none"><circle cx="645" cy="410" r="1.8"/><circle cx="739" cy="410" r="1.8"/><circle cx="645" cy="436" r="1.8"/><circle cx="739" cy="436" r="1.8"/></g>
+    <path d="M644 412h22" stroke="#f4d08f" stroke-width="2.6"/>
+    <path d="M726 404c2-7 18-9 24-2c-4 5-18 6-24 2z" fill="#fff" stroke-width="2.6"/>
+  </g>
+
+  <!-- ROPE COIL, left -->
+  <g stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round">
+    <ellipse cx="88" cy="452" rx="44" ry="10" fill="#b98447" stroke="none"/>
+    <ellipse cx="88" cy="442" rx="40" ry="14" fill="#c9a46a" stroke-width="4"/>
+    <ellipse cx="88" cy="437" rx="28" ry="9" fill="#b88d52" stroke-width="3"/>
+    <ellipse cx="88" cy="433" rx="15" ry="4.6" fill="#a07a42" stroke-width="2.6"/>
+    <path d="M58 446c10 5 50 5 60 0M66 440c8 3 36 3 44 0" fill="none" stroke="#e7c48a" stroke-width="2.4"/>
+    <path d="M126 446c14 2 24 10 30 22" fill="none" stroke-width="4"/>
+    <path d="M126 446c14 2 24 10 30 22" fill="none" stroke="#c9a46a" stroke-width="1.4"/>
+  </g>
+
+  <!-- SNOWDRIFT the penguin stands on -->
+  <g stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M168 476C166 444 190 426 220 430C232 414 262 410 284 418C306 404 346 404 368 414C392 404 430 406 446 420C474 414 512 418 528 436C548 432 572 444 574 476Z" fill="#fff" stroke-width="4"/>
+    <path d="M200 476C210 462 236 456 262 460C300 450 348 452 380 458C420 452 470 452 500 460C522 458 542 464 552 476Z" fill="#c7e4f6" stroke="none"/>
+    <path d="M222 438C246 430 268 430 284 434M372 422C396 416 420 418 440 428M530 444C544 446 556 452 562 462" fill="none" stroke="#d6ecf9" stroke-width="3.4"/>
+    <path d="M168 476C166 444 190 426 220 430C232 414 262 410 284 418C306 404 346 404 368 414C392 404 430 406 446 420C474 414 512 418 528 436C548 432 572 444 574 476" fill="none" stroke-width="4"/>
+    <!-- soft shade under the pair -->
+    <ellipse cx="438" cy="447" rx="34" ry="6" fill="#c7e4f6" stroke="none"/>
+  </g>
+
+  <g fill="none" stroke="#a9cfe9" stroke-width="2.6" stroke-linecap="round"><g transform="translate(196 462) rotate(82)"><path d="M0 0l-5 -5M0 0l0 -7M0 0l5 -5M0 0l3 0"/></g><g transform="translate(214 450) rotate(96)"><path d="M0 0l-5 -5M0 0l0 -7M0 0l5 -5M0 0l3 0"/></g><g transform="translate(238 462) rotate(84)"><path d="M0 0l-5 -5M0 0l0 -7M0 0l5 -5M0 0l3 0"/></g><g transform="translate(258 450) rotate(98)"><path d="M0 0l-5 -5M0 0l0 -7M0 0l5 -5M0 0l3 0"/></g></g>
+
+  <!-- THE RING the player stands on -->
+  <ellipse cx="330" cy="446" rx="58" ry="11" fill="none" stroke="#1a2332" stroke-width="11"/>
+  <ellipse cx="330" cy="446" rx="58" ry="11" fill="none" stroke="#3aa0f2" stroke-width="5.5"/>
+
+  <!-- THE PENGUIN, waving -->
+  <g transform="translate(249 266.6) scale(.92)"><g class="t-you">YOU_HERE</g></g>
+
+  <!-- THE SCOUT -->
+  <g transform="translate(396.8 332.4) scale(.8)"><g class="t-scout">CL_HERE</g></g>

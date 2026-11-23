@@ -131,9 +131,9 @@
     <path d="M520 444q100 10 196 0" fill="none" stroke="#c9ecff" stroke-width="4"/>
     <!-- funnel and smoke -->
     <g class="q-smoke" stroke-width="3">
-      <circle cx="674" cy="226" r="7" fill="#eef3f7"/>
-      <circle cx="664" cy="214" r="9" fill="#eef3f7"/>
-      <circle cx="652" cy="200" r="11" fill="#eef3f7"/>
+      <path d="M666 232c-6 0-8-8-2-10c0-6 8-8 12-4c4-4 12 0 10 6c6 2 4 10-2 10z" fill="#eef3f7"/>
+      <path d="M650 214c-8 0-10-10-2-12c0-8 10-10 15-5c5-5 15-1 13 7c8 2 6 12-2 12z" fill="#e4ebf1"/>
+      <path d="M630 194c-9 0-12-12-3-14c0-9 12-12 18-6c6-6 18-1 15 8c9 2 7 14-2 14z" fill="#dbe4eb"/>
     </g>
     <path d="M664 240h24l-3 44h-18z" fill="#d9493e" stroke-width="4"/>
     <path d="M665 252h22" stroke="#fff" stroke-width="6"/>
@@ -361,7 +361,21 @@
     <path d="M934 632c0 16 24 26 56 26s56-10 56-26c0-10-24-16-56-16s-56 6-56 16z" fill="#c9854a" stroke-width="4"/>
     <ellipse cx="990" cy="628" rx="46" ry="10" fill="#7a4a27" stroke-width="3"/>
     <path d="M942 640c14 6 30 8 48 8M950 650c12 3 26 4 40 4M1038 640c-14 6-30 8-48 8M1030 650c-12 3-26 4-40 4" stroke="#e7c48a" stroke-width="3" fill="none"/>
-    <path d="M940 632l-10-6M1040 632l12-5M962 618l-8-8M1020 618l8-9" stroke="#8d5a32" stroke-width="3"/>
+    <path d="M940 632l-10-6M1040 632l12-5M962 618l-8-8M1020 618l8-9M948 624l-12-2M1032 622l14-3M990 616l0-10" stroke="#8d5a32" stroke-width="3"/>
+    <path d="M944 628c10-4 16 2 26-2M1010 626c10 2 18-4 28 0" fill="none" stroke="#e7c48a" stroke-width="3"/>
+    <ellipse cx="1004" cy="624" rx="20" ry="7" fill="#7eb6d4" stroke-width="2.8"/>
+    <path d="M990 622c6-4 18-4 26 0" fill="none" stroke="#bfe0f0" stroke-width="2.4"/>
+    <path d="M962 614c-6-12-2-22 6-26c2 10 0 20-6 26z" fill="#fff" stroke-width="2.4"/>
+    <path d="M962 614l5-24" fill="none" stroke-width="1.6"/>
+  </g>
+  <!-- deck life: a dropped fish and a patch of packed snow with footprints -->
+  <g stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M470 600c10-6 40-8 64-4c20 4 22 14 4 18c-24 6-60 6-74-2c-6-4-4-10 6-12z" fill="#f4faff" stroke-width="3"/>
+    <path d="M478 610c18 4 44 4 60-2" fill="none" stroke="#d6ecf9" stroke-width="3"/>
+    <g fill="#c7e4f6" stroke="none"><ellipse cx="492" cy="604" rx="4" ry="2.2"/><ellipse cx="508" cy="600" rx="4" ry="2.2"/><ellipse cx="522" cy="606" rx="4" ry="2.2"/></g>
+    <path d="M796 640c6-8 22-8 28 0c-6 8-22 8-28 0z" fill="#9cc7e3" stroke-width="2.6"/>
+    <path d="M824 640l8-6v12z" fill="#9cc7e3" stroke-width="2.4"/>
+    <circle cx="804" cy="638" r="1.6" fill="#1a2332" stroke="none"/>
   </g>
 
   <!-- FISH CRATE -->

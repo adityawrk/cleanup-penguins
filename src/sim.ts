@@ -115,7 +115,7 @@ export const MAC_SCOPE: Scope = { id: 'mac', kind: 'mac', label: 'This Mac', pat
 
 /** Where the nth shed stands on the quay's back edge. Sheds sit between the third boat and the Glasshouse. */
 export function shedSlot(index: number): Point {
-  return { x: 934 + (index % 3) * 62, y: 448 }
+  return { x: 940 + (index % 2) * 84, y: 448 - Math.floor(index / 2) * 8 }
 }
 
 export function starterRepos(): Scope[] {
@@ -1163,7 +1163,7 @@ function finishEmpty(world: World, now: number) {
     if (item && item.disposed === 'locker') item.disposed = 'sea'
   }
   world.lockerTenths = 0
-  world.splash = { until: now + 800, x: 1150, y: 430 }
+  world.splash = { until: now + 800, x: 1195, y: 592 }
   if (world.rehearsal) {
     world.rehearsedTenths += job.tenths
     punchline(world, "Splash! Practice run. They're still on your disk.", now)
@@ -1420,14 +1420,19 @@ export function say(world: World, text: string, now: number): SayKind {
     return 'answered'
   }
   // A question is asked, not noted: it doesn't go on the brief.
-  if (!/\?\s*$/.test(line)) remember(world, line)
+  const question = isQuestion(line)
+  if (!question) remember(world, line)
   if (scoutIsLive(world)) {
     beginTool(world, 'Thinking', false)
     sayLine(target, '…', now, 0, true)
     return 'ask'
   }
-  sayLine(target, "I'll keep that in mind.", now, 3200)
+  sayLine(target, question ? "Pick it up and I'll tell you what I know." : "I'll keep that in mind.", now, 3200)
   return 'note'
+}
+
+function isQuestion(line: string): boolean {
+  return /\?\s*$/.test(line)
 }
 
 /** The live scout answered. Speak it, point at the item it named, then follow any lines queued meanwhile. */
@@ -1455,7 +1460,7 @@ export function liveFailed(world: World, now: number) {
   scout.sticky = false
   const queued = world.steering.length > 0
   finishTool(world, now)
-  if (!queued) sayLine(scout, "I couldn't reach Claude Code just now. Your note is kept.", now, 4200)
+  if (!queued) sayLine(scout, "I couldn't reach Claude Code just now.", now, 4200)
 }
 
 function arrivalLine(world: World, previous: BirdId | null): string {
@@ -1512,7 +1517,7 @@ export function finishTool(world: World, now: number) {
   world.tool = null
   const lines = world.steering.splice(0, world.steering.length)
   if (!lines.length || !world.scout) return
-  for (const line of lines) remember(world, line)
+  for (const line of lines) if (!isQuestion(line)) remember(world, line)
   const newest = lines[lines.length - 1]
   const lower = newest.toLowerCase()
   const scout = being(world, world.scout)

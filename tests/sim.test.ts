@@ -25,6 +25,9 @@ import {
   takeRope,
   walkTo,
   SPOTS,
+  liveReply,
+  liveFailed,
+  requestEmpty,
   type World,
 } from '../src/sim'
 
@@ -294,5 +297,65 @@ describe('harbor rules', () => {
     you.y = you.ty
     step(world, 4200, 0.016)
     expect(world.fidget?.kind).toBe('wave')
+  })
+
+  it('asks the live scout only when Claude Code was found, and never notes a question', () => {
+    const scripted = createWorld('ada')
+    expect(say(scripted, 'which cache is biggest?', 10)).toBe('note')
+    expect(scripted.brief).toEqual([])
+    expect(being(scripted, 'claude').bubble).not.toMatch(/keep that in mind/)
+
+    const world = createWorld('ada')
+    world.live = { claude: true, cursor: false, codex: false }
+    expect(say(world, 'leave the chrome cache alone', 20)).toBe('ask')
+    expect(world.tool?.label).toBe('Thinking')
+    expect(world.brief).toEqual(['leave the chrome cache alone'])
+    expect(say(world, 'and the npm one?', 30)).toBe('queued')
+    liveReply(world, { say: 'Noted. Chrome stays.', item: null, hole: null }, 40)
+    expect(world.tool).toBeNull()
+    expect(world.brief).toEqual(['leave the chrome cache alone'])
+    expect(being(world, 'claude').bubble).not.toBe('Noted. Chrome stays.')
+  })
+
+  it('says plainly when the live scout cannot be reached', () => {
+    const world = createWorld('ada')
+    world.live = { claude: true, cursor: false, codex: false }
+    say(world, 'which one first', 10)
+    liveFailed(world, 20)
+    expect(world.tool).toBeNull()
+    expect(being(world, 'claude').bubble).toBe("I couldn't reach Claude Code just now.")
+  })
+
+  it('a live reply speaks and points, but cannot throw', () => {
+    const world = createWorld('ada')
+    world.live = { claude: true, cursor: false, codex: false }
+    world.room = 'hold'
+    say(world, 'which one first', 10)
+    liveReply(world, { say: 'The Codex cache.', item: 'codex', hole: 'sea' }, 20)
+    expect(being(world, 'claude').bubble).toBe('The Codex cache.')
+    expect(being(world, 'claude').mode).toBe('go')
+    expect(world.items.every((item) => item.disposed === 'none')).toBe(true)
+    expect(world.carrying).toBeNull()
+  })
+
+  it('empties the Locker into the sea as practice, leaving the pole alone', () => {
+    const world = createWorld('ada')
+    world.items.find((item) => item.id === 'wow')!.disposed = 'locker'
+    world.lockerTenths = 490
+    world.room = 'locker'
+    const you = being(world, 'you')
+    you.x = you.tx = SPOTS.tip.x
+    you.y = you.ty = SPOTS.tip.y
+    requestEmpty(world, 100)
+    expect(world.card?.kind).toBe('empty')
+    answer(world, true, 200)
+    expect(cardModel(world, 300)?.title).toBe('This would be for good.')
+    answer(world, true, 400)
+    expect(world.card?.kind).toBe('empty')
+    answer(world, true, 1100)
+    settle(world, 1000, 1100)
+    expect(world.freeTenths).toBe(438)
+    expect(world.rehearsedTenths).toBe(490)
+    expect(world.lockerTenths).toBe(0)
   })
 })

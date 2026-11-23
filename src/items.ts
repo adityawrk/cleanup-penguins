@@ -39,18 +39,28 @@ export function stampText(tenths: number): string {
   return gb.toFixed(1)
 }
 
+/** Sack silhouettes, so a floor of caches doesn't look like a grid of icons. */
+const SACK_BODIES = [
+  'M60 30C34 30 20 52 20 72C20 88 34 96 60 96C86 96 100 88 100 72C100 52 86 30 60 30Z',
+  'M60 28C40 28 28 46 28 70C28 88 40 96 60 96C80 96 92 88 92 70C92 46 80 28 60 28Z',
+  'M60 32C40 34 24 50 16 72C12 86 26 96 58 96C92 96 106 88 102 74C96 52 82 32 60 32Z',
+]
+
 function sack(item: Pick<Item, 'name' | 'tenths'>): string {
   const h = hash(item.name)
+  const body = SACK_BODIES[(h >> 5) % SACK_BODIES.length]
   const c = SACKS[h % SACKS.length]
   const tie = TIES[(h >> 3) % TIES.length]
   const stamp = esc(stampText(item.tenths))
   return `
   <ellipse cx="60" cy="95" rx="40" ry="6" fill="${INK}" opacity=".18"/>
   <g stroke="${INK}" stroke-linejoin="round" stroke-linecap="round">
-    <path d="M60 30C34 30 20 52 20 72C20 88 34 96 60 96C86 96 100 88 100 72C100 52 86 30 60 30Z" fill="${c.body}" stroke-width="4.4"/>
+    <path d="${body}" fill="${c.body}" stroke-width="4.4"/>
     <path d="M86 40C96 52 100 62 100 72C100 88 86 96 60 96C74 90 84 80 86 62C87 54 87 46 86 40Z" fill="${c.shade}" stroke="none"/>
     <path d="M30 60C34 50 40 44 46 40" fill="none" stroke="#fff" stroke-width="3.4" opacity=".55"/>
-    <path d="M60 30C34 30 20 52 20 72C20 88 34 96 60 96C86 96 100 88 100 72C100 52 86 30 60 30Z" fill="none" stroke-width="4.4"/>
+    <path d="${body}" fill="none" stroke-width="4.4"/>
+    ${(h >> 8) % 3 === 0 ? `<path d="M30 80c6 4 14 6 22 6M74 46c6 4 10 10 12 16" fill="none" stroke="${c.shade}" stroke-width="3"/>` : ''}
+    ${(h >> 10) % 2 === 0 ? `<path d="M78 82l10-4l2 8l-10 2z" fill="${c.patch}" stroke-width="2.2"/>` : ''}
     <path d="M46 32C40 22 44 12 52 10C54 16 58 18 60 18C62 18 66 16 68 10C76 12 80 22 74 32Z" fill="${c.body}" stroke-width="3.6"/>
     <path d="M66 14C72 16 76 24 72 32H64C68 26 68 20 66 14Z" fill="${c.shade}" stroke="none"/>
     <path d="M46 32C40 22 44 12 52 10C54 16 58 18 60 18C62 18 66 16 68 10C76 12 80 22 74 32Z" fill="none" stroke-width="3.6"/>
@@ -162,4 +172,10 @@ export function itemSvg(item: Pick<Item, 'form' | 'name' | 'tenths'>): string {
     : item.form === 'disk' ? disk(item)
     : sack(item)
   return `<svg viewBox="0 0 120 100" class="item-art" aria-hidden="true">${body}</svg>`
+}
+
+/** A small, stable tilt and nudge per item, so the floor looks set down by hand. */
+export function jitter(name: string): { dx: number; dy: number; tilt: number } {
+  const h = hash(name + '#')
+  return { dx: ((h % 21) - 10) * 1.2, dy: (((h >> 5) % 13) - 6), tilt: (((h >> 9) % 11) - 5) * 0.9 }
 }

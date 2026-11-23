@@ -3,6 +3,8 @@ import { defineConfig, type Plugin } from 'vitest/config'
 import { readDisk, scanCaches } from './src/engine/scan'
 import { askClaude, detectAgents, type ScoutAsk } from './src/engine/scout'
 
+let scoutBusy = false
+
 function harborApi(): Plugin {
   return {
     name: 'harbor-api',
@@ -33,6 +35,22 @@ function harborApi(): Plugin {
           return
         }
         if (req.url === '/api/scout' && req.method === 'POST') {
+          // Only this page may spend the player's agent: same origin, JSON, one call at a time.
+          const origin = req.headers.origin
+          const host = req.headers.host
+          const sameOrigin = !origin || (host !== undefined && new URL(origin).host === host)
+          if (!sameOrigin || !String(req.headers['content-type'] ?? '').startsWith('application/json') || req.headers['sec-fetch-site'] === 'cross-site') {
+            res.statusCode = 403
+            res.end('{}')
+            return
+          }
+          if (scoutBusy) {
+            res.statusCode = 429
+            res.end('{"error":"busy"}')
+            return
+          }
+          scoutBusy = true
+          res.on('close', () => (scoutBusy = false))
           let body = ''
           req.on('data', (chunk) => {
             body += chunk
