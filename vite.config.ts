@@ -5,11 +5,24 @@ import { askClaude, detectAgents, type ScoutAsk } from './src/engine/scout'
 
 let scoutBusy = false
 
+function localHost(host: string | undefined): boolean {
+  if (!host) return false
+  const name = host.replace(/:\d+$/, '').toLowerCase()
+  return name === 'localhost' || name === '127.0.0.1' || name === '[::1]' || name.endsWith('.localhost')
+}
+
 function harborApi(): Plugin {
   return {
     name: 'harbor-api',
     configureServer(server) {
       server.middlewares.use((req, res, next) => {
+        // The harbor API answers only to this machine's own names. A page that rebinds its DNS to
+        // 127.0.0.1 still sends its own Host header, so this stops it reading the disk or spending the scout.
+        if (req.url?.startsWith('/api/') && !localHost(req.headers.host)) {
+          res.statusCode = 403
+          res.end('{}')
+          return
+        }
         if (req.url === '/api/disk') {
           readDisk()
             .then((disk) => {

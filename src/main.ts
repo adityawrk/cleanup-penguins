@@ -273,6 +273,8 @@ who.addEventListener('click', (event) => {
   audio.pop()
 })
 window.addEventListener('keydown', onKey)
+document.addEventListener('visibilitychange', () => audio.setHidden(document.hidden))
+;(window as unknown as { harborAudio: HarborAudio }).harborAudio = audio
 window.addEventListener('resize', layout)
 layout()
 void document.fonts.load('700 28px Fredoka')
@@ -549,6 +551,8 @@ function syncSheds() {
     button.style.left = `${slot.x}px`
     button.style.top = `${slot.y}px`
     button.style.setProperty('--wall', SHED_COLORS[index % SHED_COLORS.length])
+    button.style.zIndex = index < 2 ? '2' : '1'
+    if (index >= 2) button.style.scale = '0.82'
     button.classList.toggle('is-scope', world.scope.id === repo.id)
     const tenths = scopeTenths(world, repo.id)
     button.setAttribute('aria-label', `${repo.label}, ${tenths > 0 ? gbWord(tenths) : 'not mapped yet'}`)
@@ -1004,6 +1008,10 @@ async function askScout(text: string) {
     audio.chirp()
   } catch {
     liveFailed(world, performance.now())
+    // Don't keep calling the scout live after a failed call; look again in two minutes.
+    if (world.live) world.live = { ...world.live, claude: false }
+    tuningKey = ''
+    window.setTimeout(() => void findAgents(), 120_000)
   }
 }
 
@@ -1089,7 +1097,8 @@ function syncGuide(now: number) {
   if (guide === 'lift') {
     if (world.carrying) guide = 'drop'
     else {
-      const top = world.room === 'hold' ? itemsHere(world).filter((item) => item.disposed === 'none').sort((x, y) => y.tenths - x.tenths)[0] : undefined
+      // Point at what E would lift, so the arrow and the key agree.
+      const top = world.room === 'hold' ? nearestLiftable(world) : undefined
       point(a, top ? { x: top.x, y: top.y - 96 } : null)
       point(b, null)
       if (top) line('lift', "Pick one up. I'll tell you what it is.")

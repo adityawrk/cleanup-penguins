@@ -69,7 +69,8 @@ button { appearance: none; background: none; border: 0; padding: 0; }
 .being.bird .shadow { bottom: -4px; width: 80px; height: 14px; margin-left: -40px; }
 /* The player's floor ring: one blue band between two ink lines, flat on the planks. */
 .ring { position: absolute; left: 50%; bottom: -6px; width: 132px; height: 30px; margin-left: -66px; border-radius: 50%; border: 6px solid #3aa0f2; box-shadow: 0 0 0 3px var(--ink), inset 0 0 0 3px var(--ink); pointer-events: none; }
-.turn { transform: scale(var(--heft, 1)) scaleX(var(--face, 1)); transform-origin: 50% 100%; transition: transform 280ms cubic-bezier(.22, .8, .2, 1); }
+/* The mirror flips instantly (a tween through scaleX(0) reads as a paper-thin sliver). */
+.turn { transform: scale(var(--heft, 1)) scaleX(var(--face, 1)); transform-origin: 50% 100%; }
 .sprite svg, .hello-art { display: block; width: 100%; height: auto; shape-rendering: geometricPrecision; }
 .being.is-walking .sprite { animation: waddle 360ms ease-in-out infinite; }
 .being.is-walking .flipper { transform-box: fill-box; transform-origin: center; animation: flap 360ms ease-in-out infinite; }
@@ -533,9 +534,9 @@ button { appearance: none; background: none; border: 0; padding: 0; }
 
 /* Snow on the quay: soft flakes drifting down and swaying. Under the UI, over the painting. */
 .snowfall { position: absolute; inset: 0; z-index: 5; pointer-events: none; overflow: hidden; }
-.snowfall i { position: absolute; top: -12px; width: var(--size); height: var(--size); border-radius: 50%; background: #fff; box-shadow: 0 0 0 1px rgba(26, 35, 50, .12); animation-name: snow-fall, snow-sway; animation-timing-function: linear, ease-in-out; animation-iteration-count: infinite, infinite; animation-direction: normal, alternate; }
-@keyframes snow-fall { to { top: 720px; } }
-@keyframes snow-sway { from { margin-left: calc(var(--sway) * -1); } to { margin-left: var(--sway); } }
+.snowfall i { position: absolute; top: -12px; will-change: transform; width: var(--size); height: var(--size); border-radius: 50%; background: #fff; box-shadow: 0 0 0 1px rgba(26, 35, 50, .12); animation-name: snow-fall, snow-sway; animation-timing-function: linear, ease-in-out; animation-iteration-count: infinite, infinite; animation-direction: normal, alternate; }
+@keyframes snow-fall { from { translate: 0 0; } to { translate: 0 732px; } }
+@keyframes snow-sway { from { transform: translateX(calc(var(--sway) * -1)); } to { transform: translateX(var(--sway)); } }
 
 /* Quay toys. */
 .q-gull.flown { animation: gull-away 5.2s ease-in-out; }
@@ -550,3 +551,11 @@ button { appearance: none; background: none; border: 0; padding: 0; }
 }
 .q-beam.flash { animation: beam-flash 600ms steps(2) 4; }
 @keyframes beam-flash { 0% { opacity: .2; } 50% { opacity: 1; } }
+
+/* Three-quarter turn: while moving, the face, beak and belly slide toward the heading and the far flipper tucks in,
+   so a walk reads as going somewhere, not sliding sideways. The .turn mirror handles walking left. */
+.being .face, .being .belly { transition: transform 160ms ease-out; }
+.being.is-walking:not(.is-back) .face { transform: translateX(13px) scaleX(.94); }
+.being.is-walking:not(.is-back) .belly { transform: translateX(8px) scaleX(.95); }
+.being.bird.is-walking:not(.is-back) .face { transform: translateX(10px) scaleX(.93); }
+.being.is-walking:not(.is-back):not(.is-carrying) .flipper.l { opacity: 0; }

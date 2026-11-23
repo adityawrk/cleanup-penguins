@@ -1,4 +1,4 @@
-// Drives the running harbor in headless Chrome and saves screenshots. Steps: {wait} {key} {click:[x,y]} {type} {eval} {shot}.
+// Drives the running harbor in headless Chrome and saves screenshots. Steps: {wait} {key} {click:[x,y]} {type} {eval} {shot} {burst,n,every,clip}.
 // usage: node shot.mjs url outprefix [script.json]  — script: list of {key|click:[x,y]|wait|eval|shot:name}
 import puppeteer from 'puppeteer-core'
 import fs from 'node:fs'
@@ -18,6 +18,14 @@ for (const s of steps) {
   if (s.type) await page.keyboard.type(s.type)
   if (s.eval) console.log('eval:', JSON.stringify(await page.evaluate(s.eval)))
   if (s.shot) await page.screenshot({ path: `${out}-${s.shot}.png` })
+  if (s.burst) {
+    // A strip of frames for judging motion: {burst: 'walk', n: 12, every: 50, clip: [x, y, w, h]}
+    const clip = s.clip ? { x: s.clip[0], y: s.clip[1], width: s.clip[2], height: s.clip[3] } : undefined
+    for (let i = 0; i < (s.n ?? 12); i += 1) {
+      await page.screenshot({ path: `${out}-${s.burst}-${String(i).padStart(2, '0')}.png`, clip })
+      await new Promise(r => setTimeout(r, s.every ?? 50))
+    }
+  }
 }
 if (errs.length) console.log('ERRORS:', errs.join('\n'))
 await browser.close()

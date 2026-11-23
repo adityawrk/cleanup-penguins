@@ -9,6 +9,7 @@ type RoomId = 'quay' | 'hold' | 'locker' | 'glasshouse'
 export class HarborAudio {
   private ctx: AudioContext | null = null
   private bus: GainNode | null = null
+  private meter: AnalyserNode | null = null
   private noiseBuffer: AudioBuffer | null = null
   private bed: { room: RoomId; stop: () => void } | null = null
   private bedTimer = 0
@@ -23,6 +24,36 @@ export class HarborAudio {
     if (ctx.state === 'suspended') void ctx.resume()
     if (!this.bed) this.ambience(this.room)
     if (!this.song && this.musicOn) this.music(this.room)
+  }
+
+  /**
+   * Pause everything while the tab is hidden: timers are throttled in the background, so the music
+   * scheduler would otherwise fall behind and fire a burst of late notes on return.
+   */
+  setHidden(hidden: boolean) {
+    if (!this.ctx) return
+    if (hidden) {
+      if (this.song) window.clearTimeout(this.song.timer)
+      void this.ctx.suspend()
+    } else if (!this.muted) {
+      void this.ctx.resume().then(() => {
+        if (this.song) {
+          const room = this.song.room
+          this.stopMusic()
+          if (this.musicOn) this.music(room)
+        }
+      })
+    }
+  }
+
+  /** Peak level on the master bus since the last call, 0..1 and above. For checking mixes without ears. */
+  peak(): number {
+    if (!this.meter) return 0
+    const data = new Float32Array(this.meter.fftSize)
+    this.meter.getFloatTimeDomainData(data)
+    let max = 0
+    for (const v of data) max = Math.max(max, Math.abs(v))
+    return max
   }
 
   toggleMusic() {
@@ -355,6 +386,9 @@ export class HarborAudio {
       this.bus.gain.value = 0.9
       this.bus.connect(comp)
       comp.connect(ctx.destination)
+      this.meter = ctx.createAnalyser()
+      this.meter.fftSize = 2048
+      comp.connect(this.meter)
     }
     return this.bus
   }
