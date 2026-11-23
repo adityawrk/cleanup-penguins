@@ -164,6 +164,7 @@ let prevRoom = world.room
 let prevSplash = 0
 let prevSnore = 0
 let prevCarry: string | null = null
+let prevToss: string | null = null
 const poseSeen = new Map<string, string>()
 /** Last drawn position and whether we're seeing a being's back (walking away from the camera). */
 const heading = new Map<string, { x: number; y: number; back: boolean }>()
@@ -172,8 +173,9 @@ const bubbleSeen = new Map<string, string | null>()
 const beings = new Map<BeingId, HTMLElement>()
 const props = new Map<string, HTMLElement>()
 
-for (const id of ['you', 'claude', 'codex', 'cursor', 'custom'] as const) {
+for (const [index, id] of (['you', 'claude', 'codex', 'cursor', 'custom'] as const).entries()) {
   const node = clone(`tpl-${id}`)
+  node.querySelector<SVGElement>('.eyes')?.style.setProperty('animation-delay', `-${(index * 1.7) % 5.2}s`)
   node.querySelector('.name')!.textContent = id === 'you' ? world.beings[0].name : being(world, id).name
   beings.set(id, node)
 }
@@ -403,6 +405,7 @@ function sync(now: number) {
     for (const room of document.querySelectorAll<HTMLElement>('.room')) room.inert = room.id !== `room-${world.room}`
   }
   fit.dataset.room = world.room
+  fit.classList.toggle('has-card', Boolean(world.card))
   track.dataset.room = world.room
   renderFlap(must('#flaps'), poleFree(world))
   renderFlap(must('#mini-flaps'), poleFree(world))
@@ -443,8 +446,11 @@ function sync(now: number) {
     el.style.setProperty('--bxs', `${edge}px`)
     if (id !== 'you') {
       const you = being(world, 'you')
-      const close = Math.abs(actor.x - you.x) < 90 && Math.abs(actor.y - you.y) < 40
-      el.style.setProperty('--ny', close ? `${(actor.y <= you.y ? -24 : 18) / depth}px` : '0px')
+      const close = Math.abs(actor.x - you.x) < 110 && Math.abs(actor.y - you.y) < 50
+      // Slide the scout's name away from the player's, sideways, so the two never stack.
+      const away = actor.x < you.x ? -1 : 1
+      el.style.setProperty('--nx', close ? `${(away * 46) / depth}px` : '0px')
+      el.style.setProperty('--ny', close ? `${10 / depth}px` : '0px')
     }
     el.style.zIndex = String(Math.round(actor.y))
     const heft = id === world.scout ? effortScale(world.effort) : 1
@@ -541,6 +547,11 @@ function sync(now: number) {
     splash.style.left = `${world.splash.x}px`
     splash.style.top = `${world.splash.y}px`
   } else splash.hidden = true
+  if (world.toss && world.toss.itemId !== prevToss) {
+    const youEl = beings.get('you')
+    if (youEl) pulse(youEl, 'is-throw', 460)
+  }
+  prevToss = world.toss?.itemId ?? null
   if (world.carrying !== prevCarry) {
     const youEl = beings.get('you')
     if (world.carrying && youEl) {
@@ -616,7 +627,7 @@ function syncTuning() {
     }
   }
   if (!naming && document.activeElement !== sayInput) {
-    const prompt = look ? `Tell ${look.label} what matters` : 'Tell your scout what matters'
+    const prompt = look && scout ? `Tell ${scout.name} (${look.label}) what matters` : 'Tell your scout what matters'
     if (sayInput.placeholder !== prompt) sayInput.placeholder = prompt
     must('#say-label').textContent = prompt
   }
@@ -633,7 +644,7 @@ function faceOf(id: BirdId): SVGElement {
 
 function promptFor(game: World): string {
   if (!game.scout) return 'Tell your scout what matters'
-  return `Tell ${modelChoice(game).label} what matters`
+  return `Tell ${being(game, game.scout).name} (${modelChoice(game).label}) what matters`
 }
 
 function syncBrief() {
@@ -823,11 +834,11 @@ function showMarker(x: number, y: number) {
   marker.classList.add('show')
 }
 
-function pulse(el: HTMLElement, cls: string) {
+function pulse(el: HTMLElement, cls: string, ms = 360) {
   el.classList.remove(cls)
   void el.offsetWidth
   el.classList.add(cls)
-  window.setTimeout(() => el.classList.remove(cls), 340)
+  window.setTimeout(() => el.classList.remove(cls), ms)
 }
 
 function dismissHello() {

@@ -63,7 +63,7 @@ button { appearance: none; background: none; border: 0; padding: 0; }
    so the negative top margin puts the feet exactly on the walk point. */
 .being { width: 176px; height: 204px; margin: -204px 0 0 -88px; cursor: pointer; }
 .being.bird { width: 128px; height: 144px; margin: -144px 0 0 -64px; }
-.being .name { position: absolute; top: calc(100% + 8px); left: 50%; translate: -50% var(--ny, 0px); scale: var(--inv, 1); transform-origin: 50% 0; white-space: nowrap; font-weight: 600; font-size: 14px; line-height: 1; color: var(--ink); pointer-events: none; }
+.being .name { position: absolute; top: calc(100% + 8px); left: 50%; translate: calc(-50% + var(--nx, 0px)) var(--ny, 0px); scale: var(--inv, 1); transform-origin: 50% 0; white-space: nowrap; font-weight: 600; font-size: 14px; line-height: 1; color: var(--ink); pointer-events: none; }
 .being.you .name { top: calc(100% + 16px); }
 .shadow { position: absolute; left: 50%; bottom: -5px; width: 104px; height: 18px; margin-left: -52px; background: rgba(26, 35, 50, .2); border-radius: 50%; pointer-events: none; transform: scaleX(var(--heft, 1)); transform-origin: center; }
 .being.bird .shadow { bottom: -4px; width: 80px; height: 14px; margin-left: -40px; }
@@ -528,7 +528,7 @@ button { appearance: none; background: none; border: 0; padding: 0; }
 .sc-note:empty { display: none; }
 
 /* The first-run guide's bouncing arrows. */
-.pointer { position: absolute; width: 40px; height: 46px; margin: -46px 0 0 -20px; z-index: 6; pointer-events: none; animation: point 900ms ease-in-out infinite; }
+.pointer { position: absolute; width: 40px; height: 46px; margin: -46px 0 0 -20px; z-index: 3; pointer-events: none; animation: point 900ms ease-in-out infinite; }
 .pointer svg { display: block; width: 100%; height: 100%; }
 @keyframes point { 0%, 100% { transform: translateY(-10px); } 50% { transform: translateY(0); } }
 
@@ -609,3 +609,44 @@ button { appearance: none; background: none; border: 0; padding: 0; }
 /* Extra sheds stand in front, smaller; their sign shows on hover or focus so the strip doesn't crowd. */
 .shed.is-extra .shed-sign { opacity: 0; transition: opacity 140ms ease; }
 .shed.is-extra:hover .shed-sign, .shed.is-extra:focus-visible .shed-sign, .shed.is-extra.is-scope .shed-sign { opacity: 1; }
+
+/* ───────────── Motion pass ─────────────
+   Bigger, rounder movement so the cast reads alive at game size: breathing at rest, a waddle with squash and
+   stretch, feet that lift in turn, flippers swinging against the body, a crouch to lift, a wind-up to throw. */
+.being .sprite { transform-origin: 50% 100%; animation: breathe 2.8s ease-in-out infinite; }
+.being.bird .sprite { animation-duration: 2.2s; }
+@keyframes breathe { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.015, .975); } }
+.being.is-walking .sprite { animation: waddle2 420ms ease-in-out infinite; }
+@keyframes waddle2 {
+  0%, 100% { transform: rotate(-8deg) translateY(0) scale(1.04, .95); }
+  25% { transform: rotate(0deg) translateY(-9px) scale(.98, 1.03); }
+  50% { transform: rotate(8deg) translateY(0) scale(1.04, .95); }
+  75% { transform: rotate(0deg) translateY(-9px) scale(.98, 1.03); }
+}
+.being.is-walking .foot { animation: footstep2 420ms ease-in-out infinite; }
+.being.is-walking .foot.r { animation-delay: -210ms; }
+@keyframes footstep2 { 0%, 50%, 100% { transform: translateY(0); } 25% { transform: translateY(-11px) rotate(-6deg); } }
+.being.is-walking:not(.is-carrying) .flipper.r { animation: swing 420ms ease-in-out infinite; }
+@keyframes swing { 0%, 100% { transform: rotate(16deg); } 50% { transform: rotate(-18deg); } }
+.being.bird.is-walking .sprite { animation: hop3 300ms ease-in-out infinite; }
+@keyframes hop3 { 0%, 100% { transform: translateY(0) scale(1.06, .92); } 45% { transform: translateY(-18px) scale(.95, 1.06); } }
+/* Lift: a real crouch, then up with the load. */
+.being.is-heave .sprite { animation: heave2 340ms ease-out; }
+@keyframes heave2 { 0% { transform: scale(1, 1); } 35% { transform: scale(1.12, .82) translateY(4px); } 70% { transform: scale(.95, 1.08) translateY(-8px); } 100% { transform: none; } }
+/* Throw: lean back with the flipper cocked, then fling forward. */
+.being.is-throw .sprite { animation: throw 440ms cubic-bezier(.3, 0, .2, 1); }
+.being.is-throw .flipper.r { transform-box: fill-box; transform-origin: center top; animation: throw-arm 440ms cubic-bezier(.3, 0, .2, 1); }
+@keyframes throw { 0% { transform: none; } 35% { transform: rotate(-11deg) translateX(-6px) scale(1.02, .97); } 60% { transform: rotate(13deg) translateX(8px) scale(.97, 1.04); } 100% { transform: none; } }
+@keyframes throw-arm { 0% { transform: none; } 35% { transform: rotate(70deg); } 60% { transform: rotate(-60deg); } 100% { transform: none; } }
+/* Splash droplets are water: pale blue, no ink, so they never read as holes. */
+#splash b { border: 0; background: #d8f1ff; width: 10px; height: 12px; }
+#splash b:nth-of-type(2n) { background: #9fd3f5; }
+/* While a card is open, speech bubbles step back so nothing talks over the decision. */
+#fit.has-card .bubble { visibility: hidden; }
+/* Harbor folk: a small speech badge over their heads until you've talked to them once. */
+.npc-badge { position: absolute; left: 50%; bottom: calc(100% + 10px); translate: -50% 0; scale: var(--inv, 1); transform-origin: 50% 100%; display: flex; gap: 3px; padding: 5px 7px; background: #fff; border: 3px solid var(--ink); border-radius: 12px; pointer-events: none; animation: badge-bob 1.6s ease-in-out infinite; }
+.npc-badge i { width: 5px; height: 5px; border-radius: 50%; background: var(--ink); }
+.npc-badge::after { content: ""; position: absolute; left: 50%; bottom: -7px; width: 8px; height: 8px; margin-left: -4px; background: #fff; border-right: 3px solid var(--ink); border-bottom: 3px solid var(--ink); transform: rotate(45deg); }
+.being.npc.is-met .npc-badge { display: none; }
+.being.npc:has(.bubble:not([hidden])) .npc-badge { display: none; }
+@keyframes badge-bob { 50% { translate: -50% -4px; } }

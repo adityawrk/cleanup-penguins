@@ -71,8 +71,8 @@ const NPCS: NpcDef[] = [
     id: 'bolt',
     name: 'Bolt',
     room: 'locker',
-    home: { x: 760, y: 520 },
-    range: { x: 150, y: 14 },
+    home: { x: 620, y: 540 },
+    range: { x: 120, y: 14 },
     body: ['#8d62d6', '#6a46ad', '#b99af0'],
     hat: 'beanie',
     lines: [
@@ -149,6 +149,12 @@ export function createNpcs(template: HTMLTemplateElement, objectsFor: (room: Roo
     svg.innerHTML = markup + HATS[def.hat]
     svg.style.overflow = 'visible'
     node.querySelector('.name')!.textContent = def.name
+    node.querySelector<SVGElement>('.eyes')?.style.setProperty('animation-delay', `-${(def.id.length * 1.3) % 5}s`)
+    // A little speech badge until you've talked to them once: it marks harbor folk as people with tips.
+    const badge = document.createElement('div')
+    badge.className = 'npc-badge'
+    badge.innerHTML = '<i></i><i></i><i></i>'
+    node.appendChild(badge)
     node.setAttribute('role', 'button')
     node.setAttribute('aria-label', `${def.name}. Click for a tip.`)
     objectsFor(def.room).appendChild(node)
@@ -167,6 +173,7 @@ export function talkTo(id: string, now: number, playerX: number): boolean {
   void bubble.offsetWidth
   bubble.classList.add('pop')
   npc.line += 1
+  npc.el.classList.add('is-met')
   npc.bubbleUntil = now + 5200
   npc.facing = playerX >= npc.x ? 1 : -1
   npc.tx = npc.x

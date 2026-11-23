@@ -1064,13 +1064,6 @@ function postBird(world: World, id: BirdId, hole: Hole, line: string, now: numbe
   const spot = hole === 'sea' ? SPOTS.seaPost : SPOTS.binPost
   b.tx = spot.x
   b.ty = spot.y
-  if (world.room === 'hold') {
-    if (Math.hypot(b.x - spot.x, b.y - spot.y) > 400) {
-      const door = SPOTS.entrance.hold
-      b.x = door.x - (hole === 'sea' ? 40 : 90)
-      b.y = door.y
-    }
-  }
   sayLine(b, line, now, 5000, true)
 }
 
@@ -1742,19 +1735,27 @@ function idleFidget(world: World, now: number) {
   world.fidget = { kind, until: now + 700 }
 }
 
+/**
+ * The scout keeps to your trailing side, a little behind you. When you turn round it loops behind you
+ * (a lower y) to the other side instead of walking through you, and it doesn't fuss over small moves.
+ */
 function follow(world: World) {
   const you = being(world, 'you')
+  const band = BANDS[world.room]
   let slot = 0
   for (const b of birds(world)) {
     if (!b.awake || b.mode !== 'follow') continue
     slot += 1
-    const back = world.trail[world.trail.length - 1 - (6 + slot * 5)]
-    if (back) {
-      b.tx = back.x
-      b.ty = back.y
-    } else {
-      b.tx = you.x - 92 * slot
-      b.ty = you.y
+    const gap = 78 * slot
+    const want = Math.min(band.x1, Math.max(band.x0, you.x - gap * you.facing))
+    const side = Math.sign(b.x - you.x) || -you.facing
+    const crossing = side !== -you.facing && Math.abs(b.x - you.x) < gap + 20
+    const tx = crossing ? you.x : want
+    const ty = Math.max(band.y0, you.y - (crossing ? 46 : 8))
+    // Hysteresis: only re-aim when the spot has really moved.
+    if (Math.hypot(tx - b.tx, ty - b.ty) > 14) {
+      b.tx = tx
+      b.ty = ty
     }
   }
 }
