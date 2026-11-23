@@ -155,7 +155,7 @@ function harborApi(): Plugin {
 export default defineConfig({
   plugins: [harborApi()],
   define: {
-    __USERNAME__: JSON.stringify(os.userInfo().username || 'you'),
+    __USERNAME__: JSON.stringify(process.env.HARBOR_NAME || os.userInfo().username || 'you'),
   },
   test: {
     include: ['tests/**/*.test.ts'],

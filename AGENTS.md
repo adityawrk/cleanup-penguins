@@ -115,6 +115,8 @@ The bar is a polished kids' MMO: dense rooms of recognizable objects, small char
 
 ## Run, test, look
 
+**Hosted demo.** A playable demo (sample data, no live API, scout scripted) is published as a private claude.ai artifact. To rebuild it: `HARBOR_NAME=Pip npx vite build --base ./ --outDir <dir>` (`HARBOR_NAME` overrides the penguin's name so no macOS username is baked in), strip the document wrapper from `index.html` into a page file, and publish it with `assets/*` as supporting files. Run `npm run check:play -- http://localhost:<port>/index.html` against the built folder first.
+
 With `npm run dev` running, two end-to-end checks use real headless Chrome (pass the URL if the port isn't 5173):
 
 ```sh
