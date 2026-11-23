@@ -1799,7 +1799,7 @@ export function useRealCaches(world: World, rows: { name: string; path: string; 
       seaLine: 'Cache. It rebuilds.',
       binLine: 'The Locker can still give it back.',
       rebuild: 'It rebuilds the next time it is needed.',
-      sheet: `${row.path}. Measured on this Mac. The sea is permanent. The Locker can still give it back.`,
+      sheet: 'Measured on this Mac just now. A cache rebuilds itself. The sea is permanent; the Locker can still give it back.',
     })
   })
 }

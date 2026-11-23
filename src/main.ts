@@ -129,8 +129,10 @@ for (const room of document.querySelectorAll<HTMLElement>('.room')) {
 }
 
 /** Sprites are drawn large and shown small, so the room reads as a big place. */
-const YOU_SIZE = 0.56
-const SCOUT_SIZE = 0.46
+const YOU_SIZE = 0.42
+const SCOUT_SIZE = 0.36
+/** Items scale with the cast so a 9 GB sack is about the penguin's height, not twice it. */
+const ITEM_SIZE = 0.8
 
 const world = createWorld(__USERNAME__ || 'you')
 const audio = new HarborAudio()
@@ -458,7 +460,7 @@ function sync(now: number) {
     if (el.parentElement !== parent) parent.appendChild(el)
     const flying = Boolean(world.emptying?.ids.includes(item.id))
     const held = world.carrying === item.id || world.toss?.itemId === item.id || flying
-    const depth = draw.scale * (held && !flying ? 0.86 : sizeScale(item.tenths)) * (0.9 + Math.min(1, Math.max(0, (draw.y - 470) / 220)) * 0.16)
+    const depth = ITEM_SIZE * draw.scale * (held && !flying ? 0.9 : sizeScale(item.tenths)) * (0.9 + Math.min(1, Math.max(0, (draw.y - 470) / 220)) * 0.16)
     const nudge = held || item.disposed === 'locker' ? { dx: 0, dy: 0, tilt: 0 } : jitter(item.name)
     el.style.transform = `translate(${draw.x + nudge.dx}px, ${draw.y + nudge.dy}px) rotate(${draw.rot + nudge.tilt}deg) scale(${depth})`
     el.style.setProperty('--inv', String(1 / depth))
@@ -636,7 +638,8 @@ function syncSheet() {
   if (!item) return
   must('#sheet-title').textContent = item.name
   must('#sheet-path').textContent = item.path
-  must('#sheet-body').textContent = item.sheet
+  // The path is already on its own line; don't say it twice.
+  must('#sheet-body').textContent = item.sheet.replace(`${item.path}. `, '')
   const brief = must<HTMLElement>('#sheet-brief')
   brief.hidden = world.brief.length === 0
   brief.textContent = world.brief.length ? `You said: ${world.brief[world.brief.length - 1]}` : ''
