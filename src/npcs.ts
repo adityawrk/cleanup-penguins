@@ -1,11 +1,13 @@
 /**
  * Harbor folk: a few penguins who live in the rooms, potter about, and give a tip when clicked.
  * Pure presentation. They change no rule, carry nothing, and never speak for the scout.
- * Each is a recolored copy of the player's template with a hat, so the cast stays one drawing.
+ * Each is a recolored copy of the player's template with a hat and a held prop, so the cast stays one drawing
+ * but no two read the same from across the room.
  */
 import type { Room } from './sim'
 
 export type Hat = 'captain' | 'beanie' | 'souwester'
+export type Prop = 'coil' | 'basket' | 'clipboard' | 'can'
 
 interface NpcDef {
   id: string
@@ -16,12 +18,16 @@ interface NpcDef {
   range: { x: number; y: number }
   body: [string, string, string]
   hat: Hat
+  /** What they carry. Drawn just behind the near flipper, so the flipper reads as holding it. */
+  prop: Prop
+  /** Body size against the player, within about ±6%, so the folk aren't one stamp. */
+  size: number
   lines: string[]
 }
 
 export const NAVY: [string, string, string] = ['#1d4e89', '#153a66', '#4f8ad0']
 
-const NPCS: NpcDef[] = [
+export const NPCS: NpcDef[] = [
   {
     id: 'gil',
     name: 'Captain Gil',
@@ -30,6 +36,8 @@ const NPCS: NpcDef[] = [
     range: { x: 40, y: 26 },
     body: ['#d8463b', '#a8302a', '#f08a80'],
     hat: 'captain',
+    prop: 'coil',
+    size: 1.05,
     lines: [
       'Caches ride the red boat. Apps, the blue tug. Your own things, the little sailboat.',
       'Ring the bell and your scout counts this Mac again.',
@@ -45,6 +53,8 @@ const NPCS: NpcDef[] = [
     range: { x: 34, y: 18 },
     body: ['#f4c534', '#c9981f', '#ffe7a0'],
     hat: 'beanie',
+    prop: 'basket',
+    size: 0.95,
     lines: [
       'Your scout gives advice, but only you can throw.',
       'Press D to dance. Nobody minds.',
@@ -60,6 +70,8 @@ const NPCS: NpcDef[] = [
     range: { x: 120, y: 26 },
     body: ['#3f9f63', '#2c7a4a', '#7fd09a'],
     hat: 'souwester',
+    prop: 'can',
+    size: 0.97,
     lines: [
       'That old tree is macOS. Lovely, and not ours to prune.',
       'The tank is the Docker disk. Shrink it from a terminal with a prune.',
@@ -75,6 +87,8 @@ const NPCS: NpcDef[] = [
     range: { x: 120, y: 14 },
     body: ['#8d62d6', '#6a46ad', '#b99af0'],
     hat: 'beanie',
+    prop: 'clipboard',
+    size: 1.03,
     lines: [
       'Everything in here can go back. Carry it out the roll door.',
       'The red hopper tips caches into the sea. Apps and your own files stay put. Two cards first.',
@@ -106,6 +120,67 @@ export const HATS: Record<Hat, string> = {
     <path d="M70 30C68 12 84 2 100 2C118 2 134 12 132 30Z" fill="none" stroke-width="4.4"/>
     <path d="M52 36C66 26 136 24 156 34C140 42 70 44 52 36Z" fill="#f4c534" stroke-width="4"/>
     <path d="M84 8c6-4 14-5 20-4" fill="none" stroke="#fff3c4" stroke-width="3"/>
+  </g>`,
+}
+
+/**
+ * Held props, in the 176x204 sprite space. Each sits around the near flipper (its tip rests near 56,150) and is
+ * inserted just before `<g class="flipper r">`, so the flipper draws over it. They are top-level siblings, never
+ * inside the flipper group (its walk and wave pivot on its own fill box). No lettering: the sprite is mirrored.
+ */
+export const PROPS: Record<Prop, string> = {
+  // Gil: a coil of rope hung on the near shoulder, bulging out past the silhouette.
+  coil: `<g class="kit kit-coil" fill="none" stroke-linecap="round" stroke-linejoin="round" transform="rotate(-10 40 128)">
+    <path d="M40 150C38 162 40 172 46 180" stroke="#1a2332" stroke-width="15"/>
+    <path d="M40 150C38 162 40 172 46 180" stroke="#e0b56a" stroke-width="6"/>
+    <ellipse cx="34" cy="130" rx="20" ry="28" stroke="#1a2332" stroke-width="15"/>
+    <ellipse cx="34" cy="130" rx="20" ry="28" stroke="#c99550" stroke-width="6"/>
+    <ellipse cx="40" cy="128" rx="20" ry="29" stroke="#1a2332" stroke-width="15"/>
+    <ellipse cx="40" cy="128" rx="20" ry="29" stroke="#e0b56a" stroke-width="6"/>
+    <ellipse cx="46" cy="126" rx="20" ry="30" stroke="#1a2332" stroke-width="15"/>
+    <ellipse cx="46" cy="126" rx="20" ry="30" stroke="#e8b878" stroke-width="6"/>
+    <ellipse cx="46" cy="126" rx="20" ry="30" stroke="#b07a3c" stroke-width="6" stroke-dasharray="2.2 5.5"/>
+    <path d="M30 108C32 102 36 98 41 97" stroke="#fff6e4" stroke-width="2.4"/>
+  </g>`,
+  // Mo: a wicker fish basket on the near flipper, two fish poking out.
+  basket: `<g class="kit kit-basket" stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round" transform="translate(-31.5 -42.5) scale(1.25)">
+    <path d="M44 156C44 134 78 134 78 156" fill="none" stroke-width="7.2"/>
+    <path d="M44 156C44 134 78 134 78 156" fill="none" stroke="#e0b56a" stroke-width="3.2"/>
+    <path d="M42 156L36 140L46 146L50 138L52 156Z" fill="#8fa6ba" stroke-width="2.72"/>
+    <path d="M58 158C58 144 68 140 78 144C82 148 82 154 80 158Z" fill="#6cc2f2" stroke-width="2.72"/>
+    <circle cx="74" cy="148" r="1.8" fill="#1a2332" stroke="none"/>
+    <path d="M36 158H88L82 188C81 192 78 194 74 194H48C44 194 41 192 40 188Z" fill="#e0b56a" stroke="none"/>
+    <path d="M72 158H88L82 188C81 192 78 194 74 194H68Z" fill="#b07a3c" stroke="none"/>
+    <path d="M40 170H85M42 181H83M52 160V193M62 160V194M72 160V193" fill="none" stroke="#a8713c" stroke-width="1.6"/>
+    <path d="M36 158H88L82 188C81 192 78 194 74 194H48C44 194 41 192 40 188Z" fill="none" stroke-width="3.52"/>
+    <rect x="32" y="152" width="60" height="9" rx="4" fill="#e8b878" stroke-width="2.88"/>
+    <path d="M40 155H52" fill="none" stroke="#fff6e4" stroke-width="1.6"/>
+  </g>`,
+  // Bolt: a clipboard hugged to the chest under the near flipper.
+  clipboard: `<g class="kit kit-clipboard" stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round" transform="rotate(10 104 134)">
+    <rect x="82" y="106" width="44" height="56" rx="5" fill="#b07a3c" stroke="none"/>
+    <path d="M118 108H121C124 108 126 110 126 113V157C126 160 124 162 121 162H118Z" fill="#7a4a27" stroke="none"/>
+    <rect x="82" y="106" width="44" height="56" rx="5" fill="none" stroke-width="4.4"/>
+    <rect x="88" y="115" width="31" height="41" rx="1.5" fill="#fff6e4" stroke-width="2"/>
+    <path d="M93 125H114M93 132H114M93 139H108" fill="none" stroke="#8fa6ba" stroke-width="2.2"/>
+    <path d="M93 146H112" fill="none" stroke="#8fa6ba" stroke-width="2.2"/>
+    <circle cx="111" cy="150" r="2.6" fill="#d9493e" stroke="none"/>
+    <rect x="95" y="101" width="18" height="10" rx="3" fill="#8fa6ba" stroke-width="3"/>
+    <path d="M99 104H106" fill="none" stroke="#f4f8fb" stroke-width="1.8"/>
+  </g>`,
+  // Fern: a steel watering can, spout forward, rose up.
+  can: `<g class="kit kit-can" stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round" transform="translate(-30.25 -43.75) scale(1.25)">
+    <path d="M48 160C48 142 74 142 74 160" fill="none" stroke-width="7.2"/>
+    <path d="M48 160C48 142 74 142 74 160" fill="none" stroke="#8fa6ba" stroke-width="3.2"/>
+    <path d="M76 184L102 160" fill="none" stroke-width="8.0"/>
+    <path d="M76 184L102 160" fill="none" stroke="#8fa6ba" stroke-width="3.68"/>
+    <path d="M98 156L108 150C111 152 112 157 110 161L101 164Z" fill="#7690a6" stroke-width="2.72"/>
+    <path d="M40 160H82L80 190C80 193 78 195 75 195H47C44 195 42 193 42 190Z" fill="#8fa6ba" stroke="none"/>
+    <path d="M70 160H82L80 190C80 193 78 195 75 195H68Z" fill="#7690a6" stroke="none"/>
+    <path d="M41 168H81" fill="none" stroke="#5c7388" stroke-width="1.6"/>
+    <path d="M48 174V186" fill="none" stroke="#f4f8fb" stroke-width="2.08"/>
+    <path d="M40 160H82L80 190C80 193 78 195 75 195H47C44 195 42 193 42 190Z" fill="none" stroke-width="3.52"/>
+    <path d="M113 156l4 1M112 162l4 3" fill="none" stroke="#3aa0f2" stroke-width="1.76"/>
   </g>`,
 }
 
@@ -146,6 +221,9 @@ export function createNpcs(template: HTMLTemplateElement, objectsFor: (room: Roo
     NAVY.forEach((from, i) => (markup = markup.split(from).join(def.body[i])))
     // Template clip ids must stay unique per copy.
     markup = markup.replace(/youClip/g, `npc-${def.id}-clip`)
+    // The prop goes just behind the near flipper, so the flipper draws over it and reads as holding it.
+    const at = markup.indexOf('<g class="flipper r">')
+    markup = at < 0 ? markup + PROPS[def.prop] : markup.slice(0, at) + PROPS[def.prop] + markup.slice(at)
     svg.innerHTML = markup + HATS[def.hat]
     svg.style.overflow = 'visible'
     node.querySelector('.name')!.textContent = def.name
@@ -204,7 +282,7 @@ export function stepNpcs(now: number, dt: number, room: Room, scale: number, sti
       npc.y += (dy / dist) * stepLen
       if (Math.abs(dx) > 1) npc.facing = dx > 0 ? 1 : -1
     }
-    const depth = (0.88 + Math.min(1, Math.max(0, (npc.y - 480) / 220)) * 0.16) * scale
+    const depth = (0.88 + Math.min(1, Math.max(0, (npc.y - 480) / 220)) * 0.16) * scale * npc.def.size
     npc.el.style.transform = `translate(${npc.x}px, ${npc.y}px) scale(${depth})`
     npc.el.style.setProperty('--inv', String(1 / depth))
     npc.el.style.zIndex = String(Math.round(npc.y))
