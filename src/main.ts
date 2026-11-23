@@ -9,6 +9,8 @@ import quayArt from './art/quay.svg?raw'
 import quayFore from './art/quay-fore.svg?raw'
 import holdArt from './art/hold.svg?raw'
 import helloArt from './art/hello.svg?raw'
+import lockerArt from './art/locker.svg?raw'
+import glassArt from './art/glasshouse.svg?raw'
 import { itemSvg, sizeScale } from './items'
 import { EMOTES, emoteSvg } from './emotes'
 import {
@@ -73,7 +75,17 @@ import {
   type World,
 } from './sim'
 
-const ART: Record<string, string> = { quay: quayArt, 'quay-fore': quayFore, hold: holdArt, hello: helloArt }
+const FORES = import.meta.glob('./art/*-fore.svg', { query: '?raw', import: 'default', eager: true }) as Record<string, string>
+const ART: Record<string, string> = {
+  quay: quayArt,
+  hold: holdArt,
+  hello: helloArt,
+  locker: lockerArt,
+  glasshouse: glassArt,
+  'quay-fore': quayFore,
+  'locker-fore': FORES['./art/locker-fore.svg'] ?? '',
+  'glasshouse-fore': FORES['./art/glasshouse-fore.svg'] ?? '',
+}
 for (const host of document.querySelectorAll<HTMLElement>('[data-art]')) {
   host.innerHTML = ART[host.dataset.art ?? ''] ?? ''
 }
@@ -354,7 +366,7 @@ function sync(now: number) {
     const parent = world.carrying === item.id ? roomObjects(world.room) : item.disposed === 'locker' ? roomObjects('locker') : roomObjects('hold')
     if (el.parentElement !== parent) parent.appendChild(el)
     const held = world.carrying === item.id || world.toss?.itemId === item.id
-    const depth = draw.scale * sizeScale(item.tenths) * (0.9 + Math.min(1, Math.max(0, (draw.y - 470) / 220)) * 0.16)
+    const depth = draw.scale * (held ? 0.86 : sizeScale(item.tenths)) * (0.9 + Math.min(1, Math.max(0, (draw.y - 470) / 220)) * 0.16)
     el.style.transform = `translate(${draw.x}px, ${draw.y}px) rotate(${draw.rot}deg) scale(${depth})`
     el.style.setProperty('--inv', String(1 / depth))
     const you = being(world, 'you')
@@ -705,8 +717,11 @@ function onClick(event: MouseEvent) {
   if (act === 'who') openWho()
   if (act === 'model') openWho()
   if (act === 'effort') openWho()
-  if (act === 'fda') bumpBuoy(world, now)
-  if (act === 'buoy') bumpBuoy(world, now)
+  if (act === 'fda') bumpBuoy(world, now, 'panes')
+  if (act === 'buoy') {
+    const title = (hit.querySelector('title')?.textContent ?? '').toLowerCase()
+    bumpBuoy(world, now, title.includes('docker') ? 'docker' : title.includes('photo') ? 'photos' : 'macos')
+  }
   if (act === 'bird' && hit.dataset.bird === 'you' && !world.carrying) openMe()
   if (act === 'bird' && hit.dataset.bird && hit.dataset.bird !== 'you') {
     const id = hit.dataset.bird as BirdId

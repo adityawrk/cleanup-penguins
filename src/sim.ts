@@ -87,10 +87,10 @@ export const SPOTS = {
     locker: { x: 150, y: 496 },
     glasshouse: { x: 1150, y: 496 },
   },
-  gang: { x: 160, y: 540 },
-  tip: { x: 1010, y: 600 },
+  gang: { x: 160, y: 520 },
+  tip: { x: 1070, y: 596 },
   /** Where the player walks to leave each room for the quay. */
-  exit: { quay: { x: 640, y: 600 }, hold: { x: 150, y: 530 }, locker: { x: 160, y: 540 }, glasshouse: { x: 1100, y: 600 } } satisfies Record<Room, Point>,
+  exit: { quay: { x: 640, y: 600 }, hold: { x: 150, y: 530 }, locker: { x: 160, y: 520 }, glasshouse: { x: 1100, y: 600 } } satisfies Record<Room, Point>,
 }
 
 export const NEST = { x: 990, y: 640 }
@@ -137,7 +137,7 @@ const BANDS: Record<Room, Band> = {
   quay: { x0: 140, x1: 1150, y0: 490, y1: 690 },
   hold: { x0: 150, x1: 1130, y0: 500, y1: 690 },
   locker: { x0: 150, x1: 1130, y0: 490, y1: 690 },
-  glasshouse: { x0: 170, x1: 1110, y0: 560, y1: 675, wall: 560 },
+  glasshouse: { x0: 170, x1: 1110, y0: 560, y1: 690, wall: 560 },
 }
 
 export interface Being {
@@ -778,7 +778,8 @@ export function propDraw(world: World, item: Item, now: number): Draw {
   }
   if (item.disposed === 'locker') {
     const index = Math.max(0, lockerIndex(world, item.id))
-    return { x: 280 + (index % 5) * 170, y: 630 - Math.floor(index / 5) * 70, rot: 0, scale: 1, hide: false }
+    const row = Math.floor(index / 5)
+    return { x: 280 + (index % 5) * 170 + (row % 2) * 85, y: 630 - row * 46, rot: 0, scale: 1, hide: false }
   }
   return { x: item.x, y: item.y, rot: item.form === 'packed' ? -2 : 0, scale: 1, hide: false }
 }
@@ -1088,10 +1089,19 @@ export function pokeNest(world: World, id: BirdId, now: number) {
   touch(world, now)
 }
 
-export function bumpBuoy(world: World, now: number) {
+const EXHIBITS: Record<string, string> = {
+  macos: 'macOS. It runs everything. Leave it.',
+  docker: "Docker's disk. Shrink it with docker system prune, not here.",
+  photos: 'Your photo library. Yours to keep.',
+  panes: 'The panes are clear.',
+}
+
+/** The Glasshouse is look-don't-touch: each exhibit gets one plain line. */
+export function bumpBuoy(world: World, now: number, which = 'macos') {
+  const line = EXHIBITS[which] ?? EXHIBITS.macos
   const scout = world.scout ? being(world, world.scout) : null
-  if (scout?.awake) sayLine(scout, 'macOS. Leave it.', now, 2600)
-  else sayLine(being(world, 'you'), 'macOS. Leave it.', now, 2600)
+  if (scout?.awake) sayLine(scout, line, now, 3400)
+  else sayLine(being(world, 'you'), line, now, 3400)
   touch(world, now)
 }
 
@@ -1744,7 +1754,7 @@ export function useRealCaches(world: World, rows: { name: string; path: string; 
 export function nearestLiftable(world: World): Item | undefined {
   const you = being(world, 'you')
   let best: Item | undefined
-  let bestD = 220
+  let bestD = 900
   for (const item of world.items) {
     if (item.disposed === 'sea') continue
     if (item.disposed === 'none' && !belongsHere(world, item)) continue
