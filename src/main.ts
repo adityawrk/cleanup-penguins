@@ -15,6 +15,7 @@ import mapArt from './art/map.svg?raw'
 import { itemSvg, jitter, sizeScale } from './items'
 import { EMOTES, emoteSvg } from './emotes'
 import { HATS, NAVY, createNpcs, stepNpcs, talkTo, type Hat } from './npcs'
+import { createDecor } from './decor'
 import {
   SPOTS,
   answer,
@@ -183,6 +184,7 @@ for (const [index, id] of (['you', 'claude', 'codex', 'cursor', 'custom'] as con
 for (const item of world.items) ensureProp(item)
 createNpcs(must<HTMLTemplateElement>('#tpl-you'), roomObjects)
 queueMicrotask(() => dressPlayer())
+createDecor(roomObjects)
 void loadThisMac()
 void findAgents()
 
