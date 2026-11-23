@@ -731,11 +731,13 @@ function syncCard(now: number) {
   card.classList.toggle('face-2', model.yes === 'Throw it' || model.yes === 'Throw them')
   const icon = must<HTMLElement>('#card-icon')
   const cardItem = world.card && 'itemId' in world.card ? world.items.find((entry) => entry.id === (world.card as { itemId: string }).itemId) : undefined
-  const iconKey = model.icon ? `${model.icon}|${cardItem?.name ?? 'locker'}|${cardItem?.tenths ?? world.lockerTenths}` : ''
+  const iconKey = model.icon ? `${model.icon}|${cardItem?.name ?? 'locker'}|${cardItem?.tenths ?? world.lockerTenths}|${world.card?.kind}` : ''
   if (icon.dataset.key !== iconKey) {
     icon.dataset.key = iconKey
     icon.className = model.icon ? 'card-icon art' : 'card-icon'
-    icon.innerHTML = model.icon ? itemSvg({ form: model.icon, name: cardItem?.name ?? 'The Locker', tenths: cardItem?.tenths ?? world.lockerTenths }) : ''
+    // For the tip card, the stamp shows only what can actually go: the sea-safe part of the Locker.
+    const seaSafe = world.items.filter((entry) => entry.disposed === 'locker' && entry.sea).reduce((sum, entry) => sum + entry.tenths, 0)
+    icon.innerHTML = model.icon ? itemSvg({ form: model.icon, name: cardItem?.name ?? 'The Locker', tenths: cardItem?.tenths ?? seaSafe }) : ''
   }
   const key = `${model.title}|${model.yes}|${model.focus}`
   if (key !== shownCard) {
@@ -1081,7 +1083,7 @@ async function loadThisMac(first = true) {
 /** Measure a shed's folder for real (read-only) and fill its hold. */
 async function lookInFolder(scopeId: string, path: string) {
   try {
-    const response = await fetch(`/api/look?path=${encodeURIComponent(path)}`)
+    const response = await fetch(`/api/look?path=${encodeURIComponent(path)}`, { signal: AbortSignal.timeout(30_000) })
     if (!response.ok) throw new Error(String(response.status))
     const result = (await response.json()) as { items: { name: string; path: string; bytes: number; kind: 'build' | 'deps' | 'other' }[] }
     useFolder(world, scopeId, result.items, performance.now())
@@ -1096,7 +1098,7 @@ async function lookInFolder(scopeId: string, path: string) {
 /** Measure one of the player's own folders (they asked) and put its big things on the "Your stuff" boat. */
 async function lookInOwnFolder(path: string) {
   try {
-    const response = await fetch(`/api/look?path=${encodeURIComponent(path)}`)
+    const response = await fetch(`/api/look?path=${encodeURIComponent(path)}`, { signal: AbortSignal.timeout(30_000) })
     if (!response.ok) throw new Error(String(response.status))
     const result = (await response.json()) as { path: string; items: { name: string; path: string; bytes: number; kind: string; days?: number }[] }
     const rows = result.items.map((row) => ({

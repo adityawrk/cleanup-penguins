@@ -114,7 +114,15 @@ export interface ScannedFolder extends ScannedCache {
  * Measure one folder the player asked about ("look in ~/projects/app"). Read only: du over its first level.
  * Only folders inside the home directory, and never the home directory itself.
  */
-export async function scanFolder(raw: string): Promise<{ path: string; items: ScannedFolder[] }> {
+/** Give up on a look that macOS is holding (for example behind an unanswered privacy prompt). */
+export function scanFolder(raw: string, ms = 25_000): Promise<{ path: string; items: ScannedFolder[] }> {
+  return Promise.race([
+    scanFolderNow(raw),
+    new Promise<never>((_, reject) => setTimeout(() => reject(new Error('timed out')), ms)),
+  ])
+}
+
+async function scanFolderNow(raw: string): Promise<{ path: string; items: ScannedFolder[] }> {
   const home = homedir()
   const expanded = raw.startsWith('~') ? home + raw.slice(1) : raw
   const real = await realpath(expanded)

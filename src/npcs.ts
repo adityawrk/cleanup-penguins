@@ -77,7 +77,7 @@ const NPCS: NpcDef[] = [
     hat: 'beanie',
     lines: [
       'Everything in here can go back. Carry it out the roll door.',
-      'The red hopper tips the lot into the sea. Two cards first.',
+      'The red hopper tips caches into the sea. Apps and your own files stay put. Two cards first.',
       'Five bays, then we stack them behind. Plenty of room.',
     ],
   },
