@@ -94,8 +94,8 @@ button { appearance: none; background: none; border: 0; padding: 0; }
 .zs { display: none; position: absolute; right: -4px; top: calc(100% * (1 - var(--heft, 1)) + 8px); font-weight: 700; }
 .being.is-sleeping .zs { display: block; animation: floatz 1.6s ease-in-out infinite; }
 /* The sprite scales up from the feet with effort (--heft), so the bubble rides on the scaled head, not the unscaled box. */
-.bubble { position: absolute; bottom: calc(100% * var(--heft, 1) + 6px); left: 50%; translate: -50% 0; scale: var(--inv, 1); transform-origin: 50% 100%; width: max-content; max-width: 230px; background: #fff; border: 3px solid var(--ink); border-radius: 16px; padding: 8px 10px; font-size: 15px; font-weight: 600; text-align: center; z-index: 2; pointer-events: none; }
-.bubble:after { content: ""; position: absolute; left: 50%; bottom: -8px; width: 12px; height: 12px; background: #fff; border-right: 3px solid var(--ink); border-bottom: 3px solid var(--ink); transform: translateX(-50%) rotate(45deg); }
+.bubble { position: absolute; bottom: calc(100% * var(--heft, 1) + 6px); left: 50%; translate: calc(-50% + var(--bx, 0px)) 0; scale: var(--inv, 1); transform-origin: 50% 100%; width: max-content; max-width: 230px; background: #fff; border: 3px solid var(--ink); border-radius: 16px; padding: 8px 10px; font-size: 15px; font-weight: 600; text-align: center; z-index: 2; pointer-events: none; }
+.bubble:after { content: ""; position: absolute; left: clamp(18px, calc(50% - var(--bxs, 0px)), calc(100% - 18px)); bottom: -8px; width: 12px; height: 12px; background: #fff; border-right: 3px solid var(--ink); border-bottom: 3px solid var(--ink); transform: translateX(-50%) rotate(45deg); }
 .bubble.pop { animation: pop 160ms ease; }
 
 /* The floor's front edge runs under the dock in every room, so the dock sits on the picture. */
@@ -525,3 +525,14 @@ button { appearance: none; background: none; border: 0; padding: 0; }
 @keyframes t-flicker { 0%, 100% { opacity: 1; } 47% { opacity: 1; } 50% { opacity: .75; } 53% { opacity: 1; } }
 .sc-note { margin: 8px 6px 0; font-size: 12px; font-weight: 600; line-height: 1.3; color: #a8d0f5; text-align: center; }
 .sc-note:empty { display: none; }
+
+/* The first-run guide's bouncing arrows. */
+.pointer { position: absolute; width: 40px; height: 46px; margin: -46px 0 0 -20px; z-index: 6; pointer-events: none; animation: point 900ms ease-in-out infinite; }
+.pointer svg { display: block; width: 100%; height: 100%; }
+@keyframes point { 0%, 100% { transform: translateY(-10px); } 50% { transform: translateY(0); } }
+
+/* Snow on the quay: soft flakes drifting down and swaying. Under the UI, over the painting. */
+.snowfall { position: absolute; inset: 0; z-index: 5; pointer-events: none; overflow: hidden; }
+.snowfall i { position: absolute; top: -12px; width: var(--size); height: var(--size); border-radius: 50%; background: #fff; box-shadow: 0 0 0 1px rgba(26, 35, 50, .12); animation-name: snow-fall, snow-sway; animation-timing-function: linear, ease-in-out; animation-iteration-count: infinite, infinite; animation-direction: normal, alternate; }
+@keyframes snow-fall { to { top: 720px; } }
+@keyframes snow-sway { from { margin-left: calc(var(--sway) * -1); } to { margin-left: var(--sway); } }

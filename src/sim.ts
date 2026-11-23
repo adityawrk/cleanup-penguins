@@ -219,7 +219,7 @@ export interface World {
   card: Card | null
   pending: Pending | null
   toss: Toss | null
-  emptying: { until: number; tenths: number; ids: string[] } | null
+  emptying: { started: number; until: number; tenths: number; ids: string[] } | null
   splash: { until: number; x: number; y: number } | null
   sheetItemId: string | null
   freeTenths: number
@@ -746,6 +746,12 @@ export function propVisible(world: World, item: Item): boolean {
   return item.scopeId === 'mac' && item.hold === world.hold
 }
 
+/** The floor bay for the nth kept item: five painted bays, then a second staggered row behind. */
+function lockerSlot(index: number): Point {
+  const row = Math.floor(index / 5)
+  return { x: 280 + (index % 5) * 170 + (row % 2) * 85, y: 630 - row * 46 }
+}
+
 function lockerIndex(world: World, id: string): number {
   return world.items.filter((item) => item.disposed === 'locker').findIndex((item) => item.id === id)
 }
@@ -766,6 +772,20 @@ export function propDraw(world: World, item: Item, now: number): Draw {
       hide: false,
     }
   }
+  if (world.emptying && world.emptying.ids.includes(item.id) && item.disposed === 'locker') {
+    // Into the hopper, one after another, each on its own little arc.
+    const order = world.emptying.ids.indexOf(item.id)
+    const from = lockerSlot(lockerIndex(world, item.id))
+    const begin = world.emptying.started + order * 110
+    const u = Math.min(1, Math.max(0, (now - begin) / 560))
+    return {
+      x: from.x + (1160 - from.x) * u,
+      y: from.y + (300 - from.y) * u - Math.sin(u * Math.PI) * 140,
+      rot: u * 220,
+      scale: 1 - u * 0.45,
+      hide: u >= 1,
+    }
+  }
   if (world.carrying === item.id) {
     const you = being(world, 'you')
     return {
@@ -777,9 +797,8 @@ export function propDraw(world: World, item: Item, now: number): Draw {
     }
   }
   if (item.disposed === 'locker') {
-    const index = Math.max(0, lockerIndex(world, item.id))
-    const row = Math.floor(index / 5)
-    return { x: 280 + (index % 5) * 170 + (row % 2) * 85, y: 630 - row * 46, rot: 0, scale: 1, hide: false }
+    const slot = lockerSlot(Math.max(0, lockerIndex(world, item.id)))
+    return { ...slot, rot: 0, scale: 1, hide: false }
   }
   return { x: item.x, y: item.y, rot: item.form === 'packed' ? -2 : 0, scale: 1, hide: false }
 }
@@ -1241,7 +1260,7 @@ export function answer(world: World, yes: boolean, now: number) {
   }
   if (card.kind === 'empty' && card.face === 2) {
     const ids = world.items.filter((item) => item.disposed === 'locker').map((item) => item.id)
-    world.emptying = { until: now + 700, tenths: world.lockerTenths, ids }
+    world.emptying = { started: now, until: now + 700 + ids.length * 110, tenths: world.lockerTenths, ids }
     world.card = null
   }
 }
@@ -1451,6 +1470,14 @@ export function liveReply(world: World, reply: { say: string; item: string | nul
     }
   }
   finishTool(world, now)
+}
+
+/** A plain line from the scout, for the first-run guide. Says nothing if there is no scout. */
+export function scoutSay(world: World, text: string, now: number, ms = 4600) {
+  if (!world.scout) return
+  const scout = being(world, world.scout)
+  if (scout.sticky) return
+  sayLine(scout, text, now, ms)
 }
 
 /** The live scout could not be reached. Say so plainly. */

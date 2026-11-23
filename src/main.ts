@@ -51,6 +51,7 @@ import {
   liveReply,
   liveFailed,
   scoutIsLive,
+  scoutSay,
   shedSlot,
   effortChoice,
   EFFORTS,
@@ -88,6 +89,20 @@ const ART: Record<string, string> = {
 }
 for (const host of document.querySelectorAll<HTMLElement>('[data-art]')) {
   host.innerHTML = ART[host.dataset.art ?? ''] ?? ''
+}
+
+// Light snow over the quay: a fixed set of flakes, each with its own lane, size, speed and sway.
+for (const host of document.querySelectorAll<HTMLElement>('.snowfall')) {
+  for (let i = 0; i < 26; i += 1) {
+    const flake = document.createElement('i')
+    const r = (n: number) => ((Math.sin(i * 12.9898 + n * 78.233) * 43758.5453) % 1 + 1) % 1
+    flake.style.left = `${Math.round(r(1) * 1280)}px`
+    flake.style.setProperty('--size', `${(3 + r(2) * 5).toFixed(1)}px`)
+    flake.style.setProperty('--sway', `${Math.round(10 + r(3) * 26)}px`)
+    flake.style.animationDuration = `${(9 + r(4) * 9).toFixed(1)}s, ${(2.4 + r(5) * 2).toFixed(1)}s`
+    flake.style.animationDelay = `-${(r(6) * 18).toFixed(1)}s, -${(r(7) * 4).toFixed(1)}s`
+    host.appendChild(flake)
+  }
 }
 
 /** Sprites are drawn large and shown small, so the room reads as a big place. */
@@ -274,6 +289,7 @@ function sync(now: number) {
   steer.hidden = !world.tool || !waiting
   steer.textContent = waiting && world.tool ? `After ${world.tool.label} · ${waiting}` : ''
   syncTuning()
+  syncGuide(now)
   syncBrief()
   syncSheds()
   syncSheet()
@@ -290,6 +306,10 @@ function sync(now: number) {
     const depth = (0.88 + Math.min(1, Math.max(0, (actor.y - 480) / 220)) * 0.16) * (id === 'you' ? YOU_SIZE : SCOUT_SIZE)
     el.style.transform = `translate(${actor.x}px, ${actor.y}px) scale(${depth})`
     el.style.setProperty('--inv', String(1 / depth))
+    // Keep bubbles on the stage: slide them in from the edges, in the sprite's own (scaled) units.
+    const edge = Math.max(0, 150 - actor.x) - Math.max(0, actor.x - 1130)
+    el.style.setProperty('--bx', `${edge / depth}px`)
+    el.style.setProperty('--bxs', `${edge}px`)
     el.style.zIndex = String(Math.round(actor.y))
     const heft = id === world.scout ? effortScale(world.effort) : 1
     el.style.setProperty('--heft', String(heft))
@@ -365,8 +385,9 @@ function sync(now: number) {
     if (!visible) continue
     const parent = world.carrying === item.id ? roomObjects(world.room) : item.disposed === 'locker' ? roomObjects('locker') : roomObjects('hold')
     if (el.parentElement !== parent) parent.appendChild(el)
-    const held = world.carrying === item.id || world.toss?.itemId === item.id
-    const depth = draw.scale * (held ? 0.86 : sizeScale(item.tenths)) * (0.9 + Math.min(1, Math.max(0, (draw.y - 470) / 220)) * 0.16)
+    const flying = Boolean(world.emptying?.ids.includes(item.id))
+    const held = world.carrying === item.id || world.toss?.itemId === item.id || flying
+    const depth = draw.scale * (held && !flying ? 0.86 : sizeScale(item.tenths)) * (0.9 + Math.min(1, Math.max(0, (draw.y - 470) / 220)) * 0.16)
     const nudge = held || item.disposed === 'locker' ? { dx: 0, dy: 0, tilt: 0 } : jitter(item.name)
     el.style.transform = `translate(${draw.x + nudge.dx}px, ${draw.y + nudge.dy}px) rotate(${draw.rot + nudge.tilt}deg) scale(${depth})`
     el.style.setProperty('--inv', String(1 / depth))
@@ -992,4 +1013,86 @@ function openMe() {
 function closeMe() {
   must<HTMLElement>('#me').hidden = true
   catcher.hidden = !world.card && who.hidden
+}
+
+/**
+ * First-run guide. The scout walks a new player through one full loop with bouncing arrows:
+ * board the caches boat, pick something up, then choose the sea or the Locker. Remembered per browser.
+ */
+type GuideStep = 'board' | 'lift' | 'drop' | 'done'
+const GUIDE_KEY = 'harbor-guide-v1'
+let guide: GuideStep = (() => {
+  try {
+    return localStorage.getItem(GUIDE_KEY) === 'done' ? 'done' : 'board'
+  } catch {
+    return 'board'
+  }
+})()
+let guideSaid = ''
+const POINTER_SVG = '<svg viewBox="0 0 40 46" aria-hidden="true"><path d="M12 2h16v20h10L20 44L2 22h10z" fill="#ffd23f" stroke="#1a2332" stroke-width="3.4" stroke-linejoin="round"/><path d="M16 6v18" stroke="#fff6c2" stroke-width="3" stroke-linecap="round"/></svg>'
+
+function syncGuide(now: number) {
+  const a = must<HTMLElement>('#pointer-a')
+  const b = must<HTMLElement>('#pointer-b')
+  if (!a.firstChild) {
+    a.innerHTML = POINTER_SVG
+    b.innerHTML = POINTER_SVG
+  }
+  const point = (el: HTMLElement, spot: { x: number; y: number } | null) => {
+    el.hidden = !spot
+    if (spot) {
+      el.style.left = `${spot.x}px`
+      el.style.top = `${spot.y}px`
+    }
+  }
+  const settled = hello.hidden && !world.card && who.hidden && world.scout !== null && world.lastInput > 0
+  if (guide === 'done' || !settled) {
+    point(a, null)
+    point(b, null)
+    return
+  }
+  const line = (key: string, text: string) => {
+    if (guideSaid === key) return
+    guideSaid = key
+    scoutSay(world, text, now, 5200)
+  }
+  if (guide === 'board') {
+    if (world.room === 'hold') guide = 'lift'
+    else {
+      point(a, world.room === 'quay' ? { x: 424, y: 300 } : null)
+      point(b, null)
+      if (world.room === 'quay' && !world.tool) line('board', 'Caches ride on the red boat. Hop aboard!')
+      return
+    }
+  }
+  if (guide === 'lift') {
+    if (world.carrying) guide = 'drop'
+    else {
+      const top = world.room === 'hold' ? itemsHere(world).filter((item) => item.disposed === 'none').sort((x, y) => y.tenths - x.tenths)[0] : undefined
+      point(a, top ? { x: top.x, y: top.y - 96 } : null)
+      point(b, null)
+      if (top) line('lift', "Pick one up. I'll tell you what it is.")
+      return
+    }
+  }
+  if (guide === 'drop') {
+    if (world.rehearsedTenths > 0 || world.lockerTenths > 0) {
+      guide = 'done'
+      try {
+        localStorage.setItem(GUIDE_KEY, 'done')
+      } catch {
+        /* the guide just shows again next time */
+      }
+      point(a, null)
+      point(b, null)
+      window.setTimeout(() => scoutSay(world, "That's the whole job. The bell on the quay recounts this Mac.", performance.now(), 5600), 2600)
+      return
+    }
+    if (!world.carrying) {
+      guide = 'lift'
+      return
+    }
+    point(a, world.room === 'hold' ? { x: 1181, y: 300 } : null)
+    point(b, world.room === 'hold' ? { x: 248, y: 316 } : null)
+  }
 }
