@@ -26,6 +26,7 @@ import {
   walkTo,
   SPOTS,
   travel,
+  useRealHold,
   useRealCaches,
   finishTool,
   useFolder,
@@ -397,5 +398,21 @@ describe('harbor rules', () => {
     expect(travel(world, 'glasshouse', 30)).toBe(false)
     expect(world.room).toBe('hold')
     expect(being(world, 'you').bubble).toBe('Put it down first.')
+  })
+
+  it('fills the apps boat with real apps that can only go to the Locker, and empties your stuff honestly', () => {
+    const world = createWorld('ada')
+    useRealHold(world, 'apps', [
+      { name: 'Big Game', path: '/Applications/Big Game.app', bytes: 4.9e10, days: 330, form: 'crate' },
+      { name: 'Editor', path: '/Applications/Editor.app', bytes: 9e8, days: 2, form: 'crate' },
+      { name: 'Mystery', path: '/Applications/Mystery.app', bytes: 5e8, days: null, form: 'crate' },
+    ])
+    useRealHold(world, 'stuff', [])
+    const apps = world.items.filter((item) => item.hold === 'apps')
+    expect(apps.map((item) => item.name)).toEqual(['Big Game', 'Editor', 'Mystery'])
+    expect(apps.every((item) => !item.sea)).toBe(true)
+    expect(apps.map((item) => item.phrase)).toEqual(['last opened 11 months ago', 'last opened 2 days ago', 'no last-opened date on record'])
+    expect(advice(world, apps[0]).line).toBe("You haven't opened this in 11 months.")
+    expect(world.items.filter((item) => item.hold === 'stuff')).toEqual([])
   })
 })
