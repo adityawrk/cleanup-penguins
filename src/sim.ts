@@ -1740,14 +1740,14 @@ export function step(world: World, now: number, dt: number) {
 
 /** Floor spots for live caches, biggest first: the front row's middle, then outward and back. */
 const LIVE_SPOTS: Point[] = [
-  { x: 670, y: 650 },
-  { x: 500, y: 650 },
-  { x: 840, y: 650 },
-  { x: 570, y: 556 },
-  { x: 740, y: 556 },
-  { x: 400, y: 556 },
-  { x: 910, y: 556 },
-  { x: 340, y: 650 },
+  { x: 660, y: 648 },
+  { x: 492, y: 628 },
+  { x: 832, y: 640 },
+  { x: 586, y: 552 },
+  { x: 752, y: 540 },
+  { x: 404, y: 566 },
+  { x: 916, y: 560 },
+  { x: 338, y: 664 },
 ]
 
 export function useRealDisk(world: World, freeTenths: number, capacityTenths: number) {
