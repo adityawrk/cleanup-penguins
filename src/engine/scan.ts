@@ -192,3 +192,33 @@ export async function scanApps(): Promise<ScannedThing[]> {
   }
   return out
 }
+
+/**
+ * The player's recent repos, for the sheds: git folders one level inside the usual code roots.
+ * These roots aren't macOS-protected (Documents, Desktop and Downloads are skipped on purpose). Read only.
+ */
+export async function scanRepos(limit = 2): Promise<{ label: string; path: string; days: number }[]> {
+  const home = homedir()
+  const roots = ['projects', 'code', 'dev', 'src', 'Developer', 'repos', 'workspace', 'GitHub', 'git', 'Sites'].map((name) => `${home}/${name}`)
+  const found: { label: string; path: string; days: number }[] = []
+  for (const root of roots) {
+    let entries
+    try {
+      entries = await readdir(root, { withFileTypes: true })
+    } catch {
+      continue
+    }
+    for (const entry of entries) {
+      if (!entry.isDirectory() || entry.name.startsWith('.')) continue
+      const dir = `${root}/${entry.name}`
+      try {
+        await access(`${dir}/.git`)
+        const days = Math.max(0, Math.round((Date.now() - (await stat(dir)).mtimeMs) / 86_400_000))
+        found.push({ label: entry.name, path: displayPath(dir), days })
+      } catch {
+        continue
+      }
+    }
+  }
+  return found.sort((a, b) => a.days - b.days).slice(0, limit)
+}

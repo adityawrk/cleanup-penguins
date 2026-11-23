@@ -26,6 +26,7 @@ import {
   walkTo,
   SPOTS,
   travel,
+  useRealRepos,
   useRealHold,
   useRealCaches,
   finishTool,
@@ -456,5 +457,13 @@ describe('harbor rules', () => {
     settle(world, 3000, 30)
     expect(world.room).toBe('hold')
     expect(world.lookRequest).toEqual({ scopeId: shed.id, path: '~/projects/fresh-repo' })
+  })
+
+  it('swaps the made-up starter sheds for real repos, keeping sheds the player asked about', () => {
+    const world = createWorld('ada')
+    lookIn(world, '~/work/side-project', 10)
+    useRealRepos(world, [{ label: 'harbor', path: '~/projects/harbor' }, { label: 'notes', path: '~/code/notes' }])
+    expect(world.repos.map((repo) => repo.label)).toEqual(['harbor', 'notes', 'side-project'])
+    expect(world.items.some((item) => item.scopeId === 'penguins' || item.scopeId === 'lighthouse')).toBe(false)
   })
 })

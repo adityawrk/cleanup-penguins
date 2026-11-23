@@ -70,6 +70,7 @@ import {
   useRealDisk,
   useFolder,
   useRealHold,
+  useRealRepos,
   travel,
   walkTo,
   type BeingId,
@@ -666,7 +667,10 @@ function syncSheds() {
     button.style.top = `${slot.y}px`
     button.style.setProperty('--wall', SHED_COLORS[index % SHED_COLORS.length])
     button.style.zIndex = index < 2 ? '1' : '2'
-    if (index >= 2) button.style.scale = '0.82'
+    if (index >= 2) {
+      button.style.scale = '0.82'
+      button.classList.add('is-extra')
+    }
     button.classList.toggle('is-scope', world.scope.id === repo.id)
     const tenths = scopeTenths(world, repo.id)
     button.setAttribute('aria-label', `${repo.label}, ${tenths > 0 ? gbWord(tenths) : 'not mapped yet'}`)
@@ -1065,6 +1069,15 @@ async function loadThisMac(first = true) {
     // Your own files are private: macOS guards Downloads, Desktop and Documents, so the harbor never lists them
     // on its own. "Your stuff" starts empty; "look in ~/Downloads" measures it when the player asks.
     if (first) useRealHold(world, 'stuff', [])
+    if (first) {
+      void fetch('/api/repos')
+        .then((response) => response.json() as Promise<{ repos: { label: string; path: string }[] }>)
+        .then((result) => {
+          useRealRepos(world, result.repos ?? [])
+          syncPropNodes()
+        })
+        .catch(() => undefined)
+    }
     void fetch('/api/apps')
       .then((response) => response.json() as Promise<{ items: Parameters<typeof useRealHold>[2] }>)
       .then((apps) => {

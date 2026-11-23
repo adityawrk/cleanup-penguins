@@ -1902,6 +1902,18 @@ export function useRealHold(world: World, hold: 'apps' | 'stuff', rows: { name: 
   })
 }
 
+/** Replace the made-up starter sheds with the player's real recent repos. Sheds the player asked about stay. */
+export function useRealRepos(world: World, repos: { label: string; path: string }[]) {
+  const starter = new Set(starterRepos().map((repo) => repo.id))
+  const asked = world.repos.filter((repo) => !starter.has(repo.id))
+  world.items = world.items.filter((item) => !starter.has(item.scopeId) || item.disposed !== 'none')
+  const real = repos
+    .filter((repo) => !asked.some((other) => other.path === repo.path))
+    .map((repo, index) => ({ id: `repo-${index}-${repo.label}`, kind: 'repo' as const, label: repo.label, path: repo.path, x: 0, y: 0 }))
+  world.repos = [...real, ...asked].slice(0, 6).map((repo, index) => ({ ...repo, ...shedSlot(index) }))
+  if (world.scope.kind === 'repo' && !world.repos.some((repo) => repo.id === world.scope.id)) world.scope = MAC_SCOPE
+}
+
 /** Fill a shed's hold with what a folder scan measured: build output can go to the sea, dependencies and the rest to the Locker. */
 export function useFolder(world: World, scopeId: string, rows: { name: string; path: string; bytes: number; kind: 'build' | 'deps' | 'other' | 'file' }[], now: number) {
   const kept = (item: Item) => item.disposed !== 'none' || world.carrying === item.id
