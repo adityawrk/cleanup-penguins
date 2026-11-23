@@ -14,7 +14,7 @@ import glassArt from './art/glasshouse.svg?raw'
 import mapArt from './art/map.svg?raw'
 import { itemSvg, jitter, sizeScale } from './items'
 import { EMOTES, emoteSvg } from './emotes'
-import { createNpcs, stepNpcs, talkTo } from './npcs'
+import { HATS, NAVY, createNpcs, stepNpcs, talkTo, type Hat } from './npcs'
 import {
   SPOTS,
   answer,
@@ -182,6 +182,7 @@ for (const [index, id] of (['you', 'claude', 'codex', 'cursor', 'custom'] as con
 
 for (const item of world.items) ensureProp(item)
 createNpcs(must<HTMLTemplateElement>('#tpl-you'), roomObjects)
+queueMicrotask(() => dressPlayer())
 void loadThisMac()
 void findAgents()
 
@@ -324,6 +325,85 @@ emotePanel.addEventListener('click', (event) => {
 })
 must('#sc-close').addEventListener('click', () => closeWho())
 must('#me-close').addEventListener('click', () => closeMe())
+// Dress-up: the player picks a penguin color and a hat on their card. Remembered per browser.
+const COLORS: { id: string; label: string; body: [string, string, string] }[] = [
+  { id: 'navy', label: 'Navy', body: NAVY },
+  { id: 'red', label: 'Red', body: ['#d8463b', '#a8302a', '#f08a80'] },
+  { id: 'green', label: 'Green', body: ['#3f9f63', '#2c7a4a', '#7fd09a'] },
+  { id: 'yellow', label: 'Yellow', body: ['#f4c534', '#c9981f', '#ffe7a0'] },
+  { id: 'purple', label: 'Purple', body: ['#8d62d6', '#6a46ad', '#b99af0'] },
+  { id: 'pink', label: 'Pink', body: ['#ef7fb0', '#c95a8c', '#ffb6d4'] },
+  { id: 'aqua', label: 'Aqua', body: ['#2fb3c9', '#1f8a9c', '#86e0ee'] },
+  { id: 'black', label: 'Black', body: ['#2e3440', '#1c2129', '#5d6878'] },
+]
+const HAT_CHOICES: { id: Hat | 'none'; label: string }[] = [
+  { id: 'none', label: 'No hat' },
+  { id: 'beanie', label: 'Beanie' },
+  { id: 'captain', label: "Captain's cap" },
+  { id: 'souwester', label: "Sou'wester" },
+]
+const LOOK_KEY = 'harbor-look'
+const playerBase = must<HTMLTemplateElement>('#tpl-you').content.querySelector('svg')!.innerHTML
+let look = (() => {
+  try {
+    const saved = JSON.parse(localStorage.getItem(LOOK_KEY) ?? '{}') as { color?: string; hat?: string }
+    return { color: COLORS.some((c) => c.id === saved.color) ? saved.color! : 'navy', hat: HAT_CHOICES.some((h) => h.id === saved.hat) ? saved.hat! : 'none' }
+  } catch {
+    return { color: 'navy', hat: 'none' }
+  }
+})()
+function dressPlayer() {
+  const color = COLORS.find((c) => c.id === look.color) ?? COLORS[0]
+  let markup = playerBase
+  NAVY.forEach((from, i) => (markup = markup.split(from).join(color.body[i])))
+  const hat = look.hat !== 'none' ? HATS[look.hat as Hat] : ''
+  for (const svg of [beings.get('you')?.querySelector('svg'), must('#me-portrait').querySelector('svg')]) {
+    if (!svg) continue
+    svg.innerHTML = markup + hat
+    svg.style.overflow = 'visible'
+  }
+  for (const button of document.querySelectorAll<HTMLElement>('#me-colors button')) button.classList.toggle('is-on', button.dataset.color === look.color)
+  for (const button of document.querySelectorAll<HTMLElement>('#me-hats button')) button.classList.toggle('is-on', button.dataset.hat === look.hat)
+  try {
+    localStorage.setItem(LOOK_KEY, JSON.stringify(look))
+  } catch {
+    /* not remembered */
+  }
+}
+{
+  const me = must('#me')
+  const wardrobe = document.createElement('div')
+  wardrobe.className = 'me-wardrobe'
+  wardrobe.innerHTML = '<h3>Color</h3><div class="me-swatches" id="me-colors"></div><h3>Hat</h3><div class="me-hats" id="me-hats"></div>'
+  me.insertBefore(wardrobe, must('#me-foot'))
+  for (const color of COLORS) {
+    const button = document.createElement('button')
+    button.type = 'button'
+    button.dataset.color = color.id
+    button.title = color.label
+    button.setAttribute('aria-label', color.label)
+    button.style.setProperty('--swatch', color.body[0])
+    must('#me-colors').appendChild(button)
+  }
+  for (const hat of HAT_CHOICES) {
+    const button = document.createElement('button')
+    button.type = 'button'
+    button.dataset.hat = hat.id
+    button.textContent = hat.label
+    must('#me-hats').appendChild(button)
+  }
+  wardrobe.addEventListener('click', (event) => {
+    const target = (event.target as HTMLElement).closest<HTMLElement>('button')
+    if (!target) return
+    if (target.dataset.color) look = { ...look, color: target.dataset.color }
+    if (target.dataset.hat) look = { ...look, hat: target.dataset.hat }
+    dressPlayer()
+    audio.pop()
+    const you = beings.get('you')
+    if (you) pulse(you, 'is-hop', 700)
+  })
+}
+
 const STILL_KEY = 'harbor-still'
 const setStill = (on: boolean) => {
   fit.classList.toggle('is-still', on)
@@ -1256,6 +1336,7 @@ function openMe() {
     art.classList.add('face-art')
     portrait.appendChild(art)
   }
+  dressPlayer()
   must('#me-free').textContent = `${gbWord(world.freeTenths)} of ${gbWord(world.capacityTenths)}`
   must('#me-practice').textContent = world.rehearsedTenths > 0 ? gbWord(world.rehearsedTenths) : 'nothing yet'
   const locked = world.items.filter((item) => item.disposed === 'locker').length

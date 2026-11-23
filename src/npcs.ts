@@ -5,7 +5,7 @@
  */
 import type { Room } from './sim'
 
-type Hat = 'captain' | 'beanie' | 'souwester'
+export type Hat = 'captain' | 'beanie' | 'souwester'
 
 interface NpcDef {
   id: string
@@ -19,7 +19,7 @@ interface NpcDef {
   lines: string[]
 }
 
-const NAVY: [string, string, string] = ['#1d4e89', '#153a66', '#4f8ad0']
+export const NAVY: [string, string, string] = ['#1d4e89', '#153a66', '#4f8ad0']
 
 const NPCS: NpcDef[] = [
   {
@@ -83,7 +83,7 @@ const NPCS: NpcDef[] = [
   },
 ]
 
-const HATS: Record<Hat, string> = {
+export const HATS: Record<Hat, string> = {
   captain: `<g class="hat" stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round">
     <path d="M64 30C62 12 84 2 104 4C124 6 140 16 136 32Z" fill="#f4f8fb" stroke-width="4.4"/>
     <path d="M112 8C126 12 136 20 136 32H118C120 24 118 16 112 8Z" fill="#d6e2ec" stroke="none"/>

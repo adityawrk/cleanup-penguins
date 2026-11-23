@@ -667,3 +667,15 @@ svg > g.back { display: none; }
 /* Carrying away from us: the load is out of sight in front, so both flippers reach in toward it and stay there. */
 .being.is-back.is-carrying .back-flipper.l { animation: none; transform: rotate(-22deg); }
 .being.is-back.is-carrying .back-flipper.r { animation: none; transform: rotate(22deg); }
+
+/* Wardrobe on the player card: color swatches and hat pills. */
+.me-wardrobe { margin-top: 12px; text-align: left; }
+.me-wardrobe h3 { margin: 8px 0 6px; font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: #cfe8ff; text-shadow: 0 2px 0 #10427f; }
+.me-swatches { display: flex; gap: 8px; }
+.me-swatches button { width: 38px; height: 38px; border-radius: 50%; cursor: pointer; background: var(--swatch); border: 3px solid var(--ink); box-shadow: inset 0 -6px 0 rgba(0, 0, 0, .22), 0 3px 0 var(--ink); }
+.me-swatches button.is-on { outline: 4px solid #ffd23f; outline-offset: 2px; }
+.me-hats { display: flex; flex-wrap: wrap; gap: 8px; }
+.me-hats button { height: 38px; padding: 0 12px; cursor: pointer; border-radius: 999px; border: 3px solid var(--ink); background: #eef8ff; font-size: 14px; font-weight: 700; color: var(--ink); box-shadow: inset 0 -5px 0 #bcdcf5, 0 3px 0 var(--ink); }
+.me-hats button.is-on { background: #ffd23f; box-shadow: inset 0 -5px 0 #e9a913, 0 3px 0 var(--ink); }
+.me-portrait .face-art { overflow: visible; }
+#me { top: 24px; }
