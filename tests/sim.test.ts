@@ -82,7 +82,7 @@ describe('harbor rules', () => {
     expect(world.freeTenths).toBe(438)
     answer(world, true, 2600)
     expect(world.toss).not.toBeNull()
-    step(world, 3200, 0.016)
+    step(world, 3300, 0.016)
     expect(world.rehearsal).toBe(true)
     expect(world.freeTenths).toBe(438)
     expect(poleFree(world)).toBe('43.8')

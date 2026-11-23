@@ -234,7 +234,8 @@ export function createNpcs(template: HTMLTemplateElement, objectsFor: (room: Roo
     // A little speech badge until you've talked to them once: it marks harbor folk as people with tips.
     const badge = document.createElement('div')
     badge.className = 'npc-badge'
-    badge.innerHTML = '<i></i><i></i><i></i>'
+    badge.innerHTML = PICTO[def.prop] ?? '<i></i><i></i><i></i>'
+    badge.style.animationDelay = `-${(def.id.length * 2.3) % 9}s`
     node.appendChild(badge)
     node.setAttribute('role', 'button')
     node.setAttribute('aria-label', `${def.name}. Click for a tip.`)
@@ -264,7 +265,7 @@ export function talkTo(id: string, now: number, playerX: number): boolean {
 }
 
 /** Move and draw them. `scale` is the cast's base size; `still` freezes wandering for the Still harbor setting. */
-export function stepNpcs(now: number, dt: number, room: Room, scale: number, still: boolean) {
+export function stepNpcs(now: number, dt: number, room: Room, scale: number, still: boolean, player?: { x: number; y: number }) {
   npcs.forEach((npc, index) => {
     if (npc.def.room !== room) return
     if (!still && now > npc.nextMove) {
@@ -285,6 +286,8 @@ export function stepNpcs(now: number, dt: number, room: Room, scale: number, sti
       npc.y += (dy / dist) * stepLen
       if (Math.abs(dx) > 1) npc.facing = dx > 0 ? 1 : -1
     }
+    // Turn to face the player when they come close and nobody is walking.
+    if (!walking && player && Math.hypot(player.x - npc.x, (player.y - npc.y) * 1.5) < 170) npc.facing = player.x >= npc.x ? 1 : -1
     const depth = (0.88 + Math.min(1, Math.max(0, (npc.y - 480) / 220)) * 0.16) * scale * npc.def.size
     npc.el.style.transform = `translate(${npc.x}px, ${npc.y}px) scale(${depth})`
     npc.el.style.setProperty('--inv', String(1 / depth))
@@ -299,4 +302,12 @@ export function stepNpcs(now: number, dt: number, room: Room, scale: number, sti
       npc.bubbleUntil = 0
     }
   })
+}
+
+/** Little picture bubbles: what each resident is about, popped up now and then instead of a "typing" dots badge. */
+const PICTO: Record<string, string> = {
+  basket: '<svg viewBox="0 0 28 20" aria-hidden="true"><path d="M3 10C7 3 17 2 22 10C17 18 7 17 3 10Z" fill="#9cc7e3" stroke="#1a2332" stroke-width="2.2" stroke-linejoin="round"/><path d="M22 10L27 5V15Z" fill="#9cc7e3" stroke="#1a2332" stroke-width="2.2" stroke-linejoin="round"/><circle cx="8" cy="9" r="1.4" fill="#1a2332"/></svg>',
+  coil: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="#1a2332" stroke-width="5"/><circle cx="12" cy="12" r="9" fill="none" stroke="#d8b57a" stroke-width="2.6"/><circle cx="12" cy="12" r="4" fill="none" stroke="#1a2332" stroke-width="4.4"/><circle cx="12" cy="12" r="4" fill="none" stroke="#d8b57a" stroke-width="2"/></svg>',
+  clipboard: '<svg viewBox="0 0 22 24" aria-hidden="true"><rect x="2" y="3" width="18" height="20" rx="2" fill="#f3e3bf" stroke="#1a2332" stroke-width="2.2"/><path d="M6 13l4 4l7-9" fill="none" stroke="#3f9f63" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><rect x="7" y="1" width="8" height="5" rx="1.5" fill="#9aa4b1" stroke="#1a2332" stroke-width="2"/></svg>',
+  can: '<svg viewBox="0 0 20 24" aria-hidden="true"><path d="M10 2C14 9 17 13 17 16A7 7 0 0 1 3 16C3 13 6 9 10 2Z" fill="#8fd2f6" stroke="#1a2332" stroke-width="2.2" stroke-linejoin="round"/><path d="M7 15c0 2 1 3 3 4" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>',
 }

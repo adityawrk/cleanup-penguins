@@ -164,7 +164,7 @@ export interface Being {
 export interface Item {
   id: string
   hold: Hold
-  form: 'sack' | 'crate' | 'trunk' | 'packed' | 'disk'
+  form: 'sack' | 'crate' | 'trunk' | 'packed' | 'disk' | 'barrel'
   name: string
   path: string
   tenths: number
@@ -775,13 +775,23 @@ export function propDraw(world: World, item: Item, now: number): Draw {
   }
   if (world.toss?.itemId === item.id) {
     const toss = world.toss
-    const span = Math.max(1, toss.until - toss.started)
-    const u = Math.min(1, Math.max(0, (now - toss.started) / span))
+    // A wind-up first (the sack swings back over the shoulder), then a spinning arc into the water.
+    const windup = 160
+    const t = now - toss.started
+    if (t < windup) {
+      const w = Math.sin((t / windup) * Math.PI * 0.5)
+      return { x: toss.fromX - 22 * w * toss.facing, y: toss.fromY - 40 * w, rot: -30 * w * toss.facing, scale: 0.66, hide: false }
+    }
+    const span = Math.max(1, toss.until - toss.started - windup)
+    const u = Math.min(1, Math.max(0, (t - windup) / span))
+    const ease = 1 - (1 - u) * (1 - u)
+    const startX = toss.fromX - 22 * toss.facing
+    const startY = toss.fromY - 40
     return {
-      x: toss.fromX + (toss.toX - toss.fromX) * u,
-      y: toss.fromY + (toss.toY - toss.fromY) * u - Math.sin(u * Math.PI) * 120,
-      rot: u * 180 * toss.facing,
-      scale: 0.62 - u * 0.25,
+      x: startX + (toss.toX - startX) * ease,
+      y: startY + (toss.toY - startY) * u - Math.sin(u * Math.PI) * 170,
+      rot: (-30 + u * 390) * toss.facing,
+      scale: 0.7 + Math.sin(u * Math.PI) * 0.25 - u * 0.2,
       hide: false,
     }
   }
@@ -1185,7 +1195,7 @@ function beginToss(world: World, itemId: string, now: number) {
     toX: SPOTS.chute.x,
     toY: SPOTS.chute.y,
     started: now,
-    until: now + 450,
+    until: now + 620,
     facing: you.facing,
   }
   world.carrying = null
@@ -1776,7 +1786,9 @@ export function step(world: World, now: number, dt: number) {
     if (dist < 76) {
       const band = BANDS[world.room]
       if (b.mode === 'follow') {
-        const side = dx === 0 ? -you.facing : Math.sign(dx)
+        let side = dx === 0 ? -you.facing : Math.sign(dx)
+        // Against a wall there's no room on that side: go to the other one.
+        if (you.x + side * 76 < band.x0 || you.x + side * 76 > band.x1) side = -side
         b.x = Math.min(band.x1, Math.max(band.x0, you.x + side * 76))
       } else {
         // On an errand: step around behind the player (or in front, at the back wall) and keep going.
@@ -1849,7 +1861,8 @@ export function useRealCaches(world: World, rows: { name: string; path: string; 
     world.items.push({
       id: stamp === 1 ? `live-${index}` : `live-${stamp}-${index}`,
       hold: 'caches',
-      form: 'sack',
+      // Tool caches (~/.cache, ~/.npm, ~/.bun) come in barrels; app caches in ~/Library/Caches in sacks.
+      form: /^~\/\.(cache|npm|bun)\b/.test(row.path) ? 'barrel' : 'sack',
       name: row.name,
       path: row.path,
       tenths,

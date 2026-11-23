@@ -697,10 +697,10 @@ svg > g.back { display: none; }
 .being.npc:not(.is-walking) .kit-anim-coil { transform-origin: 70% 10%; animation: kit-sway 3.6s ease-in-out infinite; }
 .being.npc:not(.is-walking) .kit-anim-clipboard { transform-origin: 50% 90%; animation: kit-tap 4.2s ease-in-out infinite; }
 .being.npc:not(.is-walking) .kit-anim-can { transform-origin: 20% 80%; animation: kit-tip 4s ease-in-out infinite; }
-@keyframes kit-lift { 0%, 55%, 100% { transform: none; } 68% { transform: translateY(-30px) rotate(-10deg); } 80% { transform: translateY(-30px) rotate(8deg); } }
-@keyframes kit-sway { 0%, 100% { transform: rotate(-12deg); } 50% { transform: rotate(14deg); } }
-@keyframes kit-tap { 0%, 55%, 100% { transform: none; } 62%, 76% { transform: rotate(-10deg) translateY(-4px); } 69%, 83% { transform: rotate(-4deg); } }
-@keyframes kit-tip { 0%, 45%, 100% { transform: none; } 58%, 82% { transform: rotate(-40deg) translateY(-8px); } }
+@keyframes kit-lift { 0%, 45%, 100% { transform: none; } 55%, 68% { transform: translateY(-48px) rotate(-14deg); } 76%, 86% { transform: translateY(-40px) rotate(12deg); } }
+@keyframes kit-sway { 0%, 12%, 100% { transform: rotate(-22deg); } 45%, 62% { transform: rotate(24deg) translateY(-8px); } }
+@keyframes kit-tap { 0%, 45%, 100% { transform: none; } 52%, 60% { transform: rotate(-22deg) translateY(-14px); } 66%, 74% { transform: rotate(-4deg); } 80%, 88% { transform: rotate(-22deg) translateY(-14px); } }
+@keyframes kit-tip { 0%, 40%, 100% { transform: none; } 52%, 80% { transform: rotate(-55deg) translateY(-16px); } }
 
 /* A real dance: a bouncy rock with both flippers up, about two beats a second. */
 .being.is-dancing .sprite { animation: dance2 520ms ease-in-out infinite; }
@@ -743,3 +743,18 @@ svg > g.back { display: none; }
 @keyframes celebrate-up { 0% { opacity: 0; transform: translateY(14px) scale(.5); } 15% { opacity: 1; transform: translateY(0) scale(1.15); } 25% { transform: scale(1); } 80% { opacity: 1; } 100% { opacity: 0; transform: translateY(-70px); } }
 .confetti { position: absolute; z-index: 9; width: 9px; height: 13px; margin: -6px 0 0 -4px; border: 2px solid var(--ink); border-radius: 2px; pointer-events: none; animation: confetti 1.25s cubic-bezier(.15, .7, .4, 1) forwards; }
 @keyframes confetti { 0% { transform: translate(0, 0) rotate(0) scale(.4); opacity: 1; } 55% { transform: translate(var(--cx), var(--cy)) rotate(var(--cr)) scale(1); opacity: 1; } 100% { transform: translate(var(--cx), calc(var(--cy) + 70px)) rotate(var(--cr)); opacity: 0; } }
+
+/* The splash crown: a white column of water with an ink outline, rising and falling at the landing point. */
+#splash .crown { position: absolute; left: -60px; top: -70px; width: 120px; height: 80px; overflow: visible; transform-origin: 50% 90%; animation: crown 700ms cubic-bezier(.2, .9, .3, 1) forwards; }
+@keyframes crown { 0% { transform: scale(.3, .1); opacity: 1; } 35% { transform: scale(1.1, 1.15); opacity: 1; } 70% { transform: scale(1, .7); opacity: 1; } 100% { transform: scale(.9, .2); opacity: 0; } }
+/* The scout's name steps aside when it stands right by you (the dock already shows who it is). */
+.being.is-near-you .name { opacity: 0; }
+/* The +GB number has a backing plate so it reads over any background from its first frame. */
+.celebrate { background: rgba(26, 35, 50, .55); border-radius: 16px; padding: 4px 12px 6px; }
+
+/* Folk bubbles: a picture of what they're about, popping up for a moment every ten seconds or so. */
+.npc-badge { padding: 4px 6px; animation: picto 10s ease-in-out infinite; opacity: 0; }
+.npc-badge svg { display: block; width: 26px; height: 22px; }
+@keyframes picto { 0%, 72%, 100% { opacity: 0; translate: -50% 8px; scale: calc(var(--inv, 1) * .6); } 76%, 94% { opacity: 1; translate: -50% 0; scale: var(--inv, 1); } }
+.being.npc.is-met .npc-badge { display: block; }
+.celebrate { white-space: nowrap; }

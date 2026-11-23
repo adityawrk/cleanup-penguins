@@ -476,7 +476,7 @@ function frame(now: number) {
   step(world, now, dt)
   serveLook()
   sync(now)
-  stepNpcs(now, dt, world.room, YOU_SIZE, fit.classList.contains('is-still'))
+  stepNpcs(now, dt, world.room, YOU_SIZE, fit.classList.contains('is-still'), being(world, 'you'))
   sound(now)
   requestAnimationFrame(frame)
 }
@@ -533,7 +533,8 @@ function sync(now: number) {
       const close = Math.abs(actor.x - you.x) < 110 && Math.abs(actor.y - you.y) < 50
       // Keep the label on the bird; when it would meet the player's, stack it a line lower instead.
       el.style.setProperty('--nx', '0px')
-      el.style.setProperty('--ny', close ? `${18 / depth}px` : '0px')
+      el.style.setProperty('--ny', '0px')
+      el.classList.toggle('is-near-you', close)
     }
     el.style.zIndex = String(Math.round(actor.y))
     const heft = id === world.scout ? effortScale(world.effort) : 1
@@ -1396,7 +1397,7 @@ function syncGuide(now: number) {
     }
   }
   const talking = world.beings.some((b) => b.bubble)
-  const settled = hello.hidden && !world.card && who.hidden && world.scout !== null && world.lastInput > 0 && !talking
+  const settled = hello.hidden && !world.card && !world.toss && !world.splash && who.hidden && world.scout !== null && world.lastInput > 0 && !talking
   if (guide === 'done' || !settled) {
     point(a, null)
     point(b, null)

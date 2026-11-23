@@ -164,12 +164,34 @@ function disk(item: Pick<Item, 'name' | 'tenths'>): string {
   </g>`
 }
 
+function barrel(item: Pick<Item, 'name' | 'tenths'>): string {
+  const stamp = esc(stampText(item.tenths))
+  const hoop = TIES[(hash(item.name) >> 4) % TIES.length]
+  return `
+  <ellipse cx="60" cy="95" rx="38" ry="6" fill="${INK}" opacity=".18"/>
+  <g stroke="${INK}" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M28 26C24 44 24 76 28 94H92C96 76 96 44 92 26Z" fill="#c48945" stroke-width="4.6"/>
+    <path d="M78 27C84 44 84 76 80 93H92C96 76 96 44 92 26Z" fill="#9a6236" stroke="none"/>
+    <path d="M44 28C42 48 42 72 44 92M60 28V92M76 28C78 48 78 72 76 92" fill="none" stroke="#9a6236" stroke-width="2"/>
+    <path d="M38 34c-2 12-2 22 0 30" fill="none" stroke="#e0b56a" stroke-width="3.4"/>
+    <path d="M26 40C46 46 74 46 94 40M25 80C46 86 74 86 95 80" fill="none" stroke="${hoop}" stroke-width="7"/>
+    <path d="M26 40C46 46 74 46 94 40M25 80C46 86 74 86 95 80" fill="none" stroke-width="1.8" opacity=".55"/>
+    <path d="M28 26C24 44 24 76 28 94H92C96 76 96 44 92 26Z" fill="none" stroke-width="4.6"/>
+    <ellipse cx="60" cy="26" rx="32" ry="8" fill="#e0b56a" stroke-width="4.2"/>
+    <ellipse cx="60" cy="26" rx="22" ry="4.6" fill="none" stroke="#b07a3c" stroke-width="2"/>
+    <rect x="38" y="50" width="44" height="24" rx="5" fill="#fff6e4" stroke-width="2.6"/>
+    <text x="60" y="68" text-anchor="middle" class="stamp" fill="${INK}" stroke="none">${stamp}</text>
+    <path d="M86 58l3 6M32 70l3 4" fill="none" stroke="#7a4a27" stroke-width="2"/>
+  </g>`
+}
+
 export function itemSvg(item: Pick<Item, 'form' | 'name' | 'tenths'>): string {
   const body =
     item.form === 'packed' ? packed(item)
     : item.form === 'crate' ? crate(item)
     : item.form === 'trunk' ? trunk(item)
     : item.form === 'disk' ? disk(item)
+    : item.form === 'barrel' ? barrel(item)
     : sack(item)
   return `<svg viewBox="0 0 120 100" class="item-art" aria-hidden="true">${body}</svg>`
 }
