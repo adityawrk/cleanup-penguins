@@ -615,16 +615,18 @@ button { appearance: none; background: none; border: 0; padding: 0; }
 @keyframes breathe { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.015, .975); } }
 .being.is-walking .sprite { animation: waddle2 420ms ease-in-out infinite; }
 @keyframes waddle2 {
-  0%, 100% { transform: rotate(-8deg) translateY(0) scale(1.04, .95); }
-  25% { transform: rotate(0deg) translateY(-9px) scale(.98, 1.03); }
-  50% { transform: rotate(8deg) translateY(0) scale(1.04, .95); }
-  75% { transform: rotate(0deg) translateY(-9px) scale(.98, 1.03); }
+  0%, 100% { transform: rotate(-10deg) translateX(-4px) translateY(0) scale(1.08, .9); }
+  12% { transform: rotate(-6deg) translateY(-6px) scale(1, 1); }
+  25% { transform: rotate(2deg) translateY(-16px) scale(.95, 1.07); }
+  50% { transform: rotate(10deg) translateX(4px) translateY(0) scale(1.08, .9); }
+  62% { transform: rotate(6deg) translateY(-6px) scale(1, 1); }
+  75% { transform: rotate(-2deg) translateY(-16px) scale(.95, 1.07); }
 }
 .being.is-walking .foot { animation: footstep2 420ms ease-in-out infinite; }
 .being.is-walking .foot.r { animation-delay: -210ms; }
-@keyframes footstep2 { 0%, 50%, 100% { transform: translateY(0); } 25% { transform: translateY(-11px) rotate(-6deg); } }
+@keyframes footstep2 { 0%, 50%, 100% { transform: translateY(0) scale(1.1, .85); } 25% { transform: translateY(-20px) rotate(-12deg) scale(1, 1); } }
 .being.is-walking:not(.is-carrying) .flipper.r { animation: swing 420ms ease-in-out infinite; }
-@keyframes swing { 0%, 100% { transform: rotate(16deg); } 50% { transform: rotate(-18deg); } }
+@keyframes swing { 0%, 100% { transform: rotate(24deg); } 50% { transform: rotate(-26deg); } }
 .being.bird.is-walking .sprite { animation: hop3 300ms ease-in-out infinite; }
 @keyframes hop3 { 0%, 100% { transform: translateY(0) scale(1.06, .92); } 45% { transform: translateY(-18px) scale(.95, 1.06); } }
 /* Lift: a real crouch, then up with the load. */
@@ -771,3 +773,7 @@ svg > g.back { display: none; }
 @keyframes item-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
 .prop:hover .art { animation: wobble 420ms ease; }
 .prop.is-near::before { border-color: #ffd23f; }
+
+/* Splash rings stay inside the sea door's opening. */
+#splash i { animation-name: splash-ring; }
+@keyframes splash-ring { from { opacity: 1; transform: scale(.4); } to { opacity: 0; transform: scale(1.7); } }

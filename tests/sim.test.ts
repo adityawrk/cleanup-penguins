@@ -25,6 +25,7 @@ import {
   takeRope,
   walkTo,
   SPOTS,
+  scoutClear,
   travel,
   useRealRepos,
   useRealHold,
@@ -478,10 +479,12 @@ describe('harbor rules', () => {
       for (let i = 0; i < 260; i += 1) {
         now += 16
         step(world, now, 0.016)
-        closest = Math.min(closest, Math.hypot(scout.x - you.x, (scout.y - you.y) * 1.4))
+        const dx = Math.abs(scout.x - you.x)
+        const dy = scout.y - you.y
+        if (dx < scoutClear(world).x - 2 && dy < scoutClear(world).front - 2 && dy > -scoutClear(world).back + 2) closest = Math.min(closest, dx)
       }
     }
-    expect(closest).toBeGreaterThanOrEqual(70)
+    expect(closest).toBe(Infinity) // never once inside the penguin's drawn box
   })
 
   it('keeps the scout out of the player while lifting and carrying to either hole', () => {
@@ -499,7 +502,9 @@ describe('harbor rules', () => {
       for (let i = 0; i < ms / 16; i += 1) {
         now += 16
         step(world, now, 0.016)
-        if (now > 400) closest = Math.min(closest, Math.hypot(scout.x - you.x, (scout.y - you.y) * 1.4))
+        const dx = Math.abs(scout.x - you.x)
+        const dy = scout.y - you.y
+        if (now > 400 && dx < scoutClear(world).x - 2 && dy < scoutClear(world).front - 2 && dy > -scoutClear(world).back + 2) closest = Math.min(closest, dx)
       }
     }
     run(600)
@@ -511,6 +516,6 @@ describe('harbor rules', () => {
       answer(world, false, now)
       run(800)
     }
-    expect(closest).toBeGreaterThanOrEqual(66)
+    expect(closest).toBe(Infinity) // never once inside the penguin's drawn box
   })
 })

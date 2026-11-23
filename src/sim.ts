@@ -98,6 +98,15 @@ export const SPOTS = {
 
 export const NEST = { x: 990, y: 640 }
 
+/**
+ * How far the scout keeps from the player on screen, from the two drawn boxes: the penguin is about 84px wide
+ * and 100px tall; the scout about 50 x 55 times its effort size. Side gap, gap in front (lower), gap behind (higher).
+ */
+export function scoutClear(world: World): { x: number; front: number; back: number } {
+  const heft = effortScale(world.effort)
+  return { x: Math.round(46 + 25 * heft + 6), front: Math.round(55 * heft + 8), back: 108 }
+}
+
 export const HOMES: Record<BirdId, Point> = {
   cursor: NEST,
   claude: NEST,
@@ -1761,14 +1770,17 @@ function follow(world: World) {
   for (const b of birds(world)) {
     if (!b.awake || b.mode !== 'follow') continue
     slot += 1
-    const gap = 78 * slot
+    const gap = (scoutClear(world).x + 8) * slot
     const want = Math.min(band.x1, Math.max(band.x0, you.x - gap * you.facing))
     const side = Math.sign(b.x - you.x) || -you.facing
     const crossing = side !== -you.facing && Math.abs(b.x - you.x) < gap + 20
-    // Crossing over: head straight for the new side along a lane behind the player, never through them.
-    const tx = want
-    const front = you.y + 64 <= band.y1
-    const ty = crossing ? (front ? you.y + 64 : Math.max(band.y0, you.y - 64)) : Math.min(band.y1, you.y + 6)
+    // Crossing over: first step out to a lane in front of (or behind) the player, straight up or down,
+    // then go across. Otherwise the player walking into the scout would just shove it along ahead.
+    const clear = scoutClear(world)
+    const front = you.y + clear.front + 4 <= band.y1
+    const lane = front ? you.y + clear.front + 4 : Math.max(band.y0, you.y - clear.back - 4)
+    const tx = crossing && Math.abs(b.y - lane) > 10 ? b.x : want
+    const ty = crossing ? lane : Math.min(band.y1, you.y + 6)
     // Hysteresis: only re-aim when the spot has really moved.
     if (Math.hypot(tx - b.tx, ty - b.ty) > 14) {
       b.tx = tx
@@ -1784,25 +1796,25 @@ export function step(world: World, now: number, dt: number) {
   const beforeX = you.x
   const beforeY = you.y
   for (const b of world.beings) moveBeing(b, dt)
-  // Personal space: a scout never stands inside the player. Nudge it sideways out of a 76px circle.
+  // Personal space, in screen terms: the scout's drawn box never overlaps the penguin's.
+  // The penguin is about 84px wide and 100px tall above its feet; the scout about 50 wide and 55 tall.
+  // So the scout must be 70px to the side, or at least 60px in front (lower on screen). Never above and close.
   for (const b of birds(world)) {
     if (!b.awake) continue
+    const band = BANDS[world.room]
     const dx = b.x - you.x
-    const dy = (b.y - you.y) * 1.4
-    const dist = Math.hypot(dx, dy)
-    if (dist < 76) {
-      const band = BANDS[world.room]
-      // Push out along the player-to-scout line (an ellipse, wider than deep); at a wall, go round.
-      // On an errand, prefer the front of the player so it never parks behind their head.
-      const ux = dist > 0.5 ? dx / dist : -you.facing
-      let uy = dist > 0.5 ? dy / dist : 0.4
-      if (b.mode !== 'follow' && uy < 0 && you.y + 64 <= band.y1) uy = Math.abs(uy)
-      let nx = you.x + ux * 76
-      const ny = you.y + (uy * 76) / 1.4
-      if (nx < band.x0 || nx > band.x1) nx = you.x - ux * 76
-      b.x = Math.min(band.x1, Math.max(band.x0, nx))
-      b.y = Math.min(band.y1, Math.max(band.y0, ny))
+    const dy = b.y - you.y
+    const clear = scoutClear(world)
+    // On the side the penguin faces, its beak (and anything it carries) reaches further.
+    const reach = (s: number) => clear.x + (s === you.facing ? (world.carrying ? 34 : 16) : 0)
+    if (Math.abs(dx) >= reach(Math.sign(dx) || 1) || dy >= clear.front || dy <= -clear.back) continue
+    if (dy >= clear.front / 2 && you.y + clear.front <= band.y1) {
+      b.y = you.y + clear.front
+      continue
     }
+    let side = dx === 0 ? -you.facing : Math.sign(dx)
+    if (you.x + side * reach(side) < band.x0 || you.x + side * reach(side) > band.x1) side = -side
+    b.x = Math.min(band.x1, Math.max(band.x0, you.x + side * reach(side)))
   }
   for (const b of birds(world)) {
     if (b.mode === 'go' && !moving(b)) {
