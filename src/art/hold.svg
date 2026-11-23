@@ -433,6 +433,18 @@
     <text x="1181" y="221" text-anchor="middle" class="tag-word" font-size="12" fill="#b03329" stroke="none" font-weight="700">gone for good</text>
     <path d="M1150 160V140M1214 160V140" stroke-width="3"/>
   </g>
+  <!-- the ship's cat, asleep on the barrel pyramid: tail flicks, z's drift -->
+  <g class="h-cat" stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M888 380C888 364 902 356 918 356C936 356 946 366 946 378C946 384 940 386 916 386C896 386 888 386 888 380Z" fill="#f08a2c" stroke-width="3.6"/>
+    <path d="M930 360C940 364 946 372 946 378C946 384 940 386 922 386C934 380 936 370 930 360Z" fill="#c4661a" stroke="none"/>
+    <path d="M898 366c4-3 8-4 12-3M904 374c4-2 8-2 12-1M924 364l4 6" fill="none" stroke="#c4661a" stroke-width="2.4"/>
+    <path d="M888 380C888 364 902 356 918 356C936 356 946 366 946 378C946 384 940 386 916 386C896 386 888 386 888 380Z" fill="none" stroke-width="3.6"/>
+    <path d="M884 382C878 382 874 376 876 370C878 364 886 362 892 366C896 370 896 380 890 382Z" fill="#f08a2c" stroke-width="3.2"/>
+    <path d="M878 368l-2-8l6 4M888 366l2-8l3 7" fill="#f08a2c" stroke-width="2.4"/>
+    <path d="M880 374q3 2 6 0M886 376q2 1 4 0" fill="none" stroke-width="1.8"/>
+    <g class="h-cat-tail"><path d="M946 378C958 378 962 368 956 360" fill="none" stroke-width="7"/><path d="M946 378C958 378 962 368 956 360" fill="none" stroke="#f08a2c" stroke-width="3.4"/></g>
+    <g class="h-zzz" fill="#1a2332" stroke="none" font-family="Fredoka" font-weight="700"><text x="866" y="352" font-size="11">z</text><text x="858" y="340" font-size="14">z</text></g>
+  </g>
   <!-- a mouse that scurries along the baseboard now and then -->
   <g class="h-mouse" stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round"><g transform="translate(0 452) scale(1.5) translate(0 -452)">
     <path d="M-40 452c0-8 8-13 16-13c10 0 16 6 18 13z" fill="#9aa4b1" stroke-width="2.6"/>
