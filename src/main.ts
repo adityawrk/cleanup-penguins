@@ -66,6 +66,7 @@ import {
   takeRope,
   useRealCaches,
   useRealDisk,
+  useFolder,
   walkTo,
   type BeingId,
   type BirdId,
@@ -328,6 +329,7 @@ function frame(now: number) {
   const dt = Math.min(0.05, Math.max(0, (now - lastFrame) / 1000))
   lastFrame = now
   step(world, now, dt)
+  serveLook()
   sync(now)
   sound(now)
   requestAnimationFrame(frame)
@@ -961,27 +963,67 @@ function ensureProp(item: Item): HTMLElement {
   return node
 }
 
-async function loadThisMac() {
+/** Count this Mac: free space and the biggest caches. On first load the scout walks to the bell while it counts. */
+async function loadThisMac(first = true) {
   const scout = world.scout ? being(world, world.scout) : null
-  if (scout?.awake) {
+  if (first && scout?.awake) {
     beginTool(world, 'This Mac', false)
     scout.mode = 'go'
     scout.tx = SPOTS.bead.x
     scout.ty = 630
-    scout.bubble = 'Counting the quay.'
-    scout.bubbleUntil = performance.now() + 4000
+    scoutSay(world, 'Counting the quay.', performance.now(), 4000)
   }
   try {
     const disk = await fetch('/api/disk').then((response) => response.json() as Promise<{ freeTenths: number; capacityTenths: number }>)
-    if (disk.capacityTenths > 0) useRealDisk(world, disk.freeTenths, disk.capacityTenths)
+    if (disk.capacityTenths > 0) {
+      useRealDisk(world, disk.freeTenths, disk.capacityTenths)
+      // Reading the disk isn't bytes coming back: no flap, no splash.
+      if (first) prevFree = world.freeTenths
+    }
     const scan = await fetch('/api/scan').then((response) => response.json() as Promise<{ items: { name: string; path: string; bytes: number }[] }>)
     useRealCaches(world, scan.items ?? [])
-    for (const item of world.items) ensureProp(item)
+    syncPropNodes()
+    finishTool(world, performance.now())
+    if (!first) scoutSay(world, `Counted again. The biggest is ${beadText(world)?.replace('mostly ', '') ?? 'gone'}.`, performance.now(), 4200)
+  } catch {
+    finishTool(world, performance.now())
+    scoutSay(world, 'I could not read this Mac yet.', performance.now(), 4200)
+  }
+}
+
+/** Measure a shed's folder for real (read-only) and fill its hold. */
+async function lookInFolder(scopeId: string, path: string) {
+  try {
+    const response = await fetch(`/api/look?path=${encodeURIComponent(path)}`)
+    if (!response.ok) throw new Error(String(response.status))
+    const result = (await response.json()) as { items: { name: string; path: string; bytes: number; kind: 'build' | 'deps' | 'other' }[] }
+    useFolder(world, scopeId, result.items, performance.now())
+    syncPropNodes()
     finishTool(world, performance.now())
   } catch {
     finishTool(world, performance.now())
-    if (scout) scout.bubble = 'I could not read this Mac yet.'
+    scoutSay(world, `I couldn't look in ${path}. Is it a folder in your home?`, performance.now(), 4600)
   }
+}
+
+/** Do the look the sim asked for. */
+function serveLook() {
+  const request = world.lookRequest
+  if (!request) return
+  world.lookRequest = null
+  if (request.scopeId === 'mac') void loadThisMac(false)
+  else void lookInFolder(request.scopeId, request.path)
+}
+
+/** Make sure every item has a node, and drop nodes for items a rescan removed (no ghost sacks). */
+function syncPropNodes() {
+  const alive = new Set(world.items.map((item) => item.id))
+  for (const [id, node] of props) {
+    if (alive.has(id)) continue
+    node.remove()
+    props.delete(id)
+  }
+  for (const item of world.items) ensureProp(item)
 }
 
 function clone(id: string): HTMLElement {

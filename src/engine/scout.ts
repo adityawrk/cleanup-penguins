@@ -86,6 +86,17 @@ function facts(ask: ScoutAsk): string {
   ].join('\n\n')
 }
 
+/** Does a line claim the scout itself deleted, threw or freed something? It never can. */
+export function claimsAnAction(say: string): boolean {
+  const done = '(deleted|removed|threw|thrown|tossed|trashed|wiped|cleared|freed|moved|cleaned|emptied|purged)'
+  return (
+    new RegExp(`\\b(i|i've|i'd|i have|i just|i've just|i already|we|we've)\\b[^.?!]{0,24}\\b${done}\\b`, 'i').test(say) ||
+    new RegExp(`^\\s*(just\\s+)?${done}\\b`, 'i').test(say) ||
+    new RegExp(`\\b${done}\\s+(it|them|that|those|this)\\s+(for you|already|now)\\b`, 'i').test(say) ||
+    /\b(it's|its|they're|theyre|that's)\s+(gone|deleted|been deleted)\b/i.test(say)
+  )
+}
+
 /** Check a raw model reply against the facts it was given. Exported for tests. */
 export function clean(raw: string, ask: ScoutAsk): ScoutReply {
   const match = raw.match(/\{[\s\S]*\}/)
@@ -98,7 +109,7 @@ export function clean(raw: string, ask: ScoutAsk): ScoutReply {
   let say = typeof parsed.say === 'string' ? parsed.say.replace(/\s+/g, ' ').trim() : ''
   if (!say) say = raw.replace(/\s+/g, ' ').trim()
   // A scout never claims an action it cannot take.
-  if (/\b(i|i've|i have|i just)\s+(deleted|removed|threw|tossed|cleared|freed|moved|cleaned)\b/i.test(say)) {
+  if (claimsAnAction(say)) {
     say = "I can't throw things. You'll have to carry it."
   }
   say = say.slice(0, 90)
@@ -109,7 +120,7 @@ export function clean(raw: string, ask: ScoutAsk): ScoutReply {
   return { say, item, hole: item ? hole : null }
 }
 
-export function askClaude(ask: ScoutAsk): Promise<ScoutReply> {
+export function askClaude(ask: ScoutAsk, signal?: AbortSignal): Promise<ScoutReply> {
   const model = CLAUDE_MODELS[ask.model] ?? CLAUDE_MODELS.opus
   const effort = ['low', 'medium', 'high', 'xhigh'].includes(ask.effort) ? ask.effort : 'high'
   const args = [
@@ -124,6 +135,7 @@ export function askClaude(ask: ScoutAsk): Promise<ScoutReply> {
   ]
   return new Promise((resolve, reject) => {
     const child = spawn('claude', args, { cwd: os.tmpdir(), stdio: ['pipe', 'pipe', 'pipe'] })
+    signal?.addEventListener('abort', () => child.kill('SIGTERM'), { once: true })
     let out = ''
     let err = ''
     const timer = setTimeout(() => {

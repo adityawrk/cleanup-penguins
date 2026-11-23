@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { clean, type ScoutAsk } from '../src/engine/scout'
+import { claimsAnAction, clean, type ScoutAsk } from '../src/engine/scout'
 
 const ask: ScoutAsk = {
   text: 'which one?',
@@ -38,5 +38,16 @@ describe('live scout reply check', () => {
   it('keeps lines short and survives prose around the JSON', () => {
     const reply = clean(`Sure! {"say":"${'a'.repeat(140)}","item":null,"hole":null} hope that helps`, ask)
     expect(reply.say.length).toBe(90)
+  })
+})
+
+describe('claimed actions', () => {
+  it('catches the ways a model might claim it threw something', () => {
+    for (const line of ["I've just deleted it.", 'Deleted it for you!', 'I already cleared the Chrome cache.', "It's gone now.", 'We removed the npm cache.', 'Trashed them already.'])
+      expect([line, claimsAnAction(line)]).toEqual([line, true])
+  })
+  it('leaves advice alone', () => {
+    for (const line of ['The Chrome cache can go in the sea.', 'Throw the npm cache if you like.', 'Keep the game in the Locker.', "Deleting it is up to you."])
+      expect([line, claimsAnAction(line)]).toEqual([line, false])
   })
 })

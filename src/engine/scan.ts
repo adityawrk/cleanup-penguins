@@ -1,5 +1,5 @@
 import { execFile } from 'node:child_process'
-import { access } from 'node:fs/promises'
+import { access, realpath, stat } from 'node:fs/promises'
 import { homedir } from 'node:os'
 import { statfs } from 'node:fs/promises'
 
@@ -14,7 +14,7 @@ export interface ScannedCache {
   bytes: number
 }
 
-export function parseDu(stdout: string, root: string): { name: string; kb: number }[] {
+export function parseDu(stdout: string, root: string, hidden = false): { name: string; kb: number }[] {
   const rows: { name: string; kb: number }[] = []
   for (const line of stdout.split('\n')) {
     const match = line.trim().match(/^(\d+)\s+(.+)$/)
@@ -23,7 +23,7 @@ export function parseDu(stdout: string, root: string): { name: string; kb: numbe
     const full = match[2]
     if (full === root || full === `${root}/`) continue
     const name = full.slice(root.length).replace(/^\//, '').split('/')[0]
-    if (!name || name.startsWith('.')) continue
+    if (!name || (!hidden && name.startsWith('.')) || name === '.git') continue
     rows.push({ name, kb })
   }
   return rows
@@ -79,4 +79,39 @@ export async function scanCaches(): Promise<ScannedCache[]> {
   }
   found.sort((a, b) => b.bytes - a.bytes)
   return found.slice(0, 8)
+}
+
+/** What a folder inside a repo or project is, by name. Build output can go to the sea; dependencies go to the Locker. */
+export type FolderKind = 'build' | 'deps' | 'other'
+
+const BUILD = new Set(['dist', 'build', 'out', '.next', '.nuxt', '.svelte-kit', '.turbo', '.parcel-cache', '.cache', 'target', 'coverage', '.vite', 'DerivedData', '__pycache__', '.pytest_cache', '.gradle'])
+const DEPS = new Set(['node_modules', '.venv', 'venv', 'Pods', 'vendor', '.pnpm-store'])
+
+export function folderKind(name: string): FolderKind {
+  if (BUILD.has(name)) return 'build'
+  if (DEPS.has(name)) return 'deps'
+  return 'other'
+}
+
+export interface ScannedFolder extends ScannedCache {
+  kind: FolderKind
+}
+
+/**
+ * Measure one folder the player asked about ("look in ~/projects/app"). Read only: du over its first level.
+ * Only folders inside the home directory, and never the home directory itself.
+ */
+export async function scanFolder(raw: string): Promise<{ path: string; items: ScannedFolder[] }> {
+  const home = homedir()
+  const expanded = raw.startsWith('~') ? home + raw.slice(1) : raw
+  const real = await realpath(expanded)
+  if (real === home || !real.startsWith(home + '/')) throw new Error('outside home')
+  if (!(await stat(real)).isDirectory()) throw new Error('not a folder')
+  const rows = parseDu(await du(real), real, true)
+  const items = rows
+    .filter((row) => row.kb >= 1_000)
+    .map((row) => ({ name: row.name, path: displayPath(`${real}/${row.name}`), bytes: row.kb * 1024, kind: folderKind(row.name) }))
+    .sort((a, b) => b.bytes - a.bytes)
+    .slice(0, 8)
+  return { path: displayPath(real), items }
 }

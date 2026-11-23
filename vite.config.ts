@@ -1,6 +1,6 @@
 import os from 'node:os'
 import { defineConfig, type Plugin } from 'vitest/config'
-import { readDisk, scanCaches } from './src/engine/scan'
+import { readDisk, scanCaches, scanFolder } from './src/engine/scan'
 import { askClaude, detectAgents, type ScoutAsk } from './src/engine/scout'
 
 let scoutBusy = false
@@ -35,6 +35,20 @@ function harborApi(): Plugin {
             })
           return
         }
+        if (req.url?.startsWith('/api/look?')) {
+          const path = new URL(req.url, 'http://local').searchParams.get('path') ?? ''
+          scanFolder(path)
+            .then((result) => {
+              res.setHeader('content-type', 'application/json')
+              res.end(JSON.stringify(result))
+            })
+            .catch((error: Error) => {
+              res.statusCode = 404
+              res.setHeader('content-type', 'application/json')
+              res.end(JSON.stringify({ error: error.message }))
+            })
+          return
+        }
         if (req.url === '/api/agents') {
           detectAgents()
             .then((scan) => {
@@ -63,7 +77,12 @@ function harborApi(): Plugin {
             return
           }
           scoutBusy = true
-          res.on('close', () => (scoutBusy = false))
+          const abort = new AbortController()
+          // If the page goes away mid-answer, stop the claude process too.
+          res.on('close', () => {
+            scoutBusy = false
+            abort.abort()
+          })
           let body = ''
           req.on('data', (chunk) => {
             body += chunk
@@ -78,7 +97,7 @@ function harborApi(): Plugin {
               res.end('{}')
               return
             }
-            askClaude(ask)
+            askClaude(ask, abort.signal)
               .then((reply) => {
                 res.setHeader('content-type', 'application/json')
                 res.end(JSON.stringify(reply))

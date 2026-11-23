@@ -252,6 +252,13 @@ export interface World {
   rehearsal: boolean
   /** What practice throws would have freed, in tenths. Never added to the pole. */
   rehearsedTenths: number
+  /** Counts scans, so items from a later scan get fresh ids. */
+  lookStamp?: number
+  /**
+   * A look the scout promised and the page must now really do: rescan this Mac, or measure one folder.
+   * The sim never reads the disk; `main.ts` picks this up, runs the scan, and answers with `useRealCaches` / `useFolder`.
+   */
+  lookRequest: { scopeId: string; path: string } | null
   /** Which agent CLIs were found on this Mac. Null until checked. Only a found agent may be called live. */
   live: { claude: boolean; cursor: boolean; codex: boolean } | null
 }
@@ -635,6 +642,7 @@ export function createWorld(name: string, scout: BirdId | null = 'claude'): Worl
     rehearsal: true,
     rehearsedTenths: 0,
     live: null,
+    lookRequest: null,
   }
 }
 
@@ -928,6 +936,10 @@ export function walkTo(world: World, x: number, y: number, pending: Pending | nu
 export function takeRope(world: World, now: number) {
   if (world.room !== 'quay' || world.card || world.toss) return
   world.scope = MAC_SCOPE
+  if (!world.tool) {
+    world.lookRequest = { scopeId: 'mac', path: '~' }
+    beginTool(world, 'This Mac', false)
+  }
   if (world.scout) {
     const scout = being(world, world.scout)
     scout.awake = true
@@ -1461,17 +1473,15 @@ export function liveReply(world: World, reply: { say: string; item: string | nul
   if (!world.scout) return
   const scout = being(world, world.scout)
   scout.sticky = false
-  const queued = world.steering.length > 0
-  if (!queued) {
-    sayLine(scout, reply.say, now, Math.min(9000, 2600 + reply.say.length * 70))
-    const item = reply.item ? itemById(world, reply.item) : undefined
-    if (item && propVisible(world, item) && !world.carrying) {
-      scout.mode = 'go'
-      scout.tx = item.x - 46
-      scout.ty = Math.max(BANDS[world.room].y0, item.y)
-    }
+  // The answer is always spoken. Lines typed while it thought go on the brief, but don't talk over it.
+  finishTool(world, now, true)
+  sayLine(scout, reply.say, now, Math.min(9000, 2600 + reply.say.length * 70))
+  const item = reply.item ? itemById(world, reply.item) : undefined
+  if (item && propVisible(world, item) && !world.carrying) {
+    scout.mode = 'go'
+    scout.tx = item.x - 46
+    scout.ty = Math.max(BANDS[world.room].y0, item.y)
   }
-  finishTool(world, now)
 }
 
 /** A plain line from the scout, for the first-run guide. Says nothing if there is no scout. */
@@ -1509,7 +1519,8 @@ export function lookIn(world: World, raw: string, now: number) {
   const scout = world.scout ? being(world, world.scout) : null
   if (/^(?:~|home|mac|this mac|macintosh(?: hd)?|everything)$/i.test(path)) {
     world.scope = MAC_SCOPE
-    if (scout) sayLine(scout, "I'll map the whole Mac.", now, 4000)
+    world.lookRequest = { scopeId: 'mac', path: '~' }
+    if (scout) sayLine(scout, "I'll count the whole Mac again.", now, 4000)
     return
   }
   let scope = world.repos.find(
@@ -1527,12 +1538,13 @@ export function lookIn(world: World, raw: string, now: number) {
     world.repos.push(scope)
   }
   world.scope = scope
+  world.lookRequest = { scopeId: scope.id, path: scope.path }
   if (!scout) return
+  beginTool(world, scope.label, false)
   if (world.room === 'quay') {
     scout.mode = 'go'
     scout.tx = scope.x
     scout.ty = 500
-    beginTool(world, scope.label)
   }
   sayLine(scout, `I'll look in ${scope.label}.`, now, 4000)
 }
@@ -1541,12 +1553,14 @@ export function beginTool(world: World, label: string, walk = true) {
   world.tool = { label, walk }
 }
 
-export function finishTool(world: World, now: number) {
+/** End the current look and act on lines queued during it. `quiet` keeps the notes but skips the spoken reply. */
+export function finishTool(world: World, now: number, quiet = false) {
   if (!world.tool) return
   world.tool = null
   const lines = world.steering.splice(0, world.steering.length)
   if (!lines.length || !world.scout) return
   for (const line of lines) if (!isQuestion(line)) remember(world, line)
+  if (quiet) return
   const newest = lines[lines.length - 1]
   const lower = newest.toLowerCase()
   const scout = being(world, world.scout)
@@ -1572,7 +1586,7 @@ export function finishTool(world: World, now: number) {
     sayLine(scout, "You'll have to throw it.", now, 3600)
     return
   }
-  sayLine(scout, "Got it. I'll use that on the next one.", now, 3600)
+  sayLine(scout, isQuestion(newest) ? 'Ask me that again now that I am back.' : "Got it. I'll use that on the next one.", now, 3600)
 }
 
 export function requestScope(world: World, id: string, now: number) {
@@ -1757,12 +1771,17 @@ export function useRealDisk(world: World, freeTenths: number, capacityTenths: nu
 
 export function useRealCaches(world: World, rows: { name: string; path: string; bytes: number }[]) {
   if (rows.length === 0) return
-  world.items = world.items.filter((item) => !(item.scopeId === 'mac' && item.hold === 'caches'))
-  rows.slice(0, 8).forEach((row, index) => {
+  // A rescan replaces what's still lying in the hold. Anything thrown, kept in the Locker or being carried stays as it is.
+  const kept = (item: Item) => item.disposed !== 'none' || world.carrying === item.id
+  world.items = world.items.filter((item) => !(item.scopeId === 'mac' && item.hold === 'caches') || kept(item))
+  const keptPaths = new Set(world.items.filter((item) => item.scopeId === 'mac' && item.hold === 'caches').map((item) => item.path))
+  const fresh = rows.slice(0, 8).filter((row) => !keptPaths.has(row.path))
+  const stamp = (world.lookStamp = (world.lookStamp ?? 0) + 1)
+  fresh.forEach((row, index) => {
     const spot = LIVE_SPOTS[index] ?? { x: 640, y: 600 }
     const tenths = Math.max(1, Math.round(row.bytes / 1e8))
     world.items.push({
-      id: `live-${index}`,
+      id: stamp === 1 ? `live-${index}` : `live-${stamp}-${index}`,
       hold: 'caches',
       form: 'sack',
       name: row.name,
@@ -1785,6 +1804,50 @@ export function useRealCaches(world: World, rows: { name: string; path: string; 
   })
 }
 
+/** Fill a shed's hold with what a folder scan measured: build output can go to the sea, dependencies and the rest to the Locker. */
+export function useFolder(world: World, scopeId: string, rows: { name: string; path: string; bytes: number; kind: 'build' | 'deps' | 'other' }[], now: number) {
+  const kept = (item: Item) => item.disposed !== 'none' || world.carrying === item.id
+  world.items = world.items.filter((item) => item.scopeId !== scopeId || kept(item))
+  const stamp = (world.lookStamp = (world.lookStamp ?? 0) + 1)
+  rows.slice(0, 8).forEach((row, index) => {
+    const spot = LIVE_SPOTS[index] ?? { x: 640, y: 600 }
+    const tenths = Math.max(1, Math.round(row.bytes / 1e8))
+    const build = row.kind === 'build'
+    const deps = row.kind === 'deps'
+    world.items.push({
+      id: `look-${stamp}-${index}`,
+      hold: 'caches',
+      form: build ? 'sack' : deps ? 'crate' : 'trunk',
+      name: row.name,
+      path: row.path,
+      tenths,
+      phrase: build ? 'build output, measured just now' : deps ? 'dependencies, measured just now' : 'measured just now',
+      sea: build,
+      stale: build || deps,
+      x: spot.x,
+      y: spot.y,
+      disposed: 'none',
+      scopeId,
+      seaBird: null,
+      binBird: null,
+      seaLine: build ? 'Build output. The next build writes it again.' : null,
+      binLine: deps ? 'Dependencies. An install brings them back.' : 'Not build output. The Locker can keep it.',
+      rebuild: build ? 'The next build writes it again.' : '',
+      sheet: build
+        ? 'Build output in this folder. The sea is permanent. Building again creates it.'
+        : deps
+          ? 'Installed dependencies. The Locker keeps them; an install brings them back.'
+          : 'A folder that is not build output. The chute will not take it.',
+    })
+  })
+  const scout = world.scout ? being(world, world.scout) : null
+  const scope = world.repos.find((repo) => repo.id === scopeId)
+  if (scout && scope) {
+    const total = rows.slice(0, 8).reduce((sum, row) => sum + row.bytes, 0)
+    sayLine(scout, rows.length ? `${scope.label}: ${gbWord(Math.max(1, Math.round(total / 1e8)))} in ${rows.length} ${rows.length === 1 ? 'folder' : 'folders'}.` : `${scope.label} is tidy. Nothing big in there.`, now, 4200)
+  }
+}
+
 export function nearestLiftable(world: World): Item | undefined {
   const you = being(world, 'you')
   let best: Item | undefined
@@ -1793,7 +1856,8 @@ export function nearestLiftable(world: World): Item | undefined {
     if (item.disposed === 'sea') continue
     if (item.disposed === 'none' && !belongsHere(world, item)) continue
     if (item.disposed === 'locker' && world.room !== 'locker') continue
-    const d = Math.hypot(item.x - you.x, item.y - you.y)
+    const at = propDraw(world, item, world.now)
+    const d = Math.hypot(at.x - you.x, at.y - you.y)
     if (d < bestD) {
       best = item
       bestD = d

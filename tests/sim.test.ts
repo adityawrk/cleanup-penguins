@@ -25,6 +25,9 @@ import {
   takeRope,
   walkTo,
   SPOTS,
+  useRealCaches,
+  finishTool,
+  useFolder,
   liveReply,
   liveFailed,
   requestEmpty,
@@ -133,8 +136,10 @@ describe('harbor rules', () => {
     expect(world.scout).toBe('claude')
     expect(being(world, 'codex').awake).toBe(false)
     takeRope(world, 1000)
+    expect(world.lookRequest).toEqual({ scopeId: 'mac', path: '~' })
     const now = settle(world, 2500, 1000)
     expect(world.room).toBe('hold')
+    finishTool(world, now) // the page finished the rescan the bell asked for
     say(world, 'throw it', now)
     expect(being(world, 'claude').bubble).toBe("You'll have to throw it.")
     say(world, 'codex hello', now + 10)
@@ -265,6 +270,11 @@ describe('harbor rules', () => {
     scout.x = scout.tx
     scout.y = scout.ty
     step(world, 200, 0.016)
+    // Arriving isn't the end of a look: the folder scan is.
+    expect(world.tool?.label).toBe('lighthouse')
+    expect(world.lookRequest).toEqual({ scopeId: 'lighthouse', path: '~/projects/lighthouse' })
+    useFolder(world, 'lighthouse', [{ name: '.next', path: '~/projects/lighthouse/.next', bytes: 1.6e9, kind: 'build' }], 210)
+    finishTool(world, 210)
     expect(world.tool).toBeNull()
     expect(world.steering).toEqual([])
     expect(world.brief).toEqual(['leave the chrome cache alone'])
@@ -274,9 +284,7 @@ describe('harbor rules', () => {
 
     lookIn(world, 'lighthouse', 300)
     say(world, 'look in cleanup-penguins', 320)
-    scout.x = scout.tx
-    scout.y = scout.ty
-    step(world, 400, 0.016)
+    finishTool(world, 400)
     expect(world.scope.label).toBe('cleanup-penguins')
     expect(world.tool?.label).toBe('cleanup-penguins')
     expect(scout.bubble).toBe("I'll look in cleanup-penguins.")
@@ -314,7 +322,7 @@ describe('harbor rules', () => {
     liveReply(world, { say: 'Noted. Chrome stays.', item: null, hole: null }, 40)
     expect(world.tool).toBeNull()
     expect(world.brief).toEqual(['leave the chrome cache alone'])
-    expect(being(world, 'claude').bubble).not.toBe('Noted. Chrome stays.')
+    expect(being(world, 'claude').bubble).toBe('Noted. Chrome stays.')
   })
 
   it('says plainly when the live scout cannot be reached', () => {
@@ -357,5 +365,25 @@ describe('harbor rules', () => {
     expect(world.freeTenths).toBe(438)
     expect(world.rehearsedTenths).toBe(490)
     expect(world.lockerTenths).toBe(0)
+  })
+
+  it('turns a measured folder into cargo: build output can go to the sea, dependencies cannot', () => {
+    const world = createWorld('ada')
+    useFolder(world, 'penguins', [
+      { name: 'node_modules', path: '~/projects/cleanup-penguins/node_modules', bytes: 4.2e9, kind: 'deps' },
+      { name: 'dist', path: '~/projects/cleanup-penguins/dist', bytes: 8e8, kind: 'build' },
+    ], 10)
+    const mine = world.items.filter((item) => item.scopeId === 'penguins')
+    expect(mine.map((item) => [item.name, item.sea, item.form])).toEqual([['node_modules', false, 'crate'], ['dist', true, 'sack']])
+    expect(being(world, 'claude').bubble).toBe('cleanup-penguins: 5 GB in 2 folders.')
+  })
+
+  it('a rescan keeps what was thrown, kept or carried', () => {
+    const world = createWorld('ada')
+    useRealCaches(world, [{ name: 'Google', path: '~/Library/Caches/Google', bytes: 1.4e9 }, { name: 'pip', path: '~/Library/Caches/pip', bytes: 6e8 }])
+    world.items.find((item) => item.name === 'Google')!.disposed = 'locker'
+    useRealCaches(world, [{ name: 'Google', path: '~/Library/Caches/Google', bytes: 1.4e9 }, { name: 'uv', path: '~/Library/Caches/uv', bytes: 9e8 }])
+    const caches = world.items.filter((item) => item.scopeId === 'mac' && item.hold === 'caches')
+    expect(caches.map((item) => `${item.name}:${item.disposed}`).sort()).toEqual(['Google:locker', 'uv:none'])
   })
 })
