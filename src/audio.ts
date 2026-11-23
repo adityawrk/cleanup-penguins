@@ -13,19 +13,65 @@ export class HarborAudio {
   private bed: { room: RoomId; stop: () => void } | null = null
   private bedTimer = 0
   private room: RoomId = 'quay'
+  private song: { room: RoomId; timer: number; out: GainNode } | null = null
   muted = false
+  musicOn = true
 
   unlock() {
     if (this.muted) return
     const ctx = this.context()
     if (ctx.state === 'suspended') void ctx.resume()
     if (!this.bed) this.ambience(this.room)
+    if (!this.song && this.musicOn) this.music(this.room)
+  }
+
+  toggleMusic() {
+    this.musicOn = !this.musicOn
+    if (this.musicOn) this.music(this.room)
+    else this.stopMusic()
+    return this.musicOn
+  }
+
+  /**
+   * Room music: a short original loop per room, played on soft synth voices by a look-ahead scheduler.
+   * Quay and Glasshouse are bright and bouncy; the hold and the Locker are a cozy minor music box.
+   */
+  music(room: RoomId) {
+    this.room = room
+    if (this.muted || !this.musicOn || !this.ctx) return
+    if (this.song?.room === room) return
+    this.stopMusic()
+    const ctx = this.context()
+    const tune = TUNES[room]
+    const out = ctx.createGain()
+    out.gain.setValueAtTime(0.0001, ctx.currentTime)
+    out.gain.exponentialRampToValueAtTime(tune.level, ctx.currentTime + 1.5)
+    out.connect(this.master())
+    const step = 60 / tune.bpm / 2
+    let next = ctx.currentTime + 0.1
+    let index = 0
+    const schedule = () => {
+      while (next < ctx.currentTime + 0.3) {
+        const lead = tune.lead[index % tune.lead.length]
+        const bass = tune.bass[index % tune.bass.length]
+        if (lead !== null) this.note(out, midi(tune.root + lead + 12), next, step * 0.9, tune.leadWave, 0.5)
+        if (bass !== null) this.note(out, midi(tune.root + bass - 12), next, step * 1.8, 'triangle', 0.7)
+        if (tune.tick && index % 2 === 0) this.tickAt(out, next, index % 8 === 0 ? 0.25 : 0.12)
+        next += step
+        index += 1
+      }
+      if (this.song) this.song.timer = window.setTimeout(schedule, 80)
+    }
+    this.song = { room, timer: 0, out }
+    schedule()
   }
 
   toggle() {
     this.muted = !this.muted
-    if (this.muted) this.stopBed()
-    else this.unlock()
+    if (this.muted) {
+      this.stopBed()
+      this.stopMusic()
+    } else this.unlock()
     return !this.muted
   }
 
@@ -201,10 +247,31 @@ export class HarborAudio {
     }
   }
 
+  /** A gull's laugh, for the toy gull on the quay. */
+  gullCall() {
+    if (this.muted) return
+    this.gull(this.master())
+  }
+
+  /** The lighthouse horn: a low, round, two-tone hoot. */
+  horn() {
+    this.tone(110, 0.09, 'sawtooth', 0.9, 0.98)
+    this.tone(165, 0.05, 'triangle', 0.9, 0.98)
+    this.later(950, () => this.tone(98, 0.08, 'sawtooth', 1.1, 0.97))
+  }
+
+  /** A happy gulp. */
+  chomp() {
+    this.sweep(300, 180, 0.07, 'square', 0.03)
+    this.later(110, () => this.sweep(320, 190, 0.07, 'square', 0.03))
+    this.later(260, () => this.sweep(600, 1100, 0.1, 'sine', 0.04))
+  }
+
   private gull(out: AudioNode) {
     const calls = 2 + Math.floor(Math.random() * 3)
+    const level = out === this.bus ? 0.04 : 0.012
     for (let i = 0; i < calls; i += 1) {
-      this.later(i * 190, () => this.sweep(1300 + Math.random() * 200, 900, 0.16, 'triangle', 0.012, out))
+      this.later(i * 190, () => this.sweep(1300 + Math.random() * 200, 900, 0.16, 'triangle', level, out))
     }
   }
 
@@ -222,6 +289,50 @@ export class HarborAudio {
 
   private clank(out: AudioNode) {
     this.tone(1240, 0.008, 'triangle', 0.3, 1, out)
+  }
+
+  private stopMusic() {
+    if (!this.song || !this.ctx) return
+    const { out, timer } = this.song
+    window.clearTimeout(timer)
+    const now = this.ctx.currentTime
+    out.gain.cancelScheduledValues(now)
+    out.gain.setValueAtTime(Math.max(0.0001, out.gain.value), now)
+    out.gain.exponentialRampToValueAtTime(0.0001, now + 0.6)
+    window.setTimeout(() => out.disconnect(), 800)
+    this.song = null
+  }
+
+  private note(out: AudioNode, freq: number, at: number, dur: number, type: OscillatorType, gain: number) {
+    const ctx = this.context()
+    const osc = ctx.createOscillator()
+    const amp = ctx.createGain()
+    osc.type = type
+    osc.frequency.value = freq
+    amp.gain.setValueAtTime(0.0001, at)
+    amp.gain.exponentialRampToValueAtTime(gain, at + 0.012)
+    amp.gain.exponentialRampToValueAtTime(0.0001, at + dur)
+    osc.connect(amp)
+    amp.connect(out)
+    osc.start(at)
+    osc.stop(at + dur + 0.05)
+  }
+
+  private tickAt(out: AudioNode, at: number, gain: number) {
+    const ctx = this.context()
+    const src = ctx.createBufferSource()
+    src.buffer = this.noise()
+    const hp = ctx.createBiquadFilter()
+    hp.type = 'highpass'
+    hp.frequency.value = 6000
+    const amp = ctx.createGain()
+    amp.gain.setValueAtTime(gain * 0.25, at)
+    amp.gain.exponentialRampToValueAtTime(0.0001, at + 0.04)
+    src.connect(hp)
+    hp.connect(amp)
+    amp.connect(out)
+    src.start(at, Math.random())
+    src.stop(at + 0.06)
   }
 
   private stopBed() {
@@ -318,4 +429,33 @@ export class HarborAudio {
   private later(ms: number, fn: () => void) {
     window.setTimeout(fn, ms)
   }
+}
+
+function midi(n: number): number {
+  return 440 * Math.pow(2, (n - 69) / 12)
+}
+
+/** Semitones from each tune's root; null is a rest. One entry per eighth note. All original. */
+const _ = null
+const TUNES: Record<RoomId, { root: number; bpm: number; level: number; leadWave: OscillatorType; tick: boolean; lead: (number | null)[]; bass: (number | null)[] }> = {
+  quay: {
+    root: 60, bpm: 104, level: 0.05, leadWave: 'triangle', tick: true,
+    lead: [4, 7, 9, 7, 4, 2, 0, _, 2, 4, 7, 4, 2, _, _, _, 4, 7, 9, 12, 9, 7, 4, _, 2, 4, 2, 0, 0, _, _, _],
+    bass: [0, _, 7, _, 0, _, 7, _, -3, _, 4, _, -3, _, 4, _, 5, _, 9, _, 5, _, 9, _, 7, _, 11, _, 7, _, 2, _],
+  },
+  hold: {
+    root: 57, bpm: 84, level: 0.045, leadWave: 'sine', tick: false,
+    lead: [0, 3, 7, 3, 12, _, 10, 7, 5, 8, 12, 8, 7, _, _, _, 0, 3, 7, 10, 12, 10, 7, 3, 2, 5, 3, 2, 0, _, _, _],
+    bass: [0, _, _, _, 7, _, _, _, 5, _, _, _, 7, _, _, _, 8, _, _, _, 3, _, _, _, 7, _, _, _, 0, _, _, _],
+  },
+  locker: {
+    root: 55, bpm: 92, level: 0.04, leadWave: 'sine', tick: true,
+    lead: [7, _, 5, _, 3, _, 5, 7, 8, _, 7, _, 5, _, _, _, 3, _, 5, _, 7, _, 10, 8, 7, _, 5, _, 3, _, _, _],
+    bass: [0, _, 0, _, 5, _, 5, _, 3, _, 3, _, 7, _, 7, _, 8, _, 8, _, 3, _, 3, _, 7, _, 7, _, 0, _, 0, _],
+  },
+  glasshouse: {
+    root: 65, bpm: 96, level: 0.045, leadWave: 'triangle', tick: false,
+    lead: [0, 4, 7, 11, 12, _, 11, 7, 9, _, 7, 4, 5, _, _, _, 2, 5, 9, 12, 14, _, 12, 9, 7, 9, 7, 4, 0, _, _, _],
+    bass: [0, _, _, 7, _, _, 4, _, 5, _, _, 9, _, _, 0, _, 2, _, _, 9, _, _, 5, _, 7, _, _, 11, _, _, 7, _],
+  },
 }

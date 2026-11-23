@@ -32,7 +32,9 @@ A Mac disk cleanup tool that plays like a late-2000s kids' MMO. You are a pengui
 - **Glasshouse** (`glasshouse.svg`): look but don't touch. macOS, the Docker disk and Photos are exhibits behind a rope.
 - **Scout**: one at a time. The scout card (dock button or the nest) picks the scout, the model and the effort. Claude offers Fable, Opus and Sonnet. Codex offers Astra, Sol and Terra. Cursor offers Grok 4.7, 4.6 and 4.5. Antigravity (typed as a custom name) offers Neon, Carbon and Argon. OpenCode uses Default. Effort is shown as fish: Low, Medium, High (the default) and Extra high scale the scout 0.72, 1, 1.28 and 1.58. High and above pin the info sheet when you lift something.
 - **Steering**: while the scout is on a look (`world.tool`), new lines queue in `world.steering` and show as "After {look} · {line}". `finishTool` writes them to the brief and acts on the newest one.
-- **Flourish**: the dock has emotes, and D dances (the scout joins in when close). Clicking your penguin opens your card. Idle, the penguin waves, hops, wiggles, then sits. Walking away from the camera shows its back.
+- **Flourish**: the dock has emotes, and D dances (the scout joins in when close). Clicking your penguin opens your card. Idle, the penguin waves, hops, wiggles, then sits. Walking away from the camera shows its back. On the quay, the gull, the lighthouse and the fish crate are toys (`data-act="toy"`, `playToy` in `main.ts`) that change no rule. Snow falls on the quay.
+- **First run**: the scout guides one loop with bouncing arrows (board the red boat, pick something up, sea or Locker), then remembers it in `localStorage` (`harbor-guide-v1`). Clear that key to see it again.
+- **Music**: each room has an original synthesized loop (`TUNES` in `src/audio.ts`). The dock's note button toggles it and remembers the choice (`harbor-music`). The speaker button mutes everything.
 
 ## Rules that must not be broken
 

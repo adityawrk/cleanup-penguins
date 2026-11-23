@@ -193,6 +193,25 @@ must('#scout-btn').addEventListener('click', () => {
   else closeWho()
 })
 must('#send-btn').addEventListener('click', () => must<HTMLFormElement>('#chat').requestSubmit())
+const MUSIC_KEY = 'harbor-music'
+try {
+  if (localStorage.getItem(MUSIC_KEY) === 'off') {
+    audio.musicOn = false
+    must('#music').setAttribute('aria-pressed', 'false')
+  }
+} catch {
+  /* music stays on */
+}
+must('#music').addEventListener('click', () => {
+  const on = audio.toggleMusic()
+  must('#music').setAttribute('aria-pressed', String(on))
+  must('#music').setAttribute('aria-label', on ? 'Music on' : 'Music off')
+  try {
+    localStorage.setItem(MUSIC_KEY, on ? 'on' : 'off')
+  } catch {
+    /* not remembered */
+  }
+})
 const emotePanel = must<HTMLElement>('#emotes')
 for (const choice of [...EMOTES, { id: 'dance', label: 'Dance', svg: '' }]) {
   const button = document.createElement('button')
@@ -631,6 +650,7 @@ function sound(now: number) {
     prevRoom = world.room
     audio.creak()
     audio.ambience(world.room)
+    audio.music(world.room)
     const wipe = must<HTMLElement>('#wipe')
     wipe.style.setProperty('--wx', `${you.x}px`)
     wipe.style.setProperty('--wy', `${you.y - 50}px`)
@@ -737,6 +757,7 @@ function onClick(event: MouseEvent) {
     }
     requestLift(world, hit.dataset.id, now)
   }
+  if (act === 'toy') playToy(hit.dataset.toy ?? '', now)
   if (act === 'who') openWho()
   if (act === 'model') openWho()
   if (act === 'effort') openWho()
@@ -1094,5 +1115,31 @@ function syncGuide(now: number) {
     }
     point(a, world.room === 'hold' ? { x: 1181, y: 300 } : null)
     point(b, world.room === 'hold' ? { x: 248, y: 316 } : null)
+  }
+}
+
+/** Little toys on the quay. Pure delight: none of them change a rule. */
+function playToy(toy: string, now: number) {
+  if (toy === 'gull') {
+    const gull = document.querySelector<SVGElement>('.q-gull')
+    if (!gull || gull.classList.contains('flown')) return
+    gull.classList.add('flown')
+    audio.gullCall()
+    window.setTimeout(() => gull.classList.remove('flown'), 5200)
+  }
+  if (toy === 'lighthouse') {
+    const beam = document.querySelector<SVGElement>('.q-beam')
+    beam?.classList.remove('flash')
+    void (beam as unknown as HTMLElement | null)?.getBoundingClientRect()
+    beam?.classList.add('flash')
+    audio.horn()
+    window.setTimeout(() => beam?.classList.remove('flash'), 2400)
+  }
+  if (toy === 'fish') {
+    emote = { id: 'fish', until: now + 2600 }
+    audio.chomp()
+    const you = beings.get('you')
+    if (you) pulse(you, 'is-hop')
+    if (world.scout && Math.random() < 0.5) window.setTimeout(() => scoutSay(world, 'Save one for me.', performance.now(), 2600), 700)
   }
 }

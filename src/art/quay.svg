@@ -34,7 +34,8 @@
   </g>
 
   <!-- LIGHTHOUSE ISLAND -->
-  <g stroke="#1a2332" stroke-linejoin="round" transform="translate(290 0)">
+  <g class="hot" data-act="toy" data-toy="lighthouse" stroke="#1a2332" stroke-linejoin="round" transform="translate(290 0)">
+    <title>The lighthouse</title>
     <path d="M660 216C668 200 690 196 702 198C716 192 742 198 756 216Z" fill="#7d8c99" stroke-width="3"/>
     <path d="M700 212C714 204 734 204 748 214Z" fill="#5e6c79" stroke="none"/>
     <path d="M664 208C676 198 694 196 704 199C690 202 676 204 664 208Z" fill="#fff" stroke="none"/>
@@ -327,12 +328,12 @@
     <ellipse cx="706" cy="469" rx="9" ry="3" fill="#a07a42" stroke-width="2.2"/>
     <g class="q-bob"><path d="M1016 300c0-10 8-16 14-16s14 6 14 16z" fill="#e24b3f" stroke-width="3"/><path d="M1018 294h24" stroke="#fff" stroke-width="4"/><path d="M1014 300h32" stroke="#c9ecff" stroke-width="3"/></g>
     <g class="q-bob q-bob-2"><path d="M948 330c0-8 6-13 11-13s11 5 11 13z" fill="#ffd23f" stroke-width="3"/><path d="M946 330h26" stroke="#c9ecff" stroke-width="3"/></g>
-    <g class="q-gull">
+    <g class="hot" data-act="toy" data-toy="gull"><title>A gull</title><g class="q-gull">
       <path d="M512 404c0-10 6-16 14-16c6 0 10 4 10 10c0 6-8 8-14 8z" fill="#fff" stroke-width="3"/>
       <path d="M534 396l8 2l-8 3z" fill="#f4a024" stroke-width="2"/>
       <circle cx="528" cy="394" r="1.8" fill="#1a2332" stroke="none"/>
       <path d="M512 402c4-6 10-8 16-6c-4 4-10 6-16 6z" fill="#9aa9b8" stroke-width="2.4"/>
-    </g>
+    </g></g>
   </g>
 
   <!-- BELL POST: ring it to map the whole Mac -->
@@ -379,7 +380,8 @@
   </g>
 
   <!-- FISH CRATE -->
-  <g stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round">
+  <g class="hot" data-act="toy" data-toy="fish" stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round">
+    <title>A crate of fish</title>
     <ellipse cx="1112" cy="606" rx="46" ry="8" fill="#b98447" stroke="none"/>
     <path d="M1074 576c8-14 20-16 30-12c6-8 16-10 26-4c10-6 20-2 22 8z" fill="#9cc7e3" stroke-width="3"/>
     <path d="M1084 566l-8-8l2 12zM1124 562l10-10l-2 12z" fill="#7fb2d4" stroke-width="2.4"/>
