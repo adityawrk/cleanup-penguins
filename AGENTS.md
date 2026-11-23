@@ -111,6 +111,8 @@ A Mac disk cleanup tool that plays like a late-2000s kids' MMO. You are a pengui
 
 The bar is a polished kids' MMO: dense rooms of recognizable objects, small characters in a big place, glossy chunky UI, and constant small life (harbor folk, bobbing boats and buoys, puffing smoke, a swinging bell, a pecking gull, lanterns, a fish past the hold's porthole, a mouse on the hold's baseboard). A change isn't done just because it works. Screenshot it and compare it with `quay.svg`.
 
+**Review history.** Nine rounds of blind art-director reviews against reference frames (stills plus motion contact sheets from `scripts/shot.mjs` bursts and `scripts/sheet.mjs`). Overall went 6.5 → 7 → 7.5 → 7.8 → 8.0 → 8.2 → 8.4 → 8.5 out of 9. Round 9's verdict: it matches the reference's craft and, with the scout kept off the player on screen, its feel. Remaining polish from that round: speech bubbles and tags near the player (bubbles now lean away, a tag hides when you stand on its item), and depth (a flatter walk than the reference). Re-run a review after any big art or motion change, and judge motion from strips, not single stills.
+
 ## Run, test, look
 
 ```sh

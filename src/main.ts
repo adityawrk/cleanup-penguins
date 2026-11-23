@@ -525,7 +525,13 @@ function sync(now: number) {
     el.style.transform = `translate(${actor.x}px, ${actor.y}px) scale(${depth})`
     el.style.setProperty('--inv', String(1 / depth))
     // Keep bubbles on the stage: slide them in from the edges, in the sprite's own (scaled) units.
-    const edge = Math.max(0, 150 - actor.x) - Math.max(0, actor.x - 1130)
+    let edge = Math.max(0, 150 - actor.x) - Math.max(0, actor.x - 1130)
+    // A scout's bubble leans away from the penguin when they stand close, so it never covers the player.
+    if (id !== 'you') {
+      const you = being(world, 'you')
+      if (Math.abs(actor.x - you.x) < 170 && Math.abs(actor.y - you.y) < 80) edge += (actor.x <= you.x ? -1 : 1) * 70
+      edge = Math.max(150 - actor.x, Math.min(1130 - actor.x, edge))
+    }
     el.style.setProperty('--bx', `${edge / depth}px`)
     el.style.setProperty('--bxs', `${edge}px`)
     if (id !== 'you') {
@@ -620,7 +626,8 @@ function sync(now: number) {
     const you = being(world, 'you')
     el.style.zIndex = world.carrying === item.id ? String(Math.round(you.y) + 2) : world.toss?.itemId === item.id ? '900' : String(Math.round(draw.y) + (nearId === item.id ? 400 : 0))
     el.classList.toggle('is-held', held)
-    el.classList.toggle('is-near', !held && nearId === item.id)
+    const standingOn = Math.hypot(draw.x - being(world, 'you').x, draw.y - being(world, 'you').y) < 80
+    el.classList.toggle('is-near', !held && nearId === item.id && !standingOn)
     setNodeText(el.querySelector('.t-size')!, gbWord(item.tenths))
     setNodeText(el.querySelector('.t-name')!, item.name)
     setNodeText(el.querySelector('.t-phrase')!, item.phrase)
