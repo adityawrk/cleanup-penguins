@@ -16,9 +16,10 @@
     <path d="M22 611.6h18.6M22 618.6h12.4" stroke="#b07a3c" stroke-width="2.2"/>
     <rect x="14" y="584" width="62" height="46" rx="2.5" fill="none" stroke-width="3.4"/>
     <path d="M19 589v6.4" stroke="#f3d7a1" stroke-width="2.4"/>
-    <path d="M10 588c4-10 64-10 70 0c-6 6-62 6-70 0z" fill="#fff" stroke-width="2.8"/>
+    <path d="M10 590c-2-8 8-12 16-8c4-8 18-8 22-2c6-6 20-6 24 2c8-2 12 6 6 10c-10 4-58 4-68-2z" fill="#fff" stroke-width="2.8"/>
     <path d="M24 586c10-3 30-3 42 0" stroke="#d6ecf9" stroke-width="3"/>
-    <path d="M-10 632c10-10 84-10 98 0c-4 6-90 6-98 0z" fill="#fff" stroke-width="2.8"/>
+    <path d="M-10 634c-2-8 10-12 18-8c6-8 22-8 28-2c8-6 24-6 30 2c10-2 18 2 22 8c-12 6-86 6-98 0z" fill="#fff" stroke-width="2.8"/>
+    <path d="M14 630c10-3 24-3 34 0" stroke="#d6ecf9" stroke-width="3"/>
     <!-- bollard and cone, front right -->
     <rect x="1218" y="610" width="34" height="100" rx="8" fill="#ffd23f" stroke-width="4"/>
     <path d="M1218 630h34M1218 660h34M1218 690h34" stroke="#1a2332" stroke-width="9" stroke-linecap="butt"/>

@@ -103,6 +103,8 @@ let prevSplash = 0
 let prevSnore = 0
 let prevCarry: string | null = null
 const poseSeen = new Map<string, string>()
+/** Last drawn position and whether we're seeing a being's back (walking away from the camera). */
+const heading = new Map<string, { x: number; y: number; back: boolean }>()
 const bubbleSeen = new Map<string, string | null>()
 
 const beings = new Map<BeingId, HTMLElement>()
@@ -284,6 +286,15 @@ function sync(now: number) {
       } else pulse(el, 'is-settle')
     }
     poseSeen.set(id, pose)
+    const last = heading.get(id) ?? { x: actor.x, y: actor.y, back: false }
+    const dx = actor.x - last.x
+    const dy = actor.y - last.y
+    if (pose !== 'walk' && pose !== 'carry') last.back = false
+    else if (Math.hypot(dx, dy) > 0.5) last.back = dy < 0 && Math.abs(dy) > Math.abs(dx) * 0.7
+    last.x = actor.x
+    last.y = actor.y
+    heading.set(id, last)
+    el.classList.toggle('is-back', last.back)
     el.classList.toggle('is-walking', pose === 'walk')
     el.classList.toggle('is-sleeping', pose === 'sleep')
     el.classList.toggle('is-sitting', sitting(world, actor))
