@@ -604,3 +604,5 @@ button { appearance: none; background: none; border: 0; padding: 0; }
 
 /* The game sits in a rounded frame on a deep harbor-night page, so letterboxing looks deliberate. */
 #fit { border-radius: 22px; overflow: hidden; box-shadow: 0 0 0 4px #1a3f66, 0 12px 0 4px #0a1f36; }
+/* From behind, both flippers show (the far one isn't hidden by the body), so the back view isn't a bare egg. */
+.being.is-back .flipper.l { opacity: 1 !important; transform: scaleX(-1) translateX(-6px); transform-box: fill-box; transform-origin: center; }
