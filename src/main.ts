@@ -11,6 +11,7 @@ import holdArt from './art/hold.svg?raw'
 import helloArt from './art/hello.svg?raw'
 import lockerArt from './art/locker.svg?raw'
 import glassArt from './art/glasshouse.svg?raw'
+import mapArt from './art/map.svg?raw'
 import { itemSvg, jitter, sizeScale } from './items'
 import { EMOTES, emoteSvg } from './emotes'
 import {
@@ -67,6 +68,7 @@ import {
   useRealCaches,
   useRealDisk,
   useFolder,
+  travel,
   walkTo,
   type BeingId,
   type BirdId,
@@ -218,6 +220,56 @@ must('#scout-btn').addEventListener('click', () => {
   else closeWho()
 })
 must('#send-btn').addEventListener('click', () => must<HTMLFormElement>('#chat').requestSubmit())
+// The map: a dock button and a panel with the drawn harbor. Built here so index.html stays the art's.
+const mapButton = document.createElement('button')
+mapButton.type = 'button'
+mapButton.className = 'dock-btn'
+mapButton.id = 'map-btn'
+mapButton.setAttribute('aria-label', 'Map')
+mapButton.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6l6-2l6 2l6-2v14l-6 2l-6-2l-6 2z" fill="#fff6e4" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 4v14M15 6v14" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="11" r="2" fill="#e24b3f"/></svg>'
+must('#console').insertBefore(mapButton, must('#chat'))
+const mapPanel = document.createElement('div')
+mapPanel.id = 'map'
+mapPanel.hidden = true
+mapPanel.setAttribute('role', 'dialog')
+mapPanel.setAttribute('aria-label', 'Map of the harbor')
+mapPanel.innerHTML = `<h2>The harbor</h2><div class="map-frame">${mapArt}</div><div class="map-keys"></div>`
+must('#fit').appendChild(mapPanel)
+const mapKeys = mapPanel.querySelector<HTMLElement>('.map-keys')!
+for (const place of mapPanel.querySelectorAll<SVGGElement>('.map-place')) {
+  const button = document.createElement('button')
+  button.type = 'button'
+  button.dataset.go = place.dataset.go
+  button.textContent = place.querySelector('title')?.textContent ?? place.dataset.go ?? ''
+  mapKeys.appendChild(button)
+}
+const goTo = (place: string) => {
+  if (travel(world, place as Room | Hold, performance.now())) closeMap()
+  else if (world.carrying) closeMap()
+}
+mapPanel.addEventListener('click', (event) => {
+  const target = (event.target as Element).closest<HTMLElement | SVGElement>('[data-go]')
+  if (target?.dataset.go) goTo(target.dataset.go)
+})
+mapButton.addEventListener('click', () => {
+  audio.unlock()
+  if (mapPanel.hidden) openMap()
+  else closeMap()
+})
+function openMap() {
+  if (world.card) return
+  closeWho()
+  mapPanel.hidden = false
+  catcher.hidden = false
+  mapButton.classList.add('is-on')
+  audio.card()
+}
+function closeMap() {
+  mapPanel.hidden = true
+  catcher.hidden = !world.card && who.hidden
+  mapButton.classList.remove('is-on')
+}
+
 const MUSIC_KEY = 'harbor-music'
 try {
   if (localStorage.getItem(MUSIC_KEY) === 'off') {
@@ -780,7 +832,7 @@ function onClick(event: MouseEvent) {
   if (naming) return
   const now = performance.now()
   audio.unlock()
-  if (world.card || !who.hidden || !must<HTMLElement>('#me').hidden) return
+  if (world.card || !who.hidden || !must<HTMLElement>('#me').hidden || !mapPanel.hidden) return
   const hit = target.closest<HTMLElement>('[data-act]')
   if (!hit) return
   const act = hit.dataset.act
@@ -857,6 +909,14 @@ function onKey(event: KeyboardEvent) {
   }
   if (!must<HTMLElement>('#me').hidden) {
     if (key === 'escape') closeMe()
+    return
+  }
+  if (!mapPanel.hidden) {
+    if (key === 'escape' || key === 'm') closeMap()
+    return
+  }
+  if (key === 'm') {
+    openMap()
     return
   }
   if (world.card) {
@@ -1043,6 +1103,7 @@ function must<T extends Element>(selector: string): T {
 catcher.addEventListener('click', () => {
   if (!who.hidden) closeWho()
   if (!must<HTMLElement>('#me').hidden) closeMe()
+  if (!mapPanel.hidden) closeMap()
 })
 
 function setText(selector: string, text: string) {

@@ -952,6 +952,25 @@ export function takeRope(world: World, now: number) {
   walkTo(world, SPOTS.bead.x, 640, { type: 'board', hold: 'caches' }, now)
 }
 
+/** Travel by the map: straight to a room or a boat's hold. Not while carrying something. */
+export function travel(world: World, place: Room | Hold, now: number): boolean {
+  if (world.card || world.toss || world.emptying) return false
+  if (world.carrying) {
+    sayLine(being(world, 'you'), 'Put it down first.', now, 2200)
+    return false
+  }
+  touch(world, now)
+  if (place === 'caches' || place === 'apps' || place === 'stuff') {
+    world.scope = MAC_SCOPE
+    world.hold = place
+    arriveParty(world, 'hold')
+    return true
+  }
+  if (place === world.room) return false
+  arriveParty(world, place)
+  return true
+}
+
 export function requestBoard(world: World, hold: Hold, now: number) {
   if (world.room !== 'quay') return
   const spot = SPOTS.board[hold]
