@@ -1,54 +1,51 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 708" class="paint-svg" aria-hidden="true">
   <!-- Foreground: drawn above the penguins. Edges only. -->
-  <g stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round">
+  <defs>
+    <linearGradient id="g-f-leaf" x1=".1" y1="0" x2=".9" y2="1"><stop offset="0" stop-color="#a4e08e"/><stop offset=".55" stop-color="#5fbd5a"/><stop offset="1" stop-color="#3a8a44"/></linearGradient>
+    <linearGradient id="g-f-big" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7fcf7a"/><stop offset=".55" stop-color="#43a566"/><stop offset="1" stop-color="#25683c"/></linearGradient>
+    <linearGradient id="g-f-big2" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fd88a"/><stop offset=".55" stop-color="#4bae5b"/><stop offset="1" stop-color="#2c7a4a"/></linearGradient>
+  </defs>
+  <g stroke-linejoin="round" stroke-linecap="round">
     <!-- ivy trailing from the top-left purlin -->
     <g class="g-ivy">
-      <path d="M-6 40C30 52 60 50 92 40C120 32 146 36 168 44" fill="none" stroke-width="8"/>
-      <path d="M-6 40C30 52 60 50 92 40C120 32 146 36 168 44" fill="none" stroke="#3f9f63" stroke-width="3.6"/>
-      <path d="M40 48C44 70 36 88 42 110M110 38C114 58 108 72 112 88" fill="none" stroke-width="7"/>
-      <path d="M40 48C44 70 36 88 42 110M110 38C114 58 108 72 112 88" fill="none" stroke="#3f9f63" stroke-width="3"/>
-      <g fill="#5bb04b" stroke-width="2.4">
+      <path d="M-6 40C30 52 60 50 92 40C120 32 146 36 168 44" fill="none" stroke="#2c7a4a" stroke-width="5.6"/>
+      <path d="M-6 40C30 52 60 50 92 40C120 32 146 36 168 44" fill="none" stroke="#6cc480" stroke-width="3"/>
+      <path d="M40 48C44 70 36 88 42 110M110 38C114 58 108 72 112 88" fill="none" stroke="#2c7a4a" stroke-width="4.6"/>
+      <path d="M40 48C44 70 36 88 42 110M110 38C114 58 108 72 112 88" fill="none" stroke="#6cc480" stroke-width="2.4"/>
+      <g fill="url(#g-f-leaf)" stroke="#2c7a4a" stroke-width="1.4">
         <path d="M14 46c-4-12 4-20 12-18c2 10-4 16-12 18z"/><path d="M62 50c6-10 16-10 20-4c-6 8-14 8-20 4z"/>
         <path d="M140 38c-2-12 8-18 14-14c0 10-6 14-14 14z"/><path d="M38 76c-10-2-14-10-10-16c8 2 12 8 10 16z"/>
         <path d="M44 98c10-2 14-10 10-16c-8 2-12 8-10 16z"/><path d="M110 62c-10-2-14-10-10-16c8 2 12 8 10 16z"/>
         <path d="M114 82c10 0 14-8 10-14c-8 2-12 6-10 14z"/>
       </g>
-      <path d="M18 42c2-4 4-8 6-10M144 34c2-2 4-6 6-8" fill="none" stroke="#2c7a4a" stroke-width="1.8"/>
+      <path d="M18 40c1-3 3-6 5-8M144 32c2-2 4-5 6-6" fill="none" stroke="#d4f5c0" stroke-width="1.4"/>
     </g>
     <!-- ivy trailing from the top-right purlin -->
     <g class="g-ivy g-ivy-2">
-      <path d="M1286 40C1250 52 1222 50 1192 40C1166 32 1140 36 1118 44" fill="none" stroke-width="8"/>
-      <path d="M1286 40C1250 52 1222 50 1192 40C1166 32 1140 36 1118 44" fill="none" stroke="#3f9f63" stroke-width="3.6"/>
-      <path d="M1240 48C1236 68 1244 84 1238 102" fill="none" stroke-width="7"/>
-      <path d="M1240 48C1236 68 1244 84 1238 102" fill="none" stroke="#3f9f63" stroke-width="3"/>
-      <g fill="#5bb04b" stroke-width="2.4">
+      <path d="M1286 40C1250 52 1222 50 1192 40C1166 32 1140 36 1118 44" fill="none" stroke="#2c7a4a" stroke-width="5.6"/>
+      <path d="M1286 40C1250 52 1222 50 1192 40C1166 32 1140 36 1118 44" fill="none" stroke="#6cc480" stroke-width="3"/>
+      <path d="M1240 48C1236 68 1244 84 1238 102" fill="none" stroke="#2c7a4a" stroke-width="4.6"/>
+      <path d="M1240 48C1236 68 1244 84 1238 102" fill="none" stroke="#6cc480" stroke-width="2.4"/>
+      <g fill="url(#g-f-leaf)" stroke="#2c7a4a" stroke-width="1.4">
         <path d="M1266 46c4-12-4-20-12-18c-2 10 4 16 12 18z"/><path d="M1210 50c-6-10-16-10-20-4c6 8 14 8 20 4z"/>
         <path d="M1144 38c2-12-8-18-14-14c0 10 6 14 14 14z"/><path d="M1242 72c10-2 14-10 10-16c-8 2-12 8-10 16z"/>
         <path d="M1236 94c-10-2-14-10-10-16c8 2 12 8 10 16z"/>
       </g>
-      <circle cx="1176" cy="40" r="5" fill="#f7a6b4" stroke-width="2"/>
+      <circle cx="1176" cy="40" r="5" fill="#f7a6b4" stroke="#b0506a" stroke-width="1"/><circle cx="1176" cy="40" r="1.8" fill="#ffd23f"/>
     </g>
 
     <!-- broad leaves, bottom-left corner -->
-    <path d="M-20 716C-24 672 -6 634 30 620C46 652 40 690 22 716Z" fill="#3f9f63" stroke-width="4.4"/>
-    <path d="M14 700C34 680 40 650 30 620C42 652 38 690 22 716Z" fill="#2c7a4a" stroke="none"/>
-    <path d="M-20 716C-24 672 -6 634 30 620C46 652 40 690 22 716Z" fill="none" stroke-width="4.4"/>
-    <path d="M2 716C8 684 16 654 28 626M8 690l-14-10M12 668l-14-12M18 648l-12-12" fill="none" stroke="#2c7a4a" stroke-width="2.6"/>
-    <path d="M-24 716C-16 686 14 664 58 664C54 690 34 708 14 716Z" fill="#5bb04b" stroke-width="4.4"/>
-    <path d="M14 716C36 704 50 688 58 664C54 690 34 708 14 716Z" fill="#3f9f63" stroke="none"/>
-    <path d="M-24 716C-16 686 14 664 58 664C54 690 34 708 14 716Z" fill="none" stroke-width="4.4"/>
-    <path d="M-6 712C10 694 30 678 52 668M14 698l-4-12M28 688l-2-12" fill="none" stroke="#2c7a4a" stroke-width="2.6"/>
-    <path d="M-4 690c8-8 18-14 28-18M4 648c4-8 10-16 16-20" fill="none" stroke="#9be08a" stroke-width="3"/>
+    <path d="M-20 716C-24 672 -6 634 30 620C46 652 40 690 22 716Z" fill="url(#g-f-big)" stroke="#1f5a35" stroke-width="2.2"/>
+    <path d="M2 716C8 684 16 654 28 626M8 690l-14-10M12 668l-14-12M18 648l-12-12" fill="none" stroke="#25683c" stroke-width="1.6"/>
+    <path d="M-24 716C-16 686 14 664 58 664C54 690 34 708 14 716Z" fill="url(#g-f-big2)" stroke="#1f5a35" stroke-width="2.2"/>
+    <path d="M-6 712C10 694 30 678 52 668M14 698l-4-12M28 688l-2-12" fill="none" stroke="#2c7a4a" stroke-width="1.6"/>
+    <path d="M-4 690c8-8 18-14 28-18M4 648c4-8 10-16 16-20" fill="none" stroke="#d4f5c0" stroke-width="2.4" opacity=".85"/>
 
     <!-- broad leaves, bottom-right corner -->
-    <path d="M1300 716C1304 670 1288 636 1254 622C1238 652 1240 690 1258 716Z" fill="#3f9f63" stroke-width="4.4"/>
-    <path d="M1282 700C1296 682 1296 652 1282 632C1300 648 1306 684 1296 716H1270Z" fill="#2c7a4a" stroke="none"/>
-    <path d="M1300 716C1304 670 1288 636 1254 622C1238 652 1240 690 1258 716Z" fill="none" stroke-width="4.4"/>
-    <path d="M1276 716C1270 684 1264 654 1256 628M1272 690l14-10M1268 668l14-12M1262 648l12-12" fill="none" stroke="#2c7a4a" stroke-width="2.6"/>
-    <path d="M1304 716C1296 688 1262 670 1212 672C1218 694 1240 710 1264 716Z" fill="#5bb04b" stroke-width="4.4"/>
-    <path d="M1264 716C1286 712 1300 708 1304 716Z" fill="#3f9f63" stroke="none"/>
-    <path d="M1304 716C1296 688 1262 670 1212 672C1218 694 1240 710 1264 716Z" fill="none" stroke-width="4.4"/>
-    <path d="M1290 712C1270 696 1246 682 1218 674M1266 702l2-12M1248 692l0-12" fill="none" stroke="#2c7a4a" stroke-width="2.6"/>
-    <path d="M1228 680c10-2 20 0 30 4M1262 640c-2-6-4-10-6-14" fill="none" stroke="#9be08a" stroke-width="3"/>
+    <path d="M1300 716C1304 670 1288 636 1254 622C1238 652 1240 690 1258 716Z" fill="url(#g-f-big2)" stroke="#1f5a35" stroke-width="2.2"/>
+    <path d="M1276 716C1270 684 1264 654 1256 628M1272 690l14-10M1268 668l14-12M1262 648l12-12" fill="none" stroke="#25683c" stroke-width="1.6"/>
+    <path d="M1304 716C1296 688 1262 670 1212 672C1218 694 1240 710 1264 716Z" fill="url(#g-f-big)" stroke="#1f5a35" stroke-width="2.2"/>
+    <path d="M1290 712C1270 696 1246 682 1218 674M1266 702l2-12M1248 692l0-12" fill="none" stroke="#2c7a4a" stroke-width="1.6"/>
+    <path d="M1228 680c10-2 20 0 30 4M1262 640c-2-6-4-10-6-14" fill="none" stroke="#d4f5c0" stroke-width="2.4" opacity=".85"/>
   </g>
 </svg>

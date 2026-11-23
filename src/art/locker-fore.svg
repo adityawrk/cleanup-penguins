@@ -1,34 +1,35 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 708" class="paint-svg" aria-hidden="true">
   <!-- Foreground: drawn above the penguins. Edges only. -->
-  <g stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round">
+  <defs>
+    <linearGradient id="l-f-box" x1=".1" y1="0" x2=".9" y2="1"><stop offset="0" stop-color="#f6d699"/><stop offset=".55" stop-color="#e3b870"/><stop offset="1" stop-color="#c08c48"/></linearGradient>
+    <linearGradient id="l-f-snow" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#d4eaf8"/></linearGradient>
+    <linearGradient id="l-f-bollard" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff09a"/><stop offset=".45" stop-color="#ffd23f"/><stop offset="1" stop-color="#d39a2b"/></linearGradient>
+    <linearGradient id="l-f-cone" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ffb46a"/><stop offset=".5" stop-color="#f08a2c"/><stop offset="1" stop-color="#c4661a"/></linearGradient>
+    <linearGradient id="l-f-base" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e07a2a"/><stop offset="1" stop-color="#a8521a"/></linearGradient>
+  </defs>
+  <g stroke-linejoin="round" stroke-linecap="round">
     <!-- crates by the door, snow still on them -->
-    <rect x="-8" y="628" width="92" height="84" rx="2.5" fill="#e0b56a" stroke-width="3.4"/>
-    <rect x="58.2" y="630" width="23.8" height="80" fill="#c99a55" stroke="none"/>
-    <path d="M-6 648.2H82" stroke="#b07a3c" stroke-width="2.4"/>
-    <rect x="34" y="628" width="8" height="20.2" fill="#f3d7a1" stroke-width="2"/>
-    <path d="M0 678.4h27.6M0 685.4h18.4" stroke="#b07a3c" stroke-width="2.2"/>
-    <rect x="-8" y="628" width="92" height="84" rx="2.5" fill="none" stroke-width="3.4"/>
-    <path d="M-3 633v11.8" stroke="#f3d7a1" stroke-width="2.4"/>
-    <rect x="14" y="584" width="62" height="46" rx="2.5" fill="#e0b56a" stroke-width="3.4"/>
-    <rect x="58.6" y="586" width="15.4" height="42" fill="#c99a55" stroke="none"/>
-    <path d="M16 595H74" stroke="#b07a3c" stroke-width="2.4"/>
-    <rect x="41" y="584" width="8" height="11" fill="#f3d7a1" stroke-width="2"/>
-    <path d="M22 611.6h18.6M22 618.6h12.4" stroke="#b07a3c" stroke-width="2.2"/>
-    <rect x="14" y="584" width="62" height="46" rx="2.5" fill="none" stroke-width="3.4"/>
-    <path d="M19 589v6.4" stroke="#f3d7a1" stroke-width="2.4"/>
-    <path d="M10 590c-2-8 8-12 16-8c4-8 18-8 22-2c6-6 20-6 24 2c8-2 12 6 6 10c-10 4-58 4-68-2z" fill="#fff" stroke-width="2.8"/>
-    <path d="M24 586c10-3 30-3 42 0" stroke="#d6ecf9" stroke-width="3"/>
-    <path d="M-10 634c-2-8 10-12 18-8c6-8 22-8 28-2c8-6 24-6 30 2c10-2 18 2 22 8c-12 6-86 6-98 0z" fill="#fff" stroke-width="2.8"/>
-    <path d="M14 630c10-3 24-3 34 0" stroke="#d6ecf9" stroke-width="3"/>
+    <rect x="-8" y="628" width="92" height="84" rx="3" fill="url(#l-f-box)" stroke="#9a6a32" stroke-width="2"/>
+    <rect x="64" y="629" width="19" height="82" rx="2" fill="#7a4a1c" opacity=".12"/>
+    <path d="M-6 648H82" stroke="#b88446" stroke-width="1.4"/>
+    <rect x="32" y="629" width="12" height="19" fill="#f8e3b6" opacity=".9"/>
+    <rect x="14" y="584" width="62" height="46" rx="3" fill="url(#l-f-box)" stroke="#9a6a32" stroke-width="2"/>
+    <rect x="62" y="585" width="13" height="44" rx="2" fill="#7a4a1c" opacity=".12"/>
+    <path d="M16 595H74" stroke="#b88446" stroke-width="1.4"/>
+    <rect x="39" y="585" width="12" height="10" fill="#f8e3b6" opacity=".9"/>
+    <path d="M10 590c-2-8 8-12 16-8c4-8 18-8 22-2c6-6 20-6 24 2c8-2 12 6 6 10c-10 4-58 4-68-2z" fill="url(#l-f-snow)" stroke="#8fb1cc" stroke-width="1.6"/>
+    <path d="M22 584c8-3 20-4 30-3" stroke="#fff" stroke-width="2.6" fill="none"/>
+    <path d="M-10 634c-2-8 10-12 18-8c6-8 22-8 28-2c8-6 24-6 30 2c10-2 18 2 22 8c-12 6-86 6-98 0z" fill="url(#l-f-snow)" stroke="#8fb1cc" stroke-width="1.6"/>
+    <path d="M6 628c10-3 26-4 38-3" stroke="#fff" stroke-width="2.6" fill="none"/>
     <!-- bollard and cone, front right -->
-    <rect x="1218" y="610" width="34" height="100" rx="8" fill="#ffd23f" stroke-width="4"/>
-    <path d="M1218 630h34M1218 660h34M1218 690h34" stroke="#1a2332" stroke-width="9" stroke-linecap="butt"/>
-    <rect x="1240" y="612" width="10" height="96" fill="#d39a2b" stroke="none" opacity=".5"/>
-    <rect x="1218" y="610" width="34" height="100" rx="8" fill="none" stroke-width="4"/>
-    <path d="M1216 612c4-8 34-8 38 0c-6 4-32 4-38 0z" fill="#fff" stroke-width="2.6"/>
-    <path d="M1176 704l12-62h12l12 62z" fill="#f08a2c" stroke-width="3.6"/>
-    <path d="M1182 676h24l2 12h-28z" fill="#fff" stroke="none"/>
-    <path d="M1176 704l12-62h12l12 62z" fill="none" stroke-width="3.6"/>
-    <rect x="1166" y="700" width="56" height="10" rx="3" fill="#c4661a" stroke-width="3.4"/>
+    <rect x="1218" y="610" width="34" height="100" rx="9" fill="url(#l-f-bollard)" stroke="#a8730e" stroke-width="2"/>
+    <path d="M1219 630h32M1219 660h32M1219 690h32" stroke="#2f3a48" stroke-width="9" stroke-linecap="butt"/>
+    <path d="M1225 616v88" stroke="#fff" stroke-width="3" opacity=".45"/>
+    <path d="M1216 612c4-8 34-8 38 0c-6 4-32 4-38 0z" fill="url(#l-f-snow)" stroke="#8fb1cc" stroke-width="1.4"/>
+    <ellipse cx="1194" cy="706" rx="32" ry="4" fill="#1a2332" opacity=".13"/>
+    <path d="M1176 704l12-62h12l12 62z" fill="url(#l-f-cone)" stroke="#a8521a" stroke-width="1.8"/>
+    <path d="M1182 676h24l2 12h-28z" fill="#fff6e4"/>
+    <path d="M1186 650l-6 48" stroke="#fff" stroke-width="2.4" opacity=".5"/>
+    <rect x="1166" y="700" width="56" height="10" rx="3" fill="url(#l-f-base)" stroke="#8a3e10" stroke-width="1.6"/>
   </g>
 </svg>
