@@ -20,12 +20,12 @@ Dismiss the title card (`#hello`) with a click, Enter or Escape.
 1. **A real delete is NOT built, and it waits on the user's decision.** Don't start it unasked. The safe design:
    - It is off by default.
    - It runs only from the player's final sea confirm (face 2), and never from the scout, the chat bar or the model path.
-   - It deletes only a cache: a `sea: true` item whose exact path `/api/scan` returned this session. Folder-look rows don't qualify, because `folderKind` judges them by name alone.
+   - It deletes only a cache: a `sea: true` item whose exact path `/api/scan` returned this session. Folder-look rows don't qualify (they come from a different scan and their kinds are inferred).
    - Afterwards it re-reads `/api/disk` and moves the pole from that reading, never from `item.tenths`.
    - `world.rehearsal` is one flag for the whole harbor. A throw needs its own result before it can stop saying "practice".
    - Open questions for the user: the Locker empty sends everything in it to the sea, apps and your own files included (see Known traps). And should build output from a folder look ever be deletable?
 2. **More live scouts (issue 6).** Only Claude is wired (`src/engine/scout.ts`). `/api/agents` detects `cursor-agent` and `codex` but nothing calls them. They need the same contract: no tools, one line in, a JSON reply. Until then their card says "Scripted · not connected yet".
-3. **Your stuff stays the player's to open.** It is empty under the live API, and nothing should list it on its own (see Privacy). Today "look in ~/Downloads" makes a new shed, not a fill of the Your stuff boat (`useRealHold(world, 'stuff', …)` is only ever called with `[]`). That look lists subfolders only, because `du -d 1` skips loose files, so a `.dmg` or `.mov` never shows. The hold's empty note already points players at that look.
+3. **Your stuff stays the player's to open.** It is empty under the live API, and nothing lists it on its own (see Privacy). "look in ~/Downloads" (or Desktop, Documents, Movies, Music, Pictures) fills the green boat via `lookInOwnFolder` and `useRealHold(..., under)`, so several looks add up. macOS may show its own permission prompt first; the scout says so.
 4. **The Mac app (issue 5).** Leave it until the delete question is settled.
 
 ## What this is
@@ -48,7 +48,7 @@ A Mac disk cleanup tool that plays like a late-2000s kids' MMO. You are a pengui
 - **Looks.** The sim never reads the disk. `takeRope`, `lookIn` and "look in mac" set `world.lookRequest`, and `serveLook()` in `main.ts` runs it.
   - `mac` runs `loadThisMac(false)`: the disk, then `/api/scan`, then `/api/apps`.
   - Any other look runs `lookInFolder` → `/api/look` → `useFolder`.
-  - Build output (`dist`, `.next`, `target`, `build`…, see `folderKind`) becomes sea-safe sacks. Dependencies (`node_modules`, `.venv`, `Pods`…) become Locker-only crates. Anything else becomes a trunk the chute refuses.
+  - Build output (`dist`, `.next`, `target`, `build`…, see `folderKind`) becomes sea-safe sacks, but only when the looked-at folder is a project (it holds `package.json`, `Cargo.toml`, `pyproject.toml`, `go.mod`, an `.xcodeproj`…); otherwise it is just a trunk. Dependencies (`node_modules`, `.venv`, `Pods`…) become Locker-only crates. Anything else becomes a trunk the chute refuses.
   - A rescan replaces only what is still lying in the hold. Thrown, kept and carried items stay.
 - **Steering.** While a look runs (`world.tool`), each new line queues in `world.steering` (at most 6) and shows as "After {look} · {line}".
   - `finishTool` puts every queued non-question on the brief, then acts on the newest line.
@@ -81,7 +81,7 @@ A Mac disk cleanup tool that plays like a late-2000s kids' MMO. You are a pengui
    - Face 2 reverses its buttons (`#card.face-2 .card-actions`), so "Throw it" never sits under the first Yes.
    - Y and Enter ignore held-key repeats.
    - Emptying the Locker uses the same two faces.
-3. **Only sea-safe things reach the sea.** Carrying a `sea: false` item (an app, your stuff, dependencies) to the sea opens a Locker card that says "The chute won't take this." The Locker empty breaks this today (see Known traps).
+3. **Only sea-safe things reach the sea.** Carrying a `sea: false` item (an app, your stuff, dependencies) to the sea opens a Locker card that says "The chute won't take this." Tipping the Locker into the sea takes only `sea: true` items; the rest stay, and the card says how many.
 4. **The Locker gives things back.** Carrying a Locker item out through the roll door (or pressing Q) asks "Put X back?". Yes puts it back in its hold. Locker moves never move the pole.
 5. **The pole is honest.** It shows real free space (`statfs`). While `world.rehearsal` is true (it always is today), throws add to `world.rehearsedTenths` and never to `freeTenths`. Face 2, the splash line, the player card and the title card all say it's practice.
 6. **The scout's words are true.** It never claims to be connected, to have scanned or to have deleted unless that happened.
@@ -117,7 +117,7 @@ What the tests cover:
   - The bell and repo scope, both sea faces, practice throws leaving the pole alone, apps redirected to the Locker, refusing a card, and the Glasshouse rope.
   - One scout, no throwing from chat, switching scouts, brief matching, walking up before lifting, model lists and effort, notes handed to the next scout, the steering queue, and waddling during a look.
   - The live path: `'ask'` only when Claude is found, questions never noted, `liveReply`, `liveFailed`.
-  - A practice Locker empty, `useFolder` kinds, a rescan keeping thrown, kept or carried items, `travel`, and `useRealHold` for apps and an empty Your stuff.
+  - A practice Locker empty that takes only sea-safe things (and refuses when there are none), own-folder looks filling Your stuff, an empty shed really looking, `useFolder` kinds, a rescan keeping thrown, kept or carried items, `travel`, and `useRealHold` for apps and an empty Your stuff.
 - `tests/scout.test.ts` (7 tests) covers `clean()` and `claimsAnAction()`.
 - `tests/scan.test.ts` (1 test) covers `parseDu`.
 - Nothing tests putting a Locker item back (rule 4), `readDisk`, `scanCaches`, `scanFolder`, `scanApps`, spawning `claude`, the `/api` middleware, `main.ts` or the DOM. Check those in the browser.
@@ -169,7 +169,7 @@ Everything here is the `harbor-api` middleware (`configureServer` in `vite.confi
   - Returns the top 8 as `{ name, path, bytes, days }`, where `days` is the folder's mtime age.
   - `useRealCaches` swaps the Mac caches still in the hold (including "14 small caches") for `live-*` sacks: `sea: true`, phrase "last changed N ago" (or "measured on this Mac" with no `days`), and one shared line. An empty scan keeps the fixtures.
 - `GET /api/apps`. `scanApps` runs `du -d 1 /Applications` (40s timeout) and takes the six largest `.app` bundles of at least 200,000 KB. It reads `kMDItemLastUsedDate` with `mdls`. `useRealHold` turns them into Locker-only crates that say "last opened N ago" or "no last-opened date on record". It is fetched after the caches and isn't part of the look.
-- `GET /api/look?path=`. `scanFolder` resolves the `realpath`, refuses anything outside home or home itself, then runs `du -k -d 1` (hidden folders included). It returns folders of at least 1,000 KB, top 8, each with a `folderKind`. Errors return a 404, and the scout says "I couldn't look in {path}. Is it a folder in your home?".
+- `GET /api/look?path=`. `scanFolder` resolves the `realpath`, refuses anything outside home or home itself, then runs `du -k -d 1` (hidden folders included) and also lists loose files of 50 MB and up, which `du -d 1` would miss. It returns folders of at least 1,000 KB, top 8, each with a `folderKind`. Errors return a 404, and the scout says "I couldn't look in {path}. Is it a folder in your home?".
 - `GET /api/agents`. Runs `command -v` in a login shell for `claude`, `cursor-agent` and `codex`, and caches the result for 60s. That proves the binary is on the PATH, not that anyone is signed in.
 - `POST /api/scout`.
   - It takes same-origin `application/json` only (403 otherwise), one call at a time (429), and a body of up to 200 KB. Bad JSON gets a 400, and a failed call a 502.
@@ -193,13 +193,10 @@ Everything here is the `harbor-api` middleware (`configureServer` in `vite.confi
 
 ## Known traps
 
-- **The Locker empty breaks rule 3.** `finishEmpty` sends every Locker item to the sea, `sea: false` ones included. The sim test "empties the Locker into the sea as practice" empties World of Warcraft. It is harmless while throws are practice, but it must be settled before any real delete.
-- **Folder kinds go by name alone.** `folderKind` marks any folder called `build`, `out`, `dist`, `.cache`… as sea-safe, wherever it sits, even under `~/Documents`.
-- **Entering an empty shed promises a look that never happens.** The scout says "Nothing mapped yet. I'll look through this folder." and the empty note says it will look, but walking in (`requestScope`) sets no `lookRequest`. Only a typed `look in <shed>` measures it.
 - **Brief matching uses words from item names.** Live caches are named after their top folder, so Chrome's cache is `Google`. "leave the chrome cache alone" matches the fixture "Chrome cache" but not the live row (#10).
 - **Places.** `say()` treats input as a place only for `look in|scan|repo <x>`, where `<x>` is `~`, a path starting with `~` or `/`, mac/home/this mac/everything, or a known shed. Everything else goes on the brief. A `/` path outside home still makes a shed, and then the look fails.
 - **Lines queued during a live answer** go on the brief (questions excepted). They are not sent to Claude and get no spoken reply: `liveReply` calls `finishTool(world, now, true)` and then speaks Claude's answer. The reply's `hole` is unused.
-- **The pole sound.** `sound()` plays `flap()` and `splash()` whenever `freeTenths` changes. Only the first disk reading resets `prevFree`. A bell rescan that reads a different free space therefore flaps and splashes with no bytes returned, and a real delete would stack the sound on the throw's own splash.
+- **The pole sound.** `sound()` plays `flap()` and `splash()` whenever `freeTenths` changes. Every disk reading (first count and rescans) resets `prevFree` first, so only bytes coming back would ever make that sound. When a real delete lands, that sound will stack with the throw's own splash.
 - **`claimsAnAction()` is a net, not a guarantee.** A model can phrase around a regex. The no-tools flag is the real guarantee.
 - **Removing items.** Code that removes items from `world.items` must call `syncPropNodes()`, or their DOM nodes linger as ghosts.
 - **Duplicate ids.** Templates are cloned (the scout card, the dock face), so their clip-path ids (`youClip`, `clClip`, …) repeat. That's harmless only because the shapes are identical. In art files, prefix every id (see [docs/art.md](docs/art.md)).

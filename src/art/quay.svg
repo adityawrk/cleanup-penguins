@@ -596,7 +596,7 @@
 
   <!-- BELL POST: ring it to map the whole Mac -->
   <g class="hot q-bell" data-act="rope" stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round">
-    <title>Map the whole Mac</title>
+    <title>Ring to count this Mac again</title>
     <ellipse cx="294" cy="612" rx="56" ry="8" fill="#1a2332" opacity=".13" stroke="none"/>
     <rect x="246" y="506" width="12" height="106" rx="4" fill="#9a6236" stroke-width="4.4"/>
     <rect x="253" y="510" width="4" height="100" fill="#7a4a27" stroke="none"/>

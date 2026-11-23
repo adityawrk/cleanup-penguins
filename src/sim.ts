@@ -875,7 +875,9 @@ function tryPending(world: World, now: number) {
     }
     world.scope = scope
     arriveParty(world, 'hold')
-    if (scope.kind === 'repo' && world.scout && !world.items.some((item) => item.scopeId === scope.id && item.disposed === 'none')) {
+    if (scope.kind === 'repo' && world.scout && !world.items.some((item) => item.scopeId === scope.id && item.disposed === 'none') && !world.tool) {
+      world.lookRequest = { scopeId: scope.id, path: scope.path }
+      beginTool(world, scope.label, false)
       sayLine(being(world, world.scout), "Nothing mapped yet. I'll look through this folder.", now, 5000)
     }
     return
@@ -913,6 +915,10 @@ function tryPending(world: World, now: number) {
     world.pending = null
     if (world.lockerTenths <= 0) {
       sayLine(being(world, 'you'), 'The Locker is empty.', now, 2200)
+      return
+    }
+    if (!world.items.some((item) => item.disposed === 'locker' && item.sea)) {
+      sayLine(being(world, 'you'), "Nothing in here can go to the sea. It all stays.", now, 3200)
       return
     }
     world.card = { kind: 'empty', face: 1, lockedUntil: 0 }
@@ -1217,12 +1223,14 @@ function finishEmpty(world: World, now: number) {
     const item = itemById(world, id)
     if (item && item.disposed === 'locker') item.disposed = 'sea'
   }
-  world.lockerTenths = 0
+  world.lockerTenths = Math.max(0, world.lockerTenths - job.tenths)
   world.splash = { until: now + 800, x: 1195, y: 592 }
+  const kept = world.items.some((item) => item.disposed === 'locker')
+  const tail = kept ? ' The rest stays here.' : ''
   if (world.rehearsal) {
     world.rehearsedTenths += job.tenths
-    punchline(world, "Splash! Practice run. They're still on your disk.", now)
-  } else punchline(world, "It's gone.", now)
+    punchline(world, `Splash! Practice run. Still on your disk.${tail}`, now)
+  } else punchline(world, `It's gone.${tail}`, now)
 }
 
 export function answer(world: World, yes: boolean, now: number) {
@@ -1264,7 +1272,7 @@ export function answer(world: World, yes: boolean, now: number) {
     world.carrying = null
     releasePosts(world)
     arriveParty(world, 'quay')
-    punchline(world, 'Back on the skiff.', now)
+    punchline(world, 'Back on its boat.', now)
     return
   }
   if (card.kind === 'wake') {
@@ -1295,8 +1303,11 @@ export function answer(world: World, yes: boolean, now: number) {
     return
   }
   if (card.kind === 'empty' && card.face === 2) {
-    const ids = world.items.filter((item) => item.disposed === 'locker').map((item) => item.id)
-    world.emptying = { started: now, until: now + 700 + ids.length * 110, tenths: world.lockerTenths, ids }
+    // Rule 3 holds here too: only sea-safe things leave. Apps and your own files stay in the Locker.
+    const safe = world.items.filter((item) => item.disposed === 'locker' && item.sea)
+    const ids = safe.map((item) => item.id)
+    const tenths = safe.reduce((sum, item) => sum + item.tenths, 0)
+    world.emptying = { started: now, until: now + 700 + ids.length * 110, tenths, ids }
     world.card = null
   }
 }
@@ -1326,13 +1337,16 @@ export function cardModel(world: World, now: number): CardView | null {
     }
   }
   if (card.kind === 'empty') {
-    const count = world.items.filter((item) => item.disposed === 'locker').length
+    const safe = world.items.filter((item) => item.disposed === 'locker' && item.sea)
+    const count = safe.length
+    const safeTenths = safe.reduce((sum, item) => sum + item.tenths, 0)
+    const staying = world.items.filter((item) => item.disposed === 'locker' && !item.sea).length
     if (card.face === 1) {
       return {
-        title: 'Empty the Locker into the sea?',
-        meta: `${gbWord(world.lockerTenths)} · ${count} ${count === 1 ? 'thing' : 'things'}`,
+        title: 'Tip the Locker into the sea?',
+        meta: `${gbWord(safeTenths)} · ${count} ${count === 1 ? 'thing' : 'things'}`,
         path: '',
-        note: 'This is permanent.',
+        note: staying ? `This is permanent. ${staying} ${staying === 1 ? 'thing stays' : 'things stay'}: the chute won't take apps or your own files.` : 'This is permanent.',
         yes: 'Yes',
         no: 'No',
         focus: 'no',
@@ -1468,7 +1482,7 @@ export function say(world: World, text: string, now: number): SayKind {
       target.tx = SPOTS.bead.x
       target.ty = 630
       beginTool(world, 'the rope')
-      sayLine(target, 'The heavy one is on the rope.', now, 4000)
+      sayLine(target, 'The heavy one is on the red boat.', now, 4000)
     } else {
       sayLine(target, 'The heavy one is the closest sack.', now, 4000)
     }
@@ -1545,6 +1559,17 @@ export function lookIn(world: World, raw: string, now: number) {
     if (scout) sayLine(scout, "I'll count the whole Mac again.", now, 4000)
     return
   }
+  // Your own folders fill the "Your stuff" boat; they don't become sheds. macOS may ask the player first.
+  const own = path.match(/^~\/(Downloads|Desktop|Documents|Movies|Music|Pictures)(\/.*)?$/i)
+  if (own) {
+    world.scope = MAC_SCOPE
+    world.lookRequest = { scopeId: 'stuff', path }
+    if (scout) {
+      beginTool(world, own[1], false)
+      sayLine(scout, `I'll look in ${own[1]}. macOS may ask you first.`, now, 4600)
+    }
+    return
+  }
   let scope = world.repos.find(
     (repo) => repo.path === path || repo.label.toLowerCase() === path.toLowerCase() || path.endsWith('/' + repo.label),
   )
@@ -1601,7 +1626,7 @@ export function finishTool(world: World, now: number, quiet = false) {
     scout.tx = SPOTS.bead.x
     scout.ty = 630
     beginTool(world, 'the rope')
-    sayLine(scout, 'The heavy one is on the rope.', now, 4000)
+    sayLine(scout, 'The heavy one is on the red boat.', now, 4000)
     return
   }
   if (/^(?:throw|delete|clean|empty|purge|rm)(?:\s+it)?$/.test(lower)) {
@@ -1838,9 +1863,10 @@ function ago(days: number): string {
  * Replace the fixture apps or "your stuff" with what this Mac really has. Neither can go to the sea.
  * Thrown, kept and carried items stay as they are. Empty rows mean the hold is honestly empty.
  */
-export function useRealHold(world: World, hold: 'apps' | 'stuff', rows: { name: string; path: string; bytes: number; days: number | null; form: Item['form'] }[]) {
+export function useRealHold(world: World, hold: 'apps' | 'stuff', rows: { name: string; path: string; bytes: number; days: number | null; form: Item['form'] }[], under?: string) {
   const kept = (item: Item) => item.disposed !== 'none' || world.carrying === item.id
-  world.items = world.items.filter((item) => !(item.scopeId === 'mac' && item.hold === hold) || kept(item))
+  const replaced = (item: Item) => item.scopeId === 'mac' && item.hold === hold && (!under || item.path.startsWith(under))
+  world.items = world.items.filter((item) => !replaced(item) || kept(item))
   const keptPaths = new Set(world.items.filter((item) => item.scopeId === 'mac' && item.hold === hold).map((item) => item.path))
   const stamp = (world.lookStamp = (world.lookStamp ?? 0) + 1)
   rows.filter((row) => !keptPaths.has(row.path)).slice(0, 6).forEach((row, index) => {
@@ -1877,7 +1903,7 @@ export function useRealHold(world: World, hold: 'apps' | 'stuff', rows: { name: 
 }
 
 /** Fill a shed's hold with what a folder scan measured: build output can go to the sea, dependencies and the rest to the Locker. */
-export function useFolder(world: World, scopeId: string, rows: { name: string; path: string; bytes: number; kind: 'build' | 'deps' | 'other' }[], now: number) {
+export function useFolder(world: World, scopeId: string, rows: { name: string; path: string; bytes: number; kind: 'build' | 'deps' | 'other' | 'file' }[], now: number) {
   const kept = (item: Item) => item.disposed !== 'none' || world.carrying === item.id
   world.items = world.items.filter((item) => item.scopeId !== scopeId || kept(item))
   const stamp = (world.lookStamp = (world.lookStamp ?? 0) + 1)
@@ -1889,7 +1915,7 @@ export function useFolder(world: World, scopeId: string, rows: { name: string; p
     world.items.push({
       id: `look-${stamp}-${index}`,
       hold: 'caches',
-      form: build ? 'sack' : deps ? 'crate' : 'trunk',
+      form: build ? 'sack' : deps ? 'crate' : row.kind === 'file' && /\.(dmg|pkg|iso|img)$/i.test(row.name) ? 'disk' : 'trunk',
       name: row.name,
       path: row.path,
       tenths,

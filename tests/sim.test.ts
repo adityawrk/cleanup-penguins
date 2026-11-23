@@ -348,7 +348,33 @@ describe('harbor rules', () => {
     expect(world.carrying).toBeNull()
   })
 
-  it('empties the Locker into the sea as practice, leaving the pole alone', () => {
+  it('tips only sea-safe things from the Locker, as practice, and keeps the rest', () => {
+    const world = createWorld('ada')
+    world.items.find((item) => item.id === 'wow')!.disposed = 'locker'
+    world.items.find((item) => item.id === 'codex')!.disposed = 'locker'
+    world.lockerTenths = 490 + 21
+    world.room = 'locker'
+    const you = being(world, 'you')
+    you.x = you.tx = SPOTS.tip.x
+    you.y = you.ty = SPOTS.tip.y
+    requestEmpty(world, 100)
+    expect(world.card?.kind).toBe('empty')
+    expect(cardModel(world, 150)?.meta).toBe('2.1 GB · 1 thing')
+    expect(cardModel(world, 150)?.note).toMatch(/1 thing stays/)
+    answer(world, true, 200)
+    expect(cardModel(world, 300)?.title).toBe('This would be for good.')
+    answer(world, true, 400)
+    expect(world.card?.kind).toBe('empty')
+    answer(world, true, 1100)
+    settle(world, 1200, 1100)
+    expect(world.items.find((item) => item.id === 'codex')?.disposed).toBe('sea')
+    expect(world.items.find((item) => item.id === 'wow')?.disposed).toBe('locker')
+    expect(world.freeTenths).toBe(438)
+    expect(world.rehearsedTenths).toBe(21)
+    expect(world.lockerTenths).toBe(490)
+  })
+
+  it('refuses to tip a Locker that holds nothing sea-safe', () => {
     const world = createWorld('ada')
     world.items.find((item) => item.id === 'wow')!.disposed = 'locker'
     world.lockerTenths = 490
@@ -357,16 +383,8 @@ describe('harbor rules', () => {
     you.x = you.tx = SPOTS.tip.x
     you.y = you.ty = SPOTS.tip.y
     requestEmpty(world, 100)
-    expect(world.card?.kind).toBe('empty')
-    answer(world, true, 200)
-    expect(cardModel(world, 300)?.title).toBe('This would be for good.')
-    answer(world, true, 400)
-    expect(world.card?.kind).toBe('empty')
-    answer(world, true, 1100)
-    settle(world, 1000, 1100)
-    expect(world.freeTenths).toBe(438)
-    expect(world.rehearsedTenths).toBe(490)
-    expect(world.lockerTenths).toBe(0)
+    expect(world.card).toBeNull()
+    expect(you.bubble).toMatch(/Nothing in here can go to the sea/)
   })
 
   it('turns a measured folder into cargo: build output can go to the sea, dependencies cannot', () => {
@@ -414,5 +432,29 @@ describe('harbor rules', () => {
     expect(apps.map((item) => item.phrase)).toEqual(['last opened 11 months ago', 'last opened 2 days ago', 'no last-opened date on record'])
     expect(advice(world, apps[0]).line).toBe("You haven't opened this in 11 months.")
     expect(world.items.filter((item) => item.hold === 'stuff')).toEqual([])
+  })
+
+  it('looks in your own folders for the Your stuff boat, without making a shed', () => {
+    const world = createWorld('ada')
+    useRealHold(world, 'stuff', []) // the live page clears the made-up fixtures on first load
+    const sheds = world.repos.length
+    lookIn(world, '~/Downloads', 10)
+    expect(world.lookRequest).toEqual({ scopeId: 'stuff', path: '~/Downloads' })
+    expect(world.repos.length).toBe(sheds)
+    expect(being(world, 'claude').bubble).toMatch(/macOS may ask you first/)
+    useRealHold(world, 'stuff', [{ name: 'Big.dmg', path: '~/Downloads/Big.dmg', bytes: 3e9, days: 120, form: 'disk' }], '~/Downloads')
+    expect(world.items.filter((item) => item.hold === 'stuff' && item.disposed === 'none').map((item) => item.name)).toEqual(['Big.dmg'])
+  })
+
+  it('really looks when you walk into a shed nothing has measured yet', () => {
+    const world = createWorld('ada')
+    lookIn(world, '~/projects/fresh-repo', 10)
+    world.lookRequest = null
+    finishTool(world, 20)
+    const shed = world.repos.find((repo) => repo.label === 'fresh-repo')!
+    requestScope(world, shed.id, 30)
+    settle(world, 3000, 30)
+    expect(world.room).toBe('hold')
+    expect(world.lookRequest).toEqual({ scopeId: shed.id, path: '~/projects/fresh-repo' })
   })
 })

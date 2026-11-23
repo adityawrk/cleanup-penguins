@@ -9,3 +9,14 @@ describe('du output', () => {
     ])
   })
 })
+
+import { folderKind } from '../src/engine/scan'
+
+describe('folderKind', () => {
+  it('treats build-named folders as build output only inside a project', () => {
+    expect(folderKind('dist', true)).toBe('build')
+    expect(folderKind('build', false)).toBe('other')
+    expect(folderKind('node_modules', false)).toBe('deps')
+    expect(folderKind('Photos', true)).toBe('other')
+  })
+})

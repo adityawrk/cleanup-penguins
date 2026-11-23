@@ -1,5 +1,5 @@
 import { execFile } from 'node:child_process'
-import { access, realpath, stat } from 'node:fs/promises'
+import { access, readdir, realpath, stat } from 'node:fs/promises'
 import { homedir } from 'node:os'
 import { statfs } from 'node:fs/promises'
 
@@ -91,19 +91,23 @@ export async function scanCaches(): Promise<ScannedCache[]> {
 }
 
 /** What a folder inside a repo or project is, by name. Build output can go to the sea; dependencies go to the Locker. */
-export type FolderKind = 'build' | 'deps' | 'other'
+export type FolderKind = 'build' | 'deps' | 'other' | 'file'
 
 const BUILD = new Set(['dist', 'build', 'out', '.next', '.nuxt', '.svelte-kit', '.turbo', '.parcel-cache', '.cache', 'target', 'coverage', '.vite', 'DerivedData', '__pycache__', '.pytest_cache', '.gradle'])
 const DEPS = new Set(['node_modules', '.venv', 'venv', 'Pods', 'vendor', '.pnpm-store'])
 
-export function folderKind(name: string): FolderKind {
-  if (BUILD.has(name)) return 'build'
+/** Build output only counts inside a project: a folder named "build" in Documents is somebody's work. */
+export function folderKind(name: string, inProject = true): FolderKind {
+  if (BUILD.has(name) && inProject) return 'build'
   if (DEPS.has(name)) return 'deps'
   return 'other'
 }
 
+const PROJECT_MARKERS = ['package.json', 'Cargo.toml', 'pyproject.toml', 'go.mod', 'Gemfile', 'pom.xml', 'build.gradle', 'Package.swift', 'composer.json', 'Makefile']
+
 export interface ScannedFolder extends ScannedCache {
   kind: FolderKind
+  days?: number
 }
 
 /**
@@ -116,13 +120,33 @@ export async function scanFolder(raw: string): Promise<{ path: string; items: Sc
   const real = await realpath(expanded)
   if (real === home || !real.startsWith(home + '/')) throw new Error('outside home')
   if (!(await stat(real)).isDirectory()) throw new Error('not a folder')
-  const rows = parseDu(await du(real), real, true)
-  const items = rows
-    .filter((row) => row.kb >= 1_000)
-    .map((row) => ({ name: row.name, path: displayPath(`${real}/${row.name}`), bytes: row.kb * 1024, kind: folderKind(row.name) }))
-    .sort((a, b) => b.bytes - a.bytes)
-    .slice(0, 8)
-  return { path: displayPath(real), items }
+  const entries = await readdir(real, { withFileTypes: true })
+  const inProject = entries.some((entry) => entry.isFile() && PROJECT_MARKERS.includes(entry.name)) || entries.some((entry) => entry.name.endsWith('.xcodeproj'))
+  const daysOf = async (path: string) => {
+    try {
+      return Math.max(0, Math.round((Date.now() - (await stat(path)).mtimeMs) / 86_400_000))
+    } catch {
+      return undefined
+    }
+  }
+  const items: ScannedFolder[] = []
+  for (const row of parseDu(await du(real), real, true)) {
+    if (row.kb < 1_000) continue
+    items.push({ name: row.name, path: displayPath(`${real}/${row.name}`), bytes: row.kb * 1024, kind: folderKind(row.name, inProject), days: await daysOf(`${real}/${row.name}`) })
+  }
+  // du -d 1 lists folders only; big loose files (an installer, a recording) matter too.
+  for (const entry of entries) {
+    if (!entry.isFile() || entry.name.startsWith('.')) continue
+    try {
+      const info = await stat(`${real}/${entry.name}`)
+      if (info.size < 50_000_000) continue
+      items.push({ name: entry.name, path: displayPath(`${real}/${entry.name}`), bytes: info.size, kind: 'file', days: Math.max(0, Math.round((Date.now() - info.mtimeMs) / 86_400_000)) })
+    } catch {
+      continue
+    }
+  }
+  items.sort((a, b) => b.bytes - a.bytes)
+  return { path: displayPath(real), items: items.slice(0, 8) }
 }
 
 export interface ScannedThing {

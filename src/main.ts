@@ -1053,8 +1053,8 @@ async function loadThisMac(first = true) {
     const disk = await fetch('/api/disk').then((response) => response.json() as Promise<{ freeTenths: number; capacityTenths: number }>)
     if (disk.capacityTenths > 0) {
       useRealDisk(world, disk.freeTenths, disk.capacityTenths)
-      // Reading the disk isn't bytes coming back: no flap, no splash.
-      if (first) prevFree = world.freeTenths
+      // Reading the disk isn't bytes coming back: no flap, no splash, first count or rescan.
+      prevFree = world.freeTenths
     }
     const scan = await fetch('/api/scan').then((response) => response.json() as Promise<{ items: { name: string; path: string; bytes: number }[] }>)
     useRealCaches(world, scan.items ?? [])
@@ -1093,12 +1093,37 @@ async function lookInFolder(scopeId: string, path: string) {
   }
 }
 
+/** Measure one of the player's own folders (they asked) and put its big things on the "Your stuff" boat. */
+async function lookInOwnFolder(path: string) {
+  try {
+    const response = await fetch(`/api/look?path=${encodeURIComponent(path)}`)
+    if (!response.ok) throw new Error(String(response.status))
+    const result = (await response.json()) as { path: string; items: { name: string; path: string; bytes: number; kind: string; days?: number }[] }
+    const rows = result.items.map((row) => ({
+      name: row.name,
+      path: row.path,
+      bytes: row.bytes,
+      days: row.days ?? null,
+      form: (/\.(dmg|pkg|iso|img)$/i.test(row.name) ? 'disk' : row.kind === 'deps' ? 'crate' : 'trunk') as Item['form'],
+    }))
+    useRealHold(world, 'stuff', rows, result.path)
+    syncPropNodes()
+    finishTool(world, performance.now())
+    const total = rows.reduce((sum, row) => sum + row.bytes, 0)
+    scoutSay(world, rows.length ? `${rows.length} big ${rows.length === 1 ? 'thing' : 'things'} in there, ${gbWord(Math.max(1, Math.round(total / 1e8)))}. They're on the green boat.` : 'Nothing big in there. Tidy!', performance.now(), 4800)
+  } catch {
+    finishTool(world, performance.now())
+    scoutSay(world, `I couldn't look in ${path}. If macOS asked, it needs a yes.`, performance.now(), 4800)
+  }
+}
+
 /** Do the look the sim asked for. */
 function serveLook() {
   const request = world.lookRequest
   if (!request) return
   world.lookRequest = null
   if (request.scopeId === 'mac') void loadThisMac(false)
+  else if (request.scopeId === 'stuff') void lookInOwnFolder(request.path)
   else void lookInFolder(request.scopeId, request.path)
 }
 
