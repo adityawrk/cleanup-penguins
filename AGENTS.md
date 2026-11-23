@@ -35,6 +35,7 @@ A Mac disk cleanup tool that plays like a late-2000s kids' MMO. You are a pengui
 - **Quay** (`quay.svg`). Three boats are the holds: Caches (red trawler), Applications (blue tug) and Your stuff (green sailboat). They moor at three depths along the arched deck edge. The Locker warehouse stands on the left and the Glasshouse on the right. The tide board (`.pole`, HTML flap cells over the painted board) shows free space. The nest (`data-act="who"`) opens the scout card.
 - **The bell** (`data-act="rope"`, `takeRope`, F on the quay) sets the scope to This Mac and requests a rescan (`lookRequest` for `mac`), unless a look is already running. The scout calls out the biggest cache, and you walk to the Caches hold.
 - **Sheds** are repos and looked-in folders, drawn as HTML buttons by `syncSheds` (`main.ts`) at `shedSlot(i)`. The first two stand on the back edge. The rest stand on the deck in front, at 0.82 scale. The starter sheds are `cleanup-penguins` and `lighthouse`.
+  Under the live API the made-up starter sheds are replaced by your two most recent real repos (`GET /api/repos`, `scanRepos`: git folders one level inside `~/projects`, `~/code`, `~/dev`, `~/src`, `~/Developer`, `~/repos`, `~/workspace`, `~/GitHub`, `~/git`, `~/Sites`; never the macOS-protected folders), via `useRealRepos`, which keeps sheds the player asked about. Walking into an unmeasured shed starts a real look. Extra sheds (index 2+) stand smaller in front with their sign shown on hover (`.shed.is-extra`).
 - **Hold** (`hold.svg`). A ship's belly with the cargo on the floor. The steel footlocker on the left is the Locker bin ("It comes back."). The cargo door on the right is the sea ("Gone for good."). The ladder goes up to the quay.
 - **Locker** (`locker.svg`). Kept things stand in five numbered bays, then a staggered second row (`lockerSlot`). The tip hopper (`data-act="empty"`) empties everything into the sea after two confirms. The roll door goes back out.
 - **Glasshouse** (`glasshouse.svg`). Look but don't touch. macOS, the Docker disk and Photos are exhibits behind a rope. The floor stops at y 560 ("Oof."). Each exhibit says one fixed line (`bumpBuoy`).
@@ -62,6 +63,7 @@ A Mac disk cleanup tool that plays like a late-2000s kids' MMO. You are a pengui
   - Walking away from the camera shows the back (`.is-back` hides `.face` and `.belly`).
   - Quay toys (`data-act="toy"`, `playToy`): the gull, the lighthouse and the fish crate. Snow falls on the quay.
 - **Harbor folk** (`src/npcs.ts`). Four penguins potter about: Captain Gil and Mo on the quay, Bolt in the Locker, Fern in the Glasshouse. Each is a recolored copy of `tpl-you` with a hat. Click one (`data-act="npc"`, `talkTo`) and it says its next tip. They live outside the sim. They are presentation only: they carry nothing, change no rule, and never speak for the scout. Their tips must stay true.
+  They wear a small speech badge (`.npc-badge`) until the player has talked to them once, so they read as NPCs with tips rather than other players.
 - **First run.** The scout guides one loop with arrows: board the red boat, lift something, then the sea or the Locker. It is done once a practice throw or a Locker keep happens, and it is remembered in `localStorage` (`harbor-guide-v1`).
 - **Sound.** Each room has an original synthesized loop (`TUNES` in `src/audio.ts`). The dock's note button toggles music (`harbor-music`). The speaker button mutes everything. Audio unlocks on the first click and pauses while the tab is hidden.
 - **Privacy.**
@@ -185,7 +187,7 @@ Everything here is the `harbor-api` middleware (`configureServer` in `vite.confi
 - Without the API (under `vite preview` or `dist/`), the page stays on fixture data and a scripted scout:
   - World of Warcraft (49 GB), Your stuff (a screen recording and an installer disk), and the caches.
   - The pole, 43.8 GB free of 512. It shows until `/api/disk` answers, and stays if that fails.
-- The starter sheds' cargo (`node_modules` and `dist` in `cleanup-penguins`, `.next` in `lighthouse`) stays fixture until the player types `look in <shed>`. Walking into the shed doesn't measure it.
+- Without the dev API, the starter sheds (`cleanup-penguins`, `lighthouse`) and their cargo are demo fixtures. Under the live API they are replaced by real repos.
 - Folder looks have no ages.
 - The Glasshouse exhibits and "The panes are clear." are fixed. `world.fda` is always true and nothing reads it.
 - Codex, Cursor and custom scouts are scripted. Every scripted line is a hardcoded string in `sim.ts` or `main.ts`.
