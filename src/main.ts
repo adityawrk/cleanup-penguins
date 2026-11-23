@@ -521,7 +521,8 @@ function sync(now: number) {
     const room: Room = id !== 'you' && !actor.awake ? 'quay' : world.room
     const parent = roomObjects(room)
     if (el.parentElement !== parent) parent.appendChild(el)
-    const depth = (0.88 + Math.min(1, Math.max(0, (actor.y - 480) / 220)) * 0.16) * (id === 'you' ? YOU_SIZE : SCOUT_SIZE)
+    // Farther up the floor reads farther away: characters scale 0.84 at the back edge to 1.06 at the front.
+    const depth = (0.84 + Math.min(1, Math.max(0, (actor.y - 480) / 220)) * 0.22) * (id === 'you' ? YOU_SIZE : SCOUT_SIZE)
     el.style.transform = `translate(${actor.x}px, ${actor.y}px) scale(${depth})`
     el.style.setProperty('--inv', String(1 / depth))
     // Keep bubbles on the stage: slide them in from the edges, in the sprite's own (scaled) units.

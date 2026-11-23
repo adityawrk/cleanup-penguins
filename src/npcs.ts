@@ -288,7 +288,7 @@ export function stepNpcs(now: number, dt: number, room: Room, scale: number, sti
     }
     // Turn to face the player when they come close and nobody is walking.
     if (!walking && player && Math.hypot(player.x - npc.x, (player.y - npc.y) * 1.5) < 170) npc.facing = player.x >= npc.x ? 1 : -1
-    const depth = (0.88 + Math.min(1, Math.max(0, (npc.y - 480) / 220)) * 0.16) * scale * npc.def.size
+    const depth = (0.84 + Math.min(1, Math.max(0, (npc.y - 480) / 220)) * 0.22) * scale * npc.def.size
     npc.el.style.transform = `translate(${npc.x}px, ${npc.y}px) scale(${depth})`
     npc.el.style.setProperty('--inv', String(1 / depth))
     npc.el.style.zIndex = String(Math.round(npc.y))
