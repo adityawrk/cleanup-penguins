@@ -1823,6 +1823,56 @@ export function useRealCaches(world: World, rows: { name: string; path: string; 
   })
 }
 
+function ago(days: number): string {
+  if (days <= 0) return 'today'
+  if (days === 1) return 'yesterday'
+  if (days < 45) return `${days} days ago`
+  if (days < 540) return `${Math.round(days / 30)} months ago`
+  return `${Math.round(days / 365)} years ago`
+}
+
+/**
+ * Replace the fixture apps or "your stuff" with what this Mac really has. Neither can go to the sea.
+ * Thrown, kept and carried items stay as they are. Empty rows mean the hold is honestly empty.
+ */
+export function useRealHold(world: World, hold: 'apps' | 'stuff', rows: { name: string; path: string; bytes: number; days: number | null; form: Item['form'] }[]) {
+  const kept = (item: Item) => item.disposed !== 'none' || world.carrying === item.id
+  world.items = world.items.filter((item) => !(item.scopeId === 'mac' && item.hold === hold) || kept(item))
+  const keptPaths = new Set(world.items.filter((item) => item.scopeId === 'mac' && item.hold === hold).map((item) => item.path))
+  const stamp = (world.lookStamp = (world.lookStamp ?? 0) + 1)
+  rows.filter((row) => !keptPaths.has(row.path)).slice(0, 6).forEach((row, index) => {
+    const spot = LIVE_SPOTS[index] ?? { x: 640, y: 600 }
+    const app = hold === 'apps'
+    const old = row.days === null || row.days > 120
+    const when = row.days === null ? (app ? 'no last-opened date on record' : 'date unknown') : `${app ? 'last opened' : 'saved'} ${ago(row.days)}`
+    world.items.push({
+      id: `${hold}-${stamp}-${index}`,
+      hold,
+      form: row.form,
+      name: row.name,
+      path: row.path,
+      tenths: Math.max(1, Math.round(row.bytes / 1e8)),
+      phrase: when,
+      sea: false,
+      stale: old,
+      x: spot.x,
+      y: spot.y,
+      disposed: 'none',
+      scopeId: 'mac',
+      seaBird: null,
+      binBird: null,
+      seaLine: null,
+      binLine: app
+        ? row.days === null ? 'No record of you opening this. The Locker can keep it.' : old ? `You haven't opened this in ${ago(row.days).replace(' ago', '')}.` : `You opened this ${ago(row.days)}. Maybe keep it.`
+        : old ? 'This has sat here a while. The Locker can keep it.' : 'This is recent. Maybe keep it.',
+      rebuild: '',
+      sheet: app
+        ? `An application, ${when}. The chute won't take apps. The Locker keeps it and can give it back.`
+        : `A big file, ${when}. The chute won't take your own files. The Locker keeps it and can give it back.`,
+    })
+  })
+}
+
 /** Fill a shed's hold with what a folder scan measured: build output can go to the sea, dependencies and the rest to the Locker. */
 export function useFolder(world: World, scopeId: string, rows: { name: string; path: string; bytes: number; kind: 'build' | 'deps' | 'other' }[], now: number) {
   const kept = (item: Item) => item.disposed !== 'none' || world.carrying === item.id

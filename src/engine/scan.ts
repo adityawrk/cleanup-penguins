@@ -115,3 +115,39 @@ export async function scanFolder(raw: string): Promise<{ path: string; items: Sc
     .slice(0, 8)
   return { path: displayPath(real), items }
 }
+
+export interface ScannedThing {
+  name: string
+  path: string
+  bytes: number
+  /** Days since macOS last saw it opened (apps) or since it was saved (files). Null when unknown. */
+  days: number | null
+  form: 'crate' | 'trunk' | 'disk'
+}
+
+function run(cmd: string, args: string[], timeout = 20000): Promise<string> {
+  return new Promise((resolve) => {
+    execFile(cmd, args, { timeout, maxBuffer: 8 * 1024 * 1024 }, (_error, stdout) => resolve(stdout ?? ''))
+  })
+}
+
+function daysSince(date: Date | null): number | null {
+  if (!date || Number.isNaN(date.getTime())) return null
+  return Math.max(0, Math.round((Date.now() - date.getTime()) / 86_400_000))
+}
+
+/** The biggest apps in /Applications, with the last-opened date Spotlight keeps. Read only. */
+export async function scanApps(): Promise<ScannedThing[]> {
+  const root = '/Applications'
+  const rows = parseDu(await run('du', ['-k', '-d', '1', root], 40000), root)
+    .filter((row) => row.name.endsWith('.app') && row.kb >= 200_000)
+    .sort((a, b) => b.kb - a.kb)
+    .slice(0, 6)
+  const out: ScannedThing[] = []
+  for (const row of rows) {
+    const path = `${root}/${row.name}`
+    const used = (await run('mdls', ['-raw', '-name', 'kMDItemLastUsedDate', path], 5000)).trim()
+    out.push({ name: row.name.replace(/\.app$/, ''), path, bytes: row.kb * 1024, days: used && used !== '(null)' ? daysSince(new Date(used)) : null, form: 'crate' })
+  }
+  return out
+}

@@ -68,6 +68,7 @@ import {
   useRealCaches,
   useRealDisk,
   useFolder,
+  useRealHold,
   travel,
   walkTo,
   type BeingId,
@@ -745,7 +746,9 @@ function syncEmpty() {
   note.hidden = any
   note.textContent = world.scope.kind === 'repo'
     ? `Nothing mapped in ${world.scope.label} yet. Your scout will look through ${world.scope.path}.`
-    : `The ${holdTitle(world.hold).toLowerCase()} skiff is clear.`
+    : world.hold === 'stuff'
+      ? 'Your own files stay private until you ask. Tell your scout "look in ~/Downloads".'
+      : `The ${holdTitle(world.hold).toLowerCase()} boat is clear.`
 }
 
 function sound(now: number) {
@@ -1046,6 +1049,17 @@ async function loadThisMac(first = true) {
     const scan = await fetch('/api/scan').then((response) => response.json() as Promise<{ items: { name: string; path: string; bytes: number }[] }>)
     useRealCaches(world, scan.items ?? [])
     syncPropNodes()
+    // Apps are measured after the caches, so the first count isn't held up by them.
+    // Your own files are private: macOS guards Downloads, Desktop and Documents, so the harbor never lists them
+    // on its own. "Your stuff" starts empty; "look in ~/Downloads" measures it when the player asks.
+    if (first) useRealHold(world, 'stuff', [])
+    void fetch('/api/apps')
+      .then((response) => response.json() as Promise<{ items: Parameters<typeof useRealHold>[2] }>)
+      .then((apps) => {
+        useRealHold(world, 'apps', apps.items ?? [])
+        syncPropNodes()
+      })
+      .catch(() => undefined)
     finishTool(world, performance.now())
     if (!first) scoutSay(world, `Counted again. The biggest is ${beadText(world)?.replace('mostly ', '') ?? 'gone'}.`, performance.now(), 4200)
   } catch {

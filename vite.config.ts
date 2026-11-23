@@ -1,6 +1,6 @@
 import os from 'node:os'
 import { defineConfig, type Plugin } from 'vitest/config'
-import { readDisk, scanCaches, scanFolder } from './src/engine/scan'
+import { readDisk, scanApps, scanCaches, scanFolder } from './src/engine/scan'
 import { askClaude, detectAgents, type ScoutAsk } from './src/engine/scout'
 
 let scoutBusy = false
@@ -32,6 +32,18 @@ function harborApi(): Plugin {
             .catch(() => {
               res.statusCode = 500
               res.end('{}')
+            })
+          return
+        }
+        if (req.url === '/api/apps') {
+          scanApps()
+            .then((items) => {
+              res.setHeader('content-type', 'application/json')
+              res.end(JSON.stringify({ items }))
+            })
+            .catch(() => {
+              res.statusCode = 500
+              res.end('{"items":[]}')
             })
           return
         }
