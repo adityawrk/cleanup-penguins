@@ -14,6 +14,7 @@ import glassArt from './art/glasshouse.svg?raw'
 import mapArt from './art/map.svg?raw'
 import { itemSvg, jitter, sizeScale } from './items'
 import { EMOTES, emoteSvg } from './emotes'
+import { createNpcs, stepNpcs, talkTo } from './npcs'
 import {
   SPOTS,
   answer,
@@ -90,6 +91,7 @@ const ART: Record<string, string> = {
   'quay-fore': quayFore,
   'locker-fore': FORES['./art/locker-fore.svg'] ?? '',
   'glasshouse-fore': FORES['./art/glasshouse-fore.svg'] ?? '',
+  'hold-fore': FORES['./art/hold-fore.svg'] ?? '',
 }
 for (const host of document.querySelectorAll<HTMLElement>('[data-art]')) {
   host.innerHTML = ART[host.dataset.art ?? ''] ?? ''
@@ -132,8 +134,8 @@ for (const room of document.querySelectorAll<HTMLElement>('.room')) {
 }
 
 /** Sprites are drawn large and shown small, so the room reads as a big place. */
-const YOU_SIZE = 0.42
-const SCOUT_SIZE = 0.36
+const YOU_SIZE = 0.48
+const SCOUT_SIZE = 0.38
 /** Items scale with the cast so a 9 GB sack is about the penguin's height, not twice it. */
 const ITEM_SIZE = 0.8
 
@@ -176,6 +178,7 @@ for (const id of ['you', 'claude', 'codex', 'cursor', 'custom'] as const) {
 }
 
 for (const item of world.items) ensureProp(item)
+createNpcs(must<HTMLTemplateElement>('#tpl-you'), roomObjects)
 void loadThisMac()
 void findAgents()
 
@@ -386,6 +389,7 @@ function frame(now: number) {
   step(world, now, dt)
   serveLook()
   sync(now)
+  stepNpcs(now, dt, world.room, YOU_SIZE, fit.classList.contains('is-still'))
   sound(now)
   requestAnimationFrame(frame)
 }
@@ -408,7 +412,7 @@ function sync(now: number) {
   setText('#label-apps', gbWord(skiffTenths(world, 'apps')))
   setText('#label-stuff', gbWord(skiffTenths(world, 'stuff')))
   must('#bead-detail').textContent = beadText(world) ?? ''
-  must('#path-sign').textContent = world.room === 'hold' ? signPath(world) : ''
+  must('#path-sign').textContent = world.room === 'hold' && !world.sheetItemId ? signPath(world) : ''
   must('#locker-count').textContent = world.lockerTenths > 0 ? gbWord(world.lockerTenths) : 'empty'
   const steer = must<HTMLElement>('#steer')
   const waiting = world.steering.at(-1)
@@ -436,6 +440,11 @@ function sync(now: number) {
     const edge = Math.max(0, 150 - actor.x) - Math.max(0, actor.x - 1130)
     el.style.setProperty('--bx', `${edge / depth}px`)
     el.style.setProperty('--bxs', `${edge}px`)
+    if (id !== 'you') {
+      const you = being(world, 'you')
+      const close = Math.abs(actor.x - you.x) < 90 && Math.abs(actor.y - you.y) < 40
+      el.style.setProperty('--ny', close ? `${(actor.y <= you.y ? -24 : 18) / depth}px` : '0px')
+    }
     el.style.zIndex = String(Math.round(actor.y))
     const heft = id === world.scout ? effortScale(world.effort) : 1
     el.style.setProperty('--heft', String(heft))
@@ -870,6 +879,7 @@ function onClick(event: MouseEvent) {
     requestLift(world, hit.dataset.id, now)
   }
   if (act === 'toy') playToy(hit.dataset.toy ?? '', now)
+  if (act === 'npc' && hit.dataset.npc && talkTo(hit.dataset.npc, now, being(world, 'you').x)) audio.pop()
   if (act === 'who') openWho()
   if (act === 'model') openWho()
   if (act === 'effort') openWho()

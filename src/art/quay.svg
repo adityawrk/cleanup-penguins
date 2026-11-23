@@ -641,11 +641,12 @@
     <path d="M962 614c-6-12-2-22 6-26c2 10 0 20-6 26z" fill="#fff" stroke-width="2.4"/>
     <path d="M962 614l5-24" fill="none" stroke-width="1.6"/>
   </g>
-  <!-- deck life: a dropped fish and a patch of packed snow with footprints -->
+  <!-- deck life: a dropped fish and a frozen puddle -->
   <g stroke="#1a2332" stroke-linejoin="round" stroke-linecap="round">
-    <path d="M470 600c10-6 40-8 64-4c20 4 22 14 4 18c-24 6-60 6-74-2c-6-4-4-10 6-12z" fill="#f4faff" stroke-width="2.6"/>
-    <path d="M478 610c18 4 44 4 60-2" fill="none" stroke="#c7e4f6" stroke-width="3"/>
-    <g fill="#c7e4f6" stroke="none"><ellipse cx="492" cy="604" rx="4" ry="2.2"/><ellipse cx="508" cy="600" rx="4" ry="2.2"/><ellipse cx="522" cy="606" rx="4" ry="2.2"/></g>
+    <!-- a frozen puddle: icy blue, with glints -->
+    <path d="M470 600c10-6 40-8 64-4c20 4 22 14 4 18c-24 6-60 6-74-2c-6-4-4-10 6-12z" fill="#bfe2f5" stroke-width="2.4"/>
+    <path d="M504 597c14 0 26 2 32 6c6 4 4 9-4 11c-10 3-24 4-36 3c16-4 22-12 8-20z" fill="#a4d2ee" stroke="none"/>
+    <path d="M480 603l16-3M486 611l8-1M512 609l14-3" fill="none" stroke="#fff" stroke-width="3"/>
     <path d="M796 640c6-8 22-8 28 0c-6 8-22 8-28 0z" fill="#9cc7e3" stroke-width="2.4"/>
     <path d="M824 640l8-6v12z" fill="#9cc7e3" stroke-width="2.2"/>
     <path d="M806 642c6 2 12 2 16-1" fill="none" stroke="#7fb2d4" stroke-width="2"/>

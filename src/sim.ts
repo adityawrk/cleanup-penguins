@@ -69,6 +69,9 @@ export interface Point {
 export const SPOTS = {
   seaStand: { x: 1040, y: 560 },
   binStand: { x: 300, y: 548 },
+  /** Where the scout stands to advise: beside the player's stand, never on it. */
+  seaPost: { x: 948, y: 596 },
+  binPost: { x: 396, y: 590 },
   chute: { x: 1180, y: 392 },
   bin: { x: 248, y: 404 },
   bead: { x: 290, y: 600 },
@@ -778,7 +781,7 @@ export function propDraw(world: World, item: Item, now: number): Draw {
       x: toss.fromX + (toss.toX - toss.fromX) * u,
       y: toss.fromY + (toss.toY - toss.fromY) * u - Math.sin(u * Math.PI) * 120,
       rot: u * 180 * toss.facing,
-      scale: 0.7 - u * 0.3,
+      scale: 0.62 - u * 0.25,
       hide: false,
     }
   }
@@ -799,10 +802,10 @@ export function propDraw(world: World, item: Item, now: number): Draw {
   if (world.carrying === item.id) {
     const you = being(world, 'you')
     return {
-      x: you.x + 14 * you.facing,
-      y: you.y - 2,
-      rot: -5 * you.facing,
-      scale: 0.7,
+      x: you.x + 30 * you.facing,
+      y: you.y - 6,
+      rot: -8 * you.facing,
+      scale: 0.62,
       hide: false,
     }
   }
@@ -1052,7 +1055,7 @@ function postBird(world: World, id: BirdId, hole: Hole, line: string, now: numbe
   const b = being(world, id)
   b.awake = true
   b.mode = 'post'
-  const spot = hole === 'sea' ? SPOTS.seaStand : SPOTS.binStand
+  const spot = hole === 'sea' ? SPOTS.seaPost : SPOTS.binPost
   b.tx = spot.x
   b.ty = spot.y
   if (world.room === 'hold') {
@@ -1178,8 +1181,8 @@ function beginToss(world: World, itemId: string, now: number) {
   if (!item) return
   world.toss = {
     itemId,
-    fromX: you.x + 14 * you.facing,
-    fromY: you.y - 2,
+    fromX: you.x + 30 * you.facing,
+    fromY: you.y - 6,
     toX: SPOTS.chute.x,
     toY: SPOTS.chute.y,
     started: now,
