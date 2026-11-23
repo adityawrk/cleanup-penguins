@@ -489,3 +489,18 @@ button { appearance: none; background: none; border: 0; padding: 0; }
 @keyframes t-glide { 50% { transform: translate(6px, -3px); } }
 @keyframes t-fall { to { transform: translateY(10px); } }
 @keyframes t-title { 50% { transform: translateY(-3px) rotate(-.4deg); } }
+
+/* The player's own card: portrait, and the honest numbers. */
+#me {
+  position: absolute; left: 50%; top: 60px; translate: -50% 0; width: 520px; z-index: 7; text-align: center;
+  background: #2a7fd4; color: #fff; border: 8px solid #a8d8ff; border-radius: 38px; padding: 20px 26px 22px;
+  box-shadow: 0 0 0 5px var(--ink), 0 12px 0 5px #0d3f78; animation: card-in 220ms cubic-bezier(.2, 1.3, .4, 1);
+}
+#me h2 { margin: 0 0 10px; font-size: 30px; line-height: 1; text-shadow: 0 3px 0 #10427f; }
+.me-portrait { width: 200px; height: 170px; margin: 0 auto 14px; display: grid; place-items: end center; padding-bottom: 16px; background: #1d66b4; border: 5px solid var(--ink); border-radius: 50%; box-shadow: inset 0 -34px 0 #1a5aa0, inset 0 0 0 5px #3f8fdc; overflow: hidden; }
+.me-portrait .face-art { width: 112px; height: auto; }
+.me-stats { margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.me-stats div { background: #eef8ff; color: var(--ink); border: 3px solid var(--ink); border-radius: 16px; padding: 8px 10px; box-shadow: inset 0 -5px 0 #bcdcf5; }
+.me-stats dt { font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #3a5a7c; }
+.me-stats dd { margin: 2px 0 0; font-size: 19px; font-weight: 700; }
+.me-foot { margin: 14px 0 0; font-size: 14px; font-weight: 600; color: #cfe8ff; }

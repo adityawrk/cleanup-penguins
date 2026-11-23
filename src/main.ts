@@ -193,6 +193,7 @@ emotePanel.addEventListener('click', (event) => {
   must('#emote-btn').setAttribute('aria-expanded', 'false')
 })
 must('#sc-close').addEventListener('click', () => closeWho())
+must('#me-close').addEventListener('click', () => closeMe())
 for (const mini of document.querySelectorAll<HTMLElement>('#scout-choices .mini')) {
   mini.appendChild(faceOf(mini.dataset.face as BirdId))
 }
@@ -667,7 +668,7 @@ function onClick(event: MouseEvent) {
   if (naming) return
   const now = performance.now()
   audio.unlock()
-  if (world.card || !who.hidden) return
+  if (world.card || !who.hidden || !must<HTMLElement>('#me').hidden) return
   const hit = target.closest<HTMLElement>('[data-act]')
   if (!hit) return
   const act = hit.dataset.act
@@ -706,6 +707,7 @@ function onClick(event: MouseEvent) {
   if (act === 'effort') openWho()
   if (act === 'fda') bumpBuoy(world, now)
   if (act === 'buoy') bumpBuoy(world, now)
+  if (act === 'bird' && hit.dataset.bird === 'you' && !world.carrying) openMe()
   if (act === 'bird' && hit.dataset.bird && hit.dataset.bird !== 'you') {
     const id = hit.dataset.bird as BirdId
     if (world.room === 'quay' && !being(world, id).awake) pokeNest(world, id, now)
@@ -735,6 +737,10 @@ function onKey(event: KeyboardEvent) {
   const key = event.key.toLowerCase()
   if (!who.hidden) {
     if (key === 'escape') closeWho()
+    return
+  }
+  if (!must<HTMLElement>('#me').hidden) {
+    if (key === 'escape') closeMe()
     return
   }
   if (world.card) {
@@ -874,6 +880,7 @@ function must<T extends Element>(selector: string): T {
 
 catcher.addEventListener('click', () => {
   if (!who.hidden) closeWho()
+  if (!must<HTMLElement>('#me').hidden) closeMe()
 })
 
 function setText(selector: string, text: string) {
@@ -933,4 +940,33 @@ async function askScout(text: string) {
   } catch {
     liveFailed(world, performance.now())
   }
+}
+
+function openMe() {
+  if (world.card) return
+  closeWho()
+  const me = must<HTMLElement>('#me')
+  const you = being(world, 'you')
+  must('#me-name').textContent = you.name
+  const portrait = must('#me-portrait')
+  if (!portrait.firstChild) {
+    const art = must<HTMLTemplateElement>('#tpl-you').content.querySelector('svg')!.cloneNode(true) as SVGElement
+    art.classList.add('face-art')
+    portrait.appendChild(art)
+  }
+  must('#me-free').textContent = `${gbWord(world.freeTenths)} of ${gbWord(world.capacityTenths)}`
+  must('#me-practice').textContent = world.rehearsedTenths > 0 ? gbWord(world.rehearsedTenths) : 'nothing yet'
+  const locked = world.items.filter((item) => item.disposed === 'locker').length
+  must('#me-locker').textContent = locked ? `${gbWord(world.lockerTenths)} · ${locked} ${locked === 1 ? 'thing' : 'things'}` : 'empty'
+  must('#me-notes').textContent = world.brief.length ? String(world.brief.length) : 'none'
+  must('#me-foot').textContent = world.rehearsal
+    ? 'This harbor is a practice run. Throws leave your disk as it is, so the free space above does not change.'
+    : 'Free space comes from your disk and moves only when bytes come back.'
+  me.hidden = false
+  catcher.hidden = false
+  audio.card()
+}
+function closeMe() {
+  must<HTMLElement>('#me').hidden = true
+  catcher.hidden = !world.card && who.hidden
 }

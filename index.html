@@ -144,6 +144,20 @@
             </div>
           </div>
         </div>
+        <div id="me" hidden role="dialog" aria-modal="true" aria-labelledby="me-name">
+          <button type="button" class="sc-close" id="me-close" aria-label="Close">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/></svg>
+          </button>
+          <h2 id="me-name"></h2>
+          <div class="me-portrait" id="me-portrait"></div>
+          <dl class="me-stats">
+            <div><dt>Free on this Mac</dt><dd id="me-free"></dd></div>
+            <div><dt>Thrown in practice</dt><dd id="me-practice"></dd></div>
+            <div><dt>In the Locker</dt><dd id="me-locker"></dd></div>
+            <div><dt>Notes for your scout</dt><dd id="me-notes"></dd></div>
+          </dl>
+          <p class="me-foot" id="me-foot"></p>
+        </div>
         <div id="live" class="sr" aria-live="polite"></div>
         <div id="hello" role="dialog" aria-modal="true" aria-labelledby="hello-line">
           <div class="hello-card">
